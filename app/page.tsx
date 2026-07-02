@@ -131,7 +131,7 @@ export default function PleaseBeReady() {
         <section className="mb-12">
           <div className="grid gap-4 sm:grid-cols-2">
             {areas.map((a) => (
-              <div key={a.title} className="flex flex-col rounded-2xl border border-[#262626] bg-[#151515] p-6">
+              <div key={a.title} className="pop flex flex-col rounded-2xl border border-[#262626] bg-[#151515] p-6">
                 <div className="mb-3 flex items-center gap-3">
                   <span className="text-2xl">{a.emoji}</span>
                   <h2 className="text-lg font-black text-[#F5F0E8]">{a.title}</h2>
@@ -157,7 +157,7 @@ export default function PleaseBeReady() {
           <h2 className="mb-4 text-xl font-black">Supply Levels</h2>
           <div className="grid gap-4 sm:grid-cols-3">
             {levels.map((l) => (
-              <div key={l.title} className="rounded-2xl border border-[#262626] bg-[#151515] p-5">
+              <div key={l.title} className="pop rounded-2xl border border-[#262626] bg-[#151515] p-5">
                 <p className="text-xs font-black uppercase tracking-[0.15em]" style={{ color: A }}>{l.tag}</p>
                 <h3 className="mt-1 text-lg font-black">{l.title}</h3>
                 <p className="mt-2 text-sm font-semibold leading-6 text-[#9A9188]">{l.text}</p>
