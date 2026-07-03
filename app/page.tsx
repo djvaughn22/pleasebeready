@@ -111,18 +111,18 @@ const resources = [
 
 export default function PleaseBeReady() {
   return (
-    <main className="min-h-screen bg-[#0C0C0C] text-[#F5F0E8]">
+    <main className="min-h-screen bg-[#0b1220] text-[#e8edf5]">
       <OpenMirrorNav />
       <div className="mx-auto max-w-3xl px-5 py-12">
 
         <div className="mb-8 inline-flex items-baseline text-lg font-black tracking-tight">
-          <span className="text-[#F5F0E8]">PleaseBeReady</span>
+          <span className="text-[#e8edf5]">PleaseBeReady</span>
           <span style={{ color: A }}>.com</span>
         </div>
 
         <section className="mb-12">
           <h1 className="mb-3 text-4xl font-black leading-tight sm:text-5xl">Emergency Preparedness Checklists</h1>
-          <p className="max-w-2xl text-base font-semibold leading-7 text-[#9A9188]">
+          <p className="max-w-2xl text-base font-semibold leading-7 text-[#94a3b8]">
             Water, food, power, medical, documents, and a go-bag — what to store, how much, and where to learn more.
             Every section links to an official guide (Ready.gov, FEMA, Red Cross, CDC).
           </p>
@@ -131,10 +131,10 @@ export default function PleaseBeReady() {
         <section className="mb-12">
           <div className="grid gap-4 sm:grid-cols-2">
             {areas.map((a) => (
-              <div key={a.title} className="pop flex flex-col rounded-2xl border border-[#262626] bg-[#151515] p-6">
+              <div key={a.title} className="pop flex flex-col rounded-2xl border border-[#26324c] bg-[#141d2e] p-6">
                 <div className="mb-3 flex items-center gap-3">
                   <span className="text-2xl">{a.emoji}</span>
-                  <h2 className="text-lg font-black text-[#F5F0E8]">{a.title}</h2>
+                  <h2 className="text-lg font-black text-[#e8edf5]">{a.title}</h2>
                 </div>
                 <ul className="mb-4 flex flex-1 flex-col gap-2">
                   {a.details.map((d) => (
@@ -144,7 +144,7 @@ export default function PleaseBeReady() {
                   ))}
                 </ul>
                 <a href={a.href} target="_blank" rel="noopener noreferrer"
-                  className="mt-auto inline-flex items-center justify-between rounded-xl border border-[#262626] bg-[#1C1C1C] px-4 py-2.5 text-xs font-black uppercase tracking-[0.1em] transition hover:border-[#3a3a3a]"
+                  className="mt-auto inline-flex items-center justify-between rounded-xl border border-[#26324c] bg-[#1c2740] px-4 py-2.5 text-xs font-black uppercase tracking-[0.1em] transition hover:border-[#1c2740]"
                   style={{ color: A }}>
                   <span>Guide · {a.source}</span><span>→</span>
                 </a>
@@ -157,34 +157,34 @@ export default function PleaseBeReady() {
           <h2 className="mb-4 text-xl font-black">Supply Levels</h2>
           <div className="grid gap-4 sm:grid-cols-3">
             {levels.map((l) => (
-              <div key={l.title} className="pop rounded-2xl border border-[#262626] bg-[#151515] p-5">
+              <div key={l.title} className="pop rounded-2xl border border-[#26324c] bg-[#141d2e] p-5">
                 <p className="text-xs font-black uppercase tracking-[0.15em]" style={{ color: A }}>{l.tag}</p>
                 <h3 className="mt-1 text-lg font-black">{l.title}</h3>
-                <p className="mt-2 text-sm font-semibold leading-6 text-[#9A9188]">{l.text}</p>
+                <p className="mt-2 text-sm font-semibold leading-6 text-[#94a3b8]">{l.text}</p>
               </div>
             ))}
           </div>
         </section>
 
-        <section className="mb-12 rounded-3xl border border-[#262626] bg-[#151515] p-7">
+        <section className="mb-12 rounded-3xl border border-[#26324c] bg-[#141d2e] p-7">
           <h2 className="mb-4 text-xl font-black">Official Resources</h2>
           <div className="flex flex-col gap-2">
             {resources.map((r) => (
               <a key={r.href} href={r.href} target="_blank" rel="noopener noreferrer"
-                className="flex items-center justify-between rounded-xl border border-[#262626] bg-[#1C1C1C] px-5 py-3.5 text-sm font-black text-[#F5F0E8] transition hover:border-[#3a3a3a]">
+                className="flex items-center justify-between rounded-xl border border-[#26324c] bg-[#1c2740] px-5 py-3.5 text-sm font-black text-[#e8edf5] transition hover:border-[#1c2740]">
                 <span>{r.label}</span><span style={{ color: A }}>→</span>
               </a>
             ))}
           </div>
         </section>
 
-        <footer className="border-t border-[#262626] pt-8 text-center">
-          <p className="mx-auto mb-4 max-w-xl text-xs font-semibold leading-6 text-[#7A736B]">
+        <footer className="border-t border-[#26324c] pt-8 text-center">
+          <p className="mx-auto mb-4 max-w-xl text-xs font-semibold leading-6 text-[#94a3b8]">
             General preparedness information, not professional or medical advice. In any emergency, call your local
             emergency number and follow official guidance from local authorities.
           </p>
           <p className="text-sm font-black tracking-tight">
-            <span className="text-[#F5F0E8]">PleaseBeReady</span><span style={{ color: A }}>.com</span>
+            <span className="text-[#e8edf5]">PleaseBeReady</span><span style={{ color: A }}>.com</span>
           </p>
         </footer>
 
