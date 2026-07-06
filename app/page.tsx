@@ -178,15 +178,12 @@ export default function PleaseBeReady() {
           </div>
         </section>
 
-        <footer className="border-t border-[#26324c] pt-8 text-center">
-          <p className="mx-auto mb-4 max-w-xl text-xs font-semibold leading-6 text-[#94a3b8]">
+        <div className="pt-8 text-center">
+          <p className="mx-auto max-w-xl text-xs font-semibold leading-6 text-[#94a3b8]">
             General preparedness information, not professional or medical advice. In any emergency, call your local
             emergency number and follow official guidance from local authorities.
           </p>
-          <p className="text-sm font-black tracking-tight">
-            <span className="text-[#e8edf5]">PleaseBeReady</span><span style={{ color: A }}>.com</span>
-          </p>
-        </footer>
+        </div>
 
       </div>
     </main>
