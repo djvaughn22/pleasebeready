@@ -1,4 +1,3 @@
-import OpenMirrorNav from "./OpenMirrorNav";
 
 const A = "#34D399";
 
@@ -112,7 +111,6 @@ const resources = [
 export default function PleaseBeReady() {
   return (
     <main className="min-h-screen bg-[#0b1220] text-[#e8edf5]">
-      <OpenMirrorNav />
       <div className="mx-auto max-w-3xl px-5 py-12">
 
         <div className="mb-8 inline-flex items-baseline text-lg font-black tracking-tight">

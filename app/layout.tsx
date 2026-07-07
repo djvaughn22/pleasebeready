@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import OpenMirrorFooter from "./OpenMirrorFooter";
+import OpenMirrorNav from "./OpenMirrorNav";
 
 export const metadata: Metadata = {
   title: "PleaseBeReady.com — Friendly Emergency Preparedness for Everyone",
@@ -12,6 +13,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className="antialiased">
       <body>
+        <OpenMirrorNav site="PleaseBeReady.com" />
         {children}
         <OpenMirrorFooter siteName="PleaseBeReady.com" />
       </body>
