@@ -1,12 +1,8 @@
 
+import { amazonUrl, type GearItem } from "./lib/gear";
+
 const A = "#34D399";
 
-// Amazon Associates tag (Open Mirror LLC account). NEXT_PUBLIC_AMAZON_TAG overrides.
-const AMAZON_TAG = process.env.NEXT_PUBLIC_AMAZON_TAG ?? "pleasebeready-20";
-const amazonUrl = (asin: string) =>
-  `https://www.amazon.com/dp/${asin}${AMAZON_TAG ? `?tag=${AMAZON_TAG}` : ""}`;
-
-type GearItem = { name: string; asin: string };
 type Area = { emoji: string; title: string; details: string[]; href: string; source: string; gear: GearItem[] };
 
 const areas: Area[] = [
@@ -138,10 +134,32 @@ const areas: Area[] = [
   },
 ];
 
-const levels = [
-  { tag: "Level 1", title: "72 Hours", text: "The baseline everyone should hit: ride out a storm, outage, or evacuation." },
-  { tag: "Level 2", title: "2 Weeks", text: "FEMA's current guidance for many disasters. Water, food, meds, and power for two weeks." },
-  { tag: "Level 3", title: "1 Month+", text: "Extended resilience for longer disruptions — build here once Levels 1–2 are solid." },
+const levels: { tag: string; title: string; text: string; gear: GearItem[] }[] = [
+  {
+    tag: "Level 1", title: "72 Hours",
+    text: "The baseline everyone should hit: ride out a storm, outage, or evacuation.",
+    gear: [
+      { name: "Ready America 72-hour kit, 2-person", asin: "B000FJQQVI" },
+    ],
+  },
+  {
+    tag: "Level 2", title: "2 Weeks",
+    text: "FEMA's current guidance for many disasters. Water, food, meds, and power for two weeks.",
+    gear: [
+      { name: "Augason Farms 30-day food supply, 1 person", asin: "B071KPGLBK" },
+      { name: "Augason Farms 55-gal water barrel + treatment kit", asin: "B006OW4FVI" },
+      { name: "Jackery Explorer 1000 v2 power station", asin: "B0D7PPG25F" },
+    ],
+  },
+  {
+    tag: "Level 3", title: "1 Month+",
+    text: "Extended resilience for longer disruptions — build here once Levels 1–2 are solid.",
+    gear: [
+      { name: "Westinghouse 9500W dual-fuel generator (CO sensor)", asin: "B099KPDJBD" },
+      { name: "Boroux gravity-fed water filter, 3 gallons", asin: "B0D9WNBTD8" },
+      { name: "SentrySafe fireproof + waterproof safe", asin: "B005P12C5A" },
+    ],
+  },
 ];
 
 const resources = [
@@ -168,6 +186,11 @@ export default function PleaseBeReady() {
             Water, food, power, medical, documents, and a go-bag — what to store, how much, and where to learn more.
             Every section lists the exact gear to get and links to an official guide (Ready.gov, FEMA, Red Cross, CDC).
           </p>
+          <a href="/today"
+            className="mt-5 inline-flex items-center gap-2 rounded-xl border border-[#26324c] bg-[#141d2e] px-4 py-2.5 text-xs font-black uppercase tracking-[0.1em] transition hover:border-[#1c2740]"
+            style={{ color: A }}>
+            <span>📅 Daily Readiness Check — one small task a day</span><span>→</span>
+          </a>
         </section>
 
         <section className="mb-12">
@@ -208,10 +231,19 @@ export default function PleaseBeReady() {
           <h2 className="mb-4 text-xl font-black">Supply Levels</h2>
           <div className="grid gap-4 sm:grid-cols-3">
             {levels.map((l) => (
-              <div key={l.title} className="pop rounded-2xl border border-[#26324c] bg-[#141d2e] p-5">
+              <div key={l.title} className="pop flex flex-col rounded-2xl border border-[#26324c] bg-[#141d2e] p-5">
                 <p className="text-xs font-black uppercase tracking-[0.15em]" style={{ color: A }}>{l.tag}</p>
                 <h3 className="mt-1 text-lg font-black">{l.title}</h3>
-                <p className="mt-2 text-sm font-semibold leading-6 text-[#94a3b8]">{l.text}</p>
+                <p className="mb-4 mt-2 flex-1 text-sm font-semibold leading-6 text-[#94a3b8]">{l.text}</p>
+                <div className="flex flex-col gap-2">
+                  {l.gear.map((g) => (
+                    <a key={g.asin} href={amazonUrl(g.asin)} target="_blank" rel="noopener noreferrer sponsored"
+                      className="inline-flex items-center justify-between gap-3 rounded-xl px-4 py-2.5 text-xs font-black transition hover:opacity-90"
+                      style={{ background: A, color: "#0b1220" }}>
+                      <span>🛒 {g.name}</span><span>→</span>
+                    </a>
+                  ))}
+                </div>
               </div>
             ))}
           </div>
