@@ -1,9 +1,8 @@
 
 const A = "#34D399";
 
-// Amazon Associates tag — set NEXT_PUBLIC_AMAZON_TAG in Vercel (e.g. "pleasebeready-20").
-// Links work without it; they just don't earn until it's set.
-const AMAZON_TAG = process.env.NEXT_PUBLIC_AMAZON_TAG ?? "";
+// Amazon Associates tag (Open Mirror LLC account). NEXT_PUBLIC_AMAZON_TAG overrides.
+const AMAZON_TAG = process.env.NEXT_PUBLIC_AMAZON_TAG ?? "pleasebeready-20";
 const amazonUrl = (asin: string) =>
   `https://www.amazon.com/dp/${asin}${AMAZON_TAG ? `?tag=${AMAZON_TAG}` : ""}`;
 
