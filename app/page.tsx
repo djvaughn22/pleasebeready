@@ -54,7 +54,7 @@ const areas: Area[] = [
     ],
     gear: [
       { name: "Energizer LED headlamps, 2-pack with batteries", asin: "B092RHC2FY" },
-      { name: "Anker PowerCore 10000 power bank", asin: "B01B14ANLY" },
+      { name: "Anker 10,000mAh USB-C power bank", asin: "B0D5CLSMFB" },
     ],
   },
   {
