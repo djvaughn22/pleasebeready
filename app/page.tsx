@@ -1,7 +1,14 @@
 
 const A = "#34D399";
 
-type Area = { emoji: string; title: string; details: string[]; href: string; source: string };
+// Amazon Associates tag — set NEXT_PUBLIC_AMAZON_TAG in Vercel (e.g. "pleasebeready-20").
+// Links work without it; they just don't earn until it's set.
+const AMAZON_TAG = process.env.NEXT_PUBLIC_AMAZON_TAG ?? "";
+const amazonUrl = (asin: string) =>
+  `https://www.amazon.com/dp/${asin}${AMAZON_TAG ? `?tag=${AMAZON_TAG}` : ""}`;
+
+type GearItem = { name: string; asin: string };
+type Area = { emoji: string; title: string; details: string[]; href: string; source: string; gear: GearItem[] };
 
 const areas: Area[] = [
   {
@@ -11,6 +18,10 @@ const areas: Area[] = [
       "Store a 3-day minimum; aim for 2 weeks. Rotate store-bought every 6–12 months.",
       "Backup purification: filter, unscented bleach (8 drops/gallon), or a rolling boil for 1 minute.",
     ],
+    gear: [
+      { name: "Reliance Aqua-Tainer 7-gallon water container", asin: "B001QC31G6" },
+      { name: "LifeStraw personal water filter", asin: "B006QF3TW4" },
+    ],
   },
   {
     emoji: "🥫", title: "Food", href: "https://www.ready.gov/food", source: "Ready.gov",
@@ -18,6 +29,10 @@ const areas: Area[] = [
       "2-week supply of non-perishable, no-cook food — roughly 2,000 calories/person/day.",
       "Canned meat/beans/veg, peanut butter, nuts, dried fruit, crackers, shelf-stable milk.",
       "Keep a manual can opener. Rotate by expiration date.",
+    ],
+    gear: [
+      { name: "Mountain House 3-day emergency food supply", asin: "B0898QSCNG" },
+      { name: "Heavy-duty manual can opener", asin: "B09HKDZ3CV" },
     ],
   },
   {
@@ -27,6 +42,9 @@ const areas: Area[] = [
       "7–30 day backup of prescriptions where possible.",
       "OTC: pain reliever, antihistamine, anti-diarrheal, electrolytes.",
     ],
+    gear: [
+      { name: "First Aid Only 298-piece all-purpose kit", asin: "B000069EYA" },
+    ],
   },
   {
     emoji: "🔦", title: "Power & Light", href: "https://www.ready.gov/power-outages", source: "Ready.gov",
@@ -34,6 +52,10 @@ const areas: Area[] = [
       "LED flashlights + headlamps, plenty of spare batteries, 1–2 charged power banks.",
       "NOAA hand-crank / solar radio.",
       "Generators run outdoors only, 20+ ft from windows and doors (carbon monoxide kills).",
+    ],
+    gear: [
+      { name: "Energizer LED headlamps, 2-pack with batteries", asin: "B092RHC2FY" },
+      { name: "Anker PowerCore 10000 power bank", asin: "B01B14ANLY" },
     ],
   },
   {
@@ -43,6 +65,10 @@ const areas: Area[] = [
       "Never run a grill, camp stove, or generator indoors.",
       "Working carbon-monoxide detector with fresh batteries.",
     ],
+    gear: [
+      { name: "Swiss Safe mylar emergency blankets, 4-pack", asin: "B01LYNWRLA" },
+      { name: "HotHands hand warmers, 10 pair", asin: "B077RXSZN3" },
+    ],
   },
   {
     emoji: "📻", title: "Communication & Plan", href: "https://www.ready.gov/make-a-plan", source: "Ready.gov",
@@ -50,6 +76,9 @@ const areas: Area[] = [
       "NOAA weather radio + a written contact list (paper, not just your phone).",
       "Pick one out-of-town contact everyone checks in with.",
       "Two meeting spots: near home, and outside the neighborhood. Text over call in outages.",
+    ],
+    gear: [
+      { name: "Midland ER310 hand-crank NOAA weather radio", asin: "B015QIC1PW" },
     ],
   },
   {
@@ -59,6 +88,9 @@ const areas: Area[] = [
       "Keep them in a waterproof bag and in encrypted cloud storage.",
       "Cash in small bills — ATMs and card readers may be down.",
     ],
+    gear: [
+      { name: "Fireproof, waterproof document bag with lock", asin: "B07SPZ93V5" },
+    ],
   },
   {
     emoji: "🎒", title: "72-Hour Go-Bag", href: "https://www.ready.gov/kit", source: "Ready.gov",
@@ -66,6 +98,9 @@ const areas: Area[] = [
       "One per person, by the door. 3 days of water + no-cook food.",
       "First aid, meds, flashlight, radio, charger, cash, document copies.",
       "Sanitation, change of clothes, sturdy shoes, whistle, emergency blanket.",
+    ],
+    gear: [
+      { name: "Ready America 72-hour kit, 2-person backpack", asin: "B000FJQQVI" },
     ],
   },
   {
@@ -75,6 +110,9 @@ const areas: Area[] = [
       "Phone charger, small tool kit, ice scraper.",
       "Flares or reflective triangles; keep the tank at least half full.",
     ],
+    gear: [
+      { name: "90-piece roadside kit: jumper cables, first aid, tools", asin: "B01C96AFWU" },
+    ],
   },
   {
     emoji: "🏠", title: "Home Safety", href: "https://www.redcross.org/get-help/how-to-prepare-for-emergencies/types-of-emergencies/home-fires.html", source: "Red Cross",
@@ -83,6 +121,10 @@ const areas: Area[] = [
       "Fire extinguisher you know how to use (remember PASS: Pull, Aim, Squeeze, Sweep).",
       "Know how to shut off water, gas, and electricity. Keep two exits clear.",
     ],
+    gear: [
+      { name: "First Alert HOME1 fire extinguisher", asin: "B01LTICQYE" },
+      { name: "First Alert smoke + CO combo alarm", asin: "B000MXJ498" },
+    ],
   },
   {
     emoji: "🤝", title: "Skills & Community", href: "https://www.ready.gov/cert", source: "FEMA CERT",
@@ -90,6 +132,9 @@ const areas: Area[] = [
       "Learn first aid and CPR.",
       "Consider joining a Community Emergency Response Team (CERT).",
       "Know which neighbors have medical, trade, or equipment resources. Practice your plan twice a year.",
+    ],
+    gear: [
+      { name: "Red Cross First Aid/CPR/AED manual", asin: "173674478X" },
     ],
   },
 ];
@@ -122,7 +167,7 @@ export default function PleaseBeReady() {
           <h1 className="mb-3 text-4xl font-black leading-tight sm:text-5xl">Emergency Preparedness Checklists</h1>
           <p className="max-w-2xl text-base font-semibold leading-7 text-[#94a3b8]">
             Water, food, power, medical, documents, and a go-bag — what to store, how much, and where to learn more.
-            Every section links to an official guide (Ready.gov, FEMA, Red Cross, CDC).
+            Every section lists the exact gear to get and links to an official guide (Ready.gov, FEMA, Red Cross, CDC).
           </p>
         </section>
 
@@ -141,11 +186,20 @@ export default function PleaseBeReady() {
                     </li>
                   ))}
                 </ul>
-                <a href={a.href} target="_blank" rel="noopener noreferrer"
-                  className="mt-auto inline-flex items-center justify-between rounded-xl border border-[#26324c] bg-[#1c2740] px-4 py-2.5 text-xs font-black uppercase tracking-[0.1em] transition hover:border-[#1c2740]"
-                  style={{ color: A }}>
-                  <span>Guide · {a.source}</span><span>→</span>
-                </a>
+                <div className="mt-auto flex flex-col gap-2">
+                  {a.gear.map((g) => (
+                    <a key={g.asin} href={amazonUrl(g.asin)} target="_blank" rel="noopener noreferrer sponsored"
+                      className="inline-flex items-center justify-between gap-3 rounded-xl px-4 py-2.5 text-xs font-black transition hover:opacity-90"
+                      style={{ background: A, color: "#0b1220" }}>
+                      <span>🛒 {g.name}</span><span>→</span>
+                    </a>
+                  ))}
+                  <a href={a.href} target="_blank" rel="noopener noreferrer"
+                    className="inline-flex items-center justify-between rounded-xl border border-[#26324c] bg-[#1c2740] px-4 py-2.5 text-xs font-black uppercase tracking-[0.1em] transition hover:border-[#1c2740]"
+                    style={{ color: A }}>
+                    <span>Guide · {a.source}</span><span>→</span>
+                  </a>
+                </div>
               </div>
             ))}
           </div>
@@ -180,6 +234,9 @@ export default function PleaseBeReady() {
           <p className="mx-auto max-w-xl text-xs font-semibold leading-6 text-[#94a3b8]">
             General preparedness information, not professional or medical advice. In any emergency, call your local
             emergency number and follow official guidance from local authorities.
+          </p>
+          <p className="mx-auto mt-3 max-w-xl text-xs font-semibold leading-6 text-[#94a3b8]">
+            As an Amazon Associate, PleaseBeReady earns from qualifying purchases.
           </p>
         </div>
 
