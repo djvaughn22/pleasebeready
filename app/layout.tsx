@@ -5,6 +5,7 @@ import OpenMirrorNav from "./OpenMirrorNav";
 import Script from "next/script";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://pleasebeready.com"),
   title: "PleaseBeReady.com — Friendly Emergency Preparedness for Everyone",
   description:
     "A calm, friendly guide to getting your household ready — one small step at a time. Water, food, first aid, power, and more. No panic, no bunkers, just practical everyday readiness.",
@@ -12,7 +13,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="antialiased">
+    <html suppressHydrationWarning lang="en" className="antialiased">
       <body>
         <OpenMirrorNav site="PleaseBeReady.com" />
         {children}
