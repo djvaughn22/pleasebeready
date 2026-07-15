@@ -6,6 +6,7 @@ import type { Metadata } from "next";
 import { buildDailyReadiness } from "../lib/dailyReadiness";
 import { chicagoDateKey } from "../lib/dailySocialCore";
 import { amazonUrl } from "../lib/gear";
+import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
@@ -47,23 +48,28 @@ export default function TodayPage() {
           <p className="mt-4 text-base font-semibold leading-7 text-[#94a3b8]">{task.detail}</p>
 
           {task.gear ? (
-            <a
-              href={amazonUrl(task.gear.asin)}
-              target="_blank"
-              rel="noopener noreferrer sponsored"
-              className="mt-6 inline-flex w-full items-center justify-between gap-3 rounded-xl px-4 py-3 text-sm font-black transition hover:opacity-90"
-              style={{ background: A, color: "#0b1220" }}
-            >
-              <span>🛒 {task.gear.name}</span>
-              <span>→</span>
-            </a>
+            <>
+              <p className="mt-6 text-[0.6rem] font-black uppercase tracking-[0.14em] text-[#94a3b8]">
+                Optional product · Some product links may earn Open Mirror LLC a commission at no extra cost to you.
+              </p>
+              <a
+                href={amazonUrl(task.gear.asin)}
+                target="_blank"
+                rel="noopener noreferrer sponsored"
+                className="mt-2 inline-flex w-full items-center justify-between gap-3 rounded-xl px-4 py-3 text-sm font-black transition hover:opacity-90"
+                style={{ background: A, color: "#0b1220" }}
+              >
+                <span>🛒 {task.gear.name}</span>
+                <span>→</span>
+              </a>
+            </>
           ) : null}
         </section>
 
         <div className="mt-8 flex flex-col items-center gap-3 text-center">
-          <a href="/" className="font-black" style={{ color: A }}>
+          <Link href="/" className="font-black" style={{ color: A }}>
             See the full checklists and all the gear →
-          </a>
+          </Link>
           <p className="max-w-md text-xs font-semibold leading-5 text-[#94a3b8]">
             A new task appears every day at midnight Central Time. This page
             always matches the day&apos;s Instagram post.

@@ -194,6 +194,10 @@ export default function PleaseBeReady() {
         </section>
 
         <section className="mb-12">
+          <h2 className="mb-2 text-xl font-black">Your preparedness checklist</h2>
+          <p className="mb-4 text-xs font-semibold leading-5 text-[#94a3b8]">
+            Optional products are marked 🛒. Some product links may earn Open Mirror LLC a commission at no extra cost to you.
+          </p>
           <div className="grid gap-4 sm:grid-cols-2">
             {areas.map((a) => (
               <div key={a.title} className="pop flex flex-col rounded-2xl border border-[#26324c] bg-[#141d2e] p-6">
@@ -209,6 +213,7 @@ export default function PleaseBeReady() {
                   ))}
                 </ul>
                 <div className="mt-auto flex flex-col gap-2">
+                  <p className="text-[0.6rem] font-black uppercase tracking-[0.14em] text-[#94a3b8]">Optional products</p>
                   {a.gear.map((g) => (
                     <a key={g.asin} href={amazonUrl(g.asin)} target="_blank" rel="noopener noreferrer sponsored"
                       className="inline-flex items-center justify-between gap-3 rounded-xl px-4 py-2.5 text-xs font-black transition hover:opacity-90"
@@ -236,6 +241,7 @@ export default function PleaseBeReady() {
                 <h3 className="mt-1 text-lg font-black">{l.title}</h3>
                 <p className="mb-4 mt-2 flex-1 text-sm font-semibold leading-6 text-[#94a3b8]">{l.text}</p>
                 <div className="flex flex-col gap-2">
+                  <p className="text-[0.6rem] font-black uppercase tracking-[0.14em] text-[#94a3b8]">Optional products</p>
                   {l.gear.map((g) => (
                     <a key={g.asin} href={amazonUrl(g.asin)} target="_blank" rel="noopener noreferrer sponsored"
                       className="inline-flex items-center justify-between gap-3 rounded-xl px-4 py-2.5 text-xs font-black transition hover:opacity-90"
