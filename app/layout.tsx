@@ -6,7 +6,7 @@ import Script from "next/script";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://pleasebeready.com"),
-  title: "PleaseBeReady.com — Friendly Emergency Preparedness for Everyone",
+  title: { default: "PleaseBeReady", template: "%s | PleaseBeReady" },
   description:
     "A calm, friendly guide to getting your household ready — one small step at a time. Water, food, first aid, power, and more. No panic, no bunkers, just practical everyday readiness.",
 };
