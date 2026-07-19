@@ -29,10 +29,12 @@ export default function AboutPage() {
 
         <h2 style={{ fontSize: 17, fontWeight: 900, margin: "0 0 8px" }}>Cost and honesty</h2>
         <p style={{ background: "#141d2e", border: "1px solid #26324c", borderRadius: 14, padding: "14px 16px", fontSize: 15, lineHeight: 1.65, margin: "0 0 28px" }}>
-          Free to use, no account, progress saves on this device. Some product links may earn
-          Open Mirror LLC a commission at no extra cost to you — as an Amazon Associate,
-          PleaseBeReady earns from qualifying purchases. Guidance here is general preparedness
-          information, not professional or medical advice.
+          Free to read, no account. The checklists are general preparedness information —
+          official guidance from sources like Ready.gov, FEMA, the Red Cross, and the CDC takes
+          priority, and this is not professional, medical, or emergency-response advice. In an
+          emergency, follow official local guidance. Some optional product links are affiliate
+          links: as an Amazon Associate, PleaseBeReady earns from qualifying purchases, and Open
+          Mirror LLC may earn a commission at no extra cost to you.
         </p>
 
         <p style={{ fontSize: 13, lineHeight: 1.7, color: "#64748b", margin: 0 }}>
