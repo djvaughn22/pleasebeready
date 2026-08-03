@@ -25,7 +25,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           ]}
         />
         {children}
-        <OpenMirrorFooter siteName="PleaseBeReady.com" accent="#34D399" />
+        <OpenMirrorFooter />
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-6GR2LFSSW1"
           strategy="afterInteractive"
