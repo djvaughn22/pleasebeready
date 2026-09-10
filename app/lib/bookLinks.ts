@@ -48,9 +48,11 @@ export function openLibraryUrl(book: PrepBook): string {
 }
 
 /** The ReadNotRead detail page for this same Open Library work — lets a
- * reader who wants to actually track/rate the book jump straight there. */
+ * reader who wants to actually track/rate the book jump straight there.
+ * `mode=book` is what keeps the destination in ReadNotRead; without it a
+ * first-time visitor lands on a book page wearing WatchedNotWatched chrome. */
 export function readNotReadUrl(book: PrepBook): string {
-  return `https://watchednotwatched.com/title/openlibrary/${book.openLibraryWorkKey}?mediaType=book`;
+  return `https://watchednotwatched.com/title/openlibrary/${book.openLibraryWorkKey}?mediaType=book&mode=book`;
 }
 
 export function coverUrl(book: PrepBook): string | null {

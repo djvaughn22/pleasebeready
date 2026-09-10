@@ -66,7 +66,15 @@ describe("cross-links use the same stable Open Library work id", () => {
   it("openLibraryUrl and readNotReadUrl both key off openLibraryWorkKey", () => {
     const b = BOOKS[0];
     expect(openLibraryUrl(b)).toBe(`https://openlibrary.org/works/${b.openLibraryWorkKey}`);
-    expect(readNotReadUrl(b)).toBe(`https://watchednotwatched.com/title/openlibrary/${b.openLibraryWorkKey}?mediaType=book`);
+    expect(readNotReadUrl(b)).toBe(`https://watchednotwatched.com/title/openlibrary/${b.openLibraryWorkKey}?mediaType=book&mode=book`);
+  });
+
+  it("every book lands the reader in ReadNotRead book mode, not WatchedNotWatched", () => {
+    for (const b of BOOKS) {
+      const params = new URL(readNotReadUrl(b)).searchParams;
+      expect(params.get("mode")).toBe("book");
+      expect(params.get("mediaType")).toBe("book");
+    }
   });
 });
 
