@@ -29,10 +29,17 @@ function toAsin(isbn: string): string | null {
   return null;
 }
 
+/** Retailer search terms, not display text: a credit like "(editor)" is
+ * accurate on the card but only adds noise to a catalog query. The card keeps
+ * the full byline; the search gets the name. */
+function searchTerms(book: PrepBook): string {
+  return `${book.title} ${book.author.replace(/\s*\([^)]*\)/g, "").trim()}`;
+}
+
 export function amazonBookUrl(book: PrepBook): string {
   const asin = book.isbn ? toAsin(book.isbn) : null;
   if (asin) return amazonUrl(asin);
-  const q = encodeURIComponent(`${book.title} ${book.author}`);
+  const q = encodeURIComponent(searchTerms(book));
   return `https://www.amazon.com/s?k=${q}&i=stripbooks${AMAZON_TAG ? `&tag=${AMAZON_TAG}` : ""}`;
 }
 
@@ -40,7 +47,7 @@ export function amazonBookUrl(book: PrepBook): string {
  * edition, so this never claims a product exists. Only rendered for books
  * flagged hasKnownAudiobook in books.ts (a curation judgment, not a live check). */
 export function audibleSearchUrl(book: PrepBook): string {
-  return `https://www.audible.com/search?keywords=${encodeURIComponent(`${book.title} ${book.author}`)}`;
+  return `https://www.audible.com/search?keywords=${encodeURIComponent(searchTerms(book))}`;
 }
 
 export function openLibraryUrl(book: PrepBook): string {

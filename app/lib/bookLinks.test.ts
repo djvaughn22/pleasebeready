@@ -78,6 +78,23 @@ describe("cross-links use the same stable Open Library work id", () => {
   });
 });
 
+describe("search terms stay clean", () => {
+  it("drops a role credit like '(editor)' from outbound searches — it is a byline, not a catalog term", () => {
+    const foxfire = BOOKS.find((b) => b.author.includes("("))!;
+    expect(foxfire.author).toContain("("); // the card still shows the full credit
+    for (const url of [amazonBookUrl(foxfire), audibleSearchUrl(foxfire)]) {
+      expect(decodeURIComponent(url)).not.toContain("(");
+    }
+  });
+
+  it("still searches on the real title and author name", () => {
+    const foxfire = BOOKS.find((b) => b.author.includes("("))!;
+    const k = new URL(audibleSearchUrl(foxfire)).searchParams.get("keywords")!;
+    expect(k).toContain(foxfire.title);
+    expect(k).toContain("Eliot Wigginton");
+  });
+});
+
 describe("AMAZON_DISCLOSURE", () => {
   it("matches this site's existing disclosure convention", () => {
     expect(AMAZON_DISCLOSURE).toBe("As an Amazon Associate, PleaseBeReady earns from qualifying purchases.");
