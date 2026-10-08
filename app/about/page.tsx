@@ -22,7 +22,9 @@ export default function AboutPage() {
 
         <h2 style={{ fontSize: 17, fontWeight: 900, margin: "0 0 8px" }}>What you can do here</h2>
         <ul style={{ fontSize: 15, lineHeight: 1.8, color: "#94a3b8", margin: "0 0 28px", paddingLeft: 18 }}>
-          <li>Work through calm, practical checklists for each area of readiness.</li>
+          <li>Pick what you&apos;re getting ready for and do one small free step today.</li>
+          <li>Work through calm, practical checklists for each area of readiness. Check marks stay on your device.</li>
+          <li>Work out how much water and food your household needs.</li>
           <li>Do one small readiness task a day with the Daily Readiness Check.</li>
           <li>See optional gear, clearly marked 🛒 — never required to be prepared.</li>
         </ul>
@@ -34,7 +36,8 @@ export default function AboutPage() {
           priority, and this is not professional, medical, or emergency-response advice. In an
           emergency, follow official local guidance. Some optional product links are affiliate
           links: as an Amazon Associate, PleaseBeReady earns from qualifying purchases, and Open
-          Mirror LLC may earn a commission at no extra cost to you.
+          Mirror LLC may earn a commission at no extra cost to you. There are no paid tools here
+          today.
         </p>
 
         <p style={{ fontSize: 13, lineHeight: 1.7, color: "#64748b", margin: 0 }}>
