@@ -18,6 +18,7 @@ export default function GearList({ gear, label = "Optional gear" }: { gear: Gear
         </p>
         {gear.map((g) => (
           <a key={g.asin} href={amazonUrl(g.asin)} target="_blank" rel="noopener noreferrer sponsored"
+            data-measure="gear" data-measure-label={g.asin}
             className="inline-flex items-center justify-between gap-3 rounded-lg border border-[#26324c] bg-[#141d2e] px-3 py-2 text-xs font-bold text-[#e8edf5] transition hover:border-[#34D399]">
             <span>{g.name}</span><span style={{ color: A }} aria-hidden>↗</span>
           </a>

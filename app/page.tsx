@@ -1,4 +1,5 @@
 import ChecklistLines from "./components/ChecklistLines";
+import ClickMeasure from "./components/ClickMeasure";
 import GearList from "./components/GearList";
 import StartHere from "./components/StartHere";
 import SupplyMath from "./components/SupplyMath";
@@ -33,6 +34,7 @@ export default function PleaseBeReady() {
           </p>
         </section>
 
+        <ClickMeasure />
         <StartHere />
 
         <ul aria-label="What's on this site" className="mb-12 flex flex-col gap-2 rounded-2xl border border-[#26324c] bg-[#141d2e] px-5 py-4 sm:flex-row sm:gap-6">
@@ -63,7 +65,7 @@ export default function PleaseBeReady() {
                   <span aria-hidden className="text-2xl">{a.emoji}</span>{a.title}
                 </h3>
                 <div className="flex-1"><ChecklistLines areaId={a.id} details={a.details} /></div>
-                <a href={a.href} target="_blank" rel="noopener noreferrer"
+                <a href={a.href} target="_blank" rel="noopener noreferrer" data-measure="guide" data-measure-label={a.id}
                   className="inline-flex items-center justify-between rounded-xl border border-[#26324c] bg-[#1c2740] px-4 py-2.5 text-xs font-black uppercase tracking-[0.1em] transition hover:border-[#34D399]"
                   style={{ color: A }}>
                   <span>Guide · {a.source}</span><span aria-hidden>→</span>

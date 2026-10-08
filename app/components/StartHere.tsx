@@ -4,6 +4,7 @@
 // need's checklist. Gear stays folded underneath. No data leaves the device.
 
 import { useState } from "react";
+import { measure } from "../lib/measure";
 import { areaById, needs } from "../lib/readiness";
 import ChecklistLines from "./ChecklistLines";
 import GearList from "./GearList";
@@ -23,7 +24,7 @@ export default function StartHere() {
           const on = n.id === needId;
           return (
             <button key={n.id} type="button" aria-pressed={on} aria-controls="start-panel"
-              onClick={() => setNeedId(on ? null : n.id)}
+              onClick={() => { if (!on) measure("need_select", n.id); setNeedId(on ? null : n.id); }}
               style={on ? { borderColor: A, boxShadow: `inset 0 0 0 1px ${A}` } : undefined}
               className={`flex min-h-[3.25rem] items-center gap-2 rounded-xl border px-3 py-2.5 text-left text-sm font-black transition ${on ? "border-[#34D399] bg-[#1c2740]" : "border-[#26324c] bg-[#141d2e] hover:border-[#34D399]"}`}>
               <span aria-hidden className="text-lg">{n.emoji}</span><span>{n.label}</span>
@@ -42,6 +43,7 @@ export default function StartHere() {
               <h3 className="mt-2 text-2xl font-black leading-tight">{need.step.title}</h3>
               <p className="mt-2 text-base font-semibold leading-7 text-[#94a3b8]">{need.step.detail}</p>
               <a href={need.guide.href} target="_blank" rel="noopener noreferrer"
+                data-measure="guide" data-measure-label={need.id}
                 className="mt-4 inline-flex items-center gap-2 rounded-xl border border-[#26324c] bg-[#1c2740] px-4 py-2.5 text-xs font-black uppercase tracking-[0.1em]"
                 style={{ color: A }}>
                 <span>Official guide · {need.guide.label}</span><span aria-hidden>→</span>
@@ -59,7 +61,8 @@ export default function StartHere() {
                   <div key={a.id} className="flex flex-col gap-3 rounded-2xl border border-[#26324c] bg-[#141d2e] p-5">
                     <h4 className="flex items-center gap-2 text-base font-black"><span aria-hidden>{a.emoji}</span>{a.title}</h4>
                     <ChecklistLines areaId={a.id} details={a.details} />
-                    <a href={a.href} target="_blank" rel="noopener noreferrer" className="text-xs font-black" style={{ color: A }}>
+                    <a href={a.href} target="_blank" rel="noopener noreferrer" className="text-xs font-black" style={{ color: A }}
+                      data-measure="guide" data-measure-label={a.id}>
                       Guide · {a.source} →
                     </a>
                     <GearList gear={a.gear} />

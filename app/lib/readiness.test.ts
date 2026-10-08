@@ -84,12 +84,29 @@ describe("homepage honesty and privacy", () => {
     expect(gear).toContain('rel="noopener noreferrer sponsored"');
   });
 
-  test("the free tools never send or collect anything", () => {
-    const visitorTools = ["StartHere.tsx", "SupplyMath.tsx", "ChecklistLines.tsx", "GearList.tsx", "useChecks.ts"];
+  test("the free tools never send what someone typed", () => {
+    const visitorTools = ["StartHere.tsx", "SupplyMath.tsx", "ChecklistLines.tsx", "GearList.tsx", "useChecks.ts", "ClickMeasure.tsx"];
     expect(readdirSync(join(appDir, "components"))).toEqual(expect.arrayContaining(visitorTools));
     for (const f of visitorTools) {
       const src = read(join("components", f));
       expect(src, f).not.toMatch(/\bfetch\(|<form|navigator\.sendBeacon|gtag\(/);
     }
+    // Supply math and check marks are never measured at all.
+    for (const f of ["SupplyMath.tsx", "ChecklistLines.tsx", "useChecks.ts"]) {
+      expect(read(join("components", f)), f).not.toMatch(/measure/);
+    }
+  });
+
+  test("aggregate measurement sends labels only and honors Do Not Track", () => {
+    const m = read("lib/measure.ts");
+    expect(m).toContain('"need_select" | "guide_click" | "gear_click"');
+    expect(m).toContain('nav.doNotTrack === "1"');
+    expect(m).toContain("globalPrivacyControl");
+    expect(m).toMatch(/gtag\("event", event, \{ label: /);
+    expect(read("components/StartHere.tsx")).toContain('measure("need_select", n.id)');
+  });
+
+  test("About says what is counted", () => {
+    expect(read("about/page.tsx")).toContain("Nothing you type is sent.");
   });
 });

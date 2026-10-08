@@ -37,7 +37,8 @@ export default function AboutPage() {
           emergency, follow official local guidance. Some optional product links are affiliate
           links: as an Amazon Associate, PleaseBeReady earns from qualifying purchases, and Open
           Mirror LLC may earn a commission at no extra cost to you. There are no paid tools here
-          today.
+          today. The site uses Google Analytics to count visits. It also counts a few anonymous clicks (which
+          need, guide, or gear link was picked), except in browsers that ask not to be tracked. Nothing you type is sent.
         </p>
 
         <p style={{ fontSize: 13, lineHeight: 1.7, color: "#64748b", margin: 0 }}>
