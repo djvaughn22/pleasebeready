@@ -4,7 +4,7 @@
 // panels to one plan that lives only on this device.
 
 import { useMemo } from "react";
-import { formatMoney, horizonLabel, resolvePlan, summarize } from "../../lib/planner/calc";
+import { formatEstimate, horizonLabel, resolvePlan, summarize } from "../../lib/planner/calc";
 import BudgetPanel from "./BudgetPanel";
 import Checklist from "./Checklist";
 import PlanActions from "./PlanActions";
@@ -37,7 +37,7 @@ export default function Planner() {
           <dl className="mt-3 grid gap-3 sm:grid-cols-4">
             <div className={`${inset} p-3`}><dt className="text-xs font-semibold text-[#94a3b8]">Water</dt><dd className="text-lg font-black"><Money>{water} gallons</Money></dd></div>
             <div className={`${inset} p-3`}><dt className="text-xs font-semibold text-[#94a3b8]">Essentials</dt><dd className="text-lg font-black">{essentials} items</dd></div>
-            <div className={`${inset} p-3`}><dt className="text-xs font-semibold text-[#94a3b8]">Still to get</dt><dd className="text-lg font-black"><Money>about {formatMoney(summary.totals.needed)}</Money></dd></div>
+            <div className={`${inset} p-3`}><dt className="text-xs font-semibold text-[#94a3b8]">Still to get</dt><dd className="text-lg font-black"><Money>about {formatEstimate(summary.totals.needed)}</Money></dd></div>
             <div className={`${inset} p-3`}><dt className="text-xs font-semibold text-[#94a3b8]">Plan length</dt><dd className="text-lg font-black">{horizonLabel(horizon)}</dd></div>
           </dl>
         </div>

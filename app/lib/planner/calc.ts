@@ -338,3 +338,17 @@ export function formatQuantity(n: number, unit: { one: string; many: string }): 
 export function formatMoney(n: number): string {
   return `$${Math.round(n).toLocaleString("en-US")}`;
 }
+
+/**
+ * For totals and per-line costs: rounded so it does not look exact.
+ * Under $10 to the dollar, under $100 to $5, under $1,000 to $10, then $50.
+ */
+export function roundEstimate(n: number): number {
+  const v = Math.max(0, n);
+  const step = v < 10 ? 1 : v < 100 ? 5 : v < 1000 ? 10 : 50;
+  return Math.round(v / step) * step;
+}
+
+export function formatEstimate(n: number): string {
+  return formatMoney(roundEstimate(n));
+}

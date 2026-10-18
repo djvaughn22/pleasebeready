@@ -11,14 +11,13 @@ export const metadata: Metadata = {
     "Plan water, food, medicine, light, sanitation and documents for your household and plan length. Edit the checklist, set a budget and build a shopping list. Your plan stays on your device.",
 };
 
-const A = "#34D399";
 
 export default function PlannerPage() {
   return (
     <main className="min-h-screen bg-[#0b1220] text-[#e8edf5]">
       <div className="mx-auto max-w-3xl px-4 py-10 sm:px-5 sm:py-12">
         <div className="print:hidden">
-          <Link href="/" className="text-sm font-black" style={{ color: A }}>← Get Ready</Link>
+          <Link href="/" className="text-sm font-black pbr-accent">← Get Ready</Link>
           <h1 className="mt-3 text-3xl font-black leading-tight sm:text-4xl">Household planner</h1>
           <p className="mt-3 max-w-2xl text-base font-semibold leading-7 text-[#94a3b8]">
             Tell us who is at home and how long you want to be covered. You get a checklist sized to your household that you can edit,
@@ -39,7 +38,7 @@ export default function PlannerPage() {
           <ul className="flex flex-col gap-2">
             {sourceList.map((s) => (
               <li key={s.id} className="text-xs font-semibold leading-5 text-[#94a3b8]">
-                <a href={s.href} target="_blank" rel="noopener noreferrer" className="font-black underline" style={{ color: A }}>
+                <a href={s.href} target="_blank" rel="noopener noreferrer" className="font-black underline pbr-accent">
                   {s.agency} · {s.title}
                 </a>
                 {" "}· we checked it {formatDate(s.checked)}{s.pageUpdated ? `; the page says updated ${formatDate(s.pageUpdated)}` : ""}

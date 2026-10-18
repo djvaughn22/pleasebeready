@@ -6,7 +6,7 @@
 
 import { useState } from "react";
 import {
-  formatMoney, formatQuantity, planQuantity, remainingQuantity, stateFor, unitCost, type Summary,
+  formatEstimate, formatQuantity, planQuantity, remainingQuantity, stateFor, unitCost, type Summary,
 } from "../../lib/planner/calc";
 import { buckets, gearFor } from "../../lib/planner/catalog";
 import { reportItemUrl } from "../../lib/planner/shopping";
@@ -17,8 +17,8 @@ import type { Planner } from "./usePlanner";
 import { A, card, inset, input, label, Money, Section } from "./ui";
 
 const PRIORITY: Record<Priority, { text: string; style: string }> = {
-  essential: { text: "Essential", style: "border-[#34D399] text-[#34D399]" },
-  next: { text: "Useful next step", style: "border-[#60A5FA] text-[#60A5FA]" },
+  essential: { text: "Essential", style: "border-[#34D399] pbr-accent" },
+  next: { text: "Useful next step", style: "border-[#60A5FA] pbr-blue" },
   optional: { text: "Optional", style: "border-[#94a3b8] text-[#94a3b8]" },
 };
 
@@ -78,10 +78,10 @@ function ItemRow({ r, p }: { r: ResolvedItem; p: Planner }) {
       </p>
       {basis && <p className="text-xs font-semibold text-[#94a3b8]">{basis}</p>}
 
-      <p className="mt-2 text-sm font-semibold leading-6 text-[#cbd5e1]">{r.reason}</p>
+      <p className="mt-2 text-sm font-semibold leading-6 pbr-body">{r.reason}</p>
       <p className="mt-1 text-xs font-semibold leading-5 text-[#94a3b8]">
         Source:{" "}
-        <a href={primary.href} target="_blank" rel="noopener noreferrer" className="underline" style={{ color: A }}>
+        <a href={primary.href} target="_blank" rel="noopener noreferrer" className="underline pbr-accent">
           {primary.agency} · {primary.title}
         </a>
         {" "}· checked {formatDate(primary.checked)}
@@ -91,7 +91,7 @@ function ItemRow({ r, p }: { r: ResolvedItem; p: Planner }) {
             {others.map((s, i) => (
               <span key={s.id}>
                 {i > 0 && ", "}
-                <a href={s.href} target="_blank" rel="noopener noreferrer" className="underline" style={{ color: A }}>{s.agency}</a>
+                <a href={s.href} target="_blank" rel="noopener noreferrer" className="underline pbr-accent">{s.agency}</a>
               </span>
             ))}
           </>
@@ -122,7 +122,7 @@ function ItemRow({ r, p }: { r: ResolvedItem; p: Planner }) {
           <a href={amazonUrl(gear.asin)} target="_blank" rel="noopener noreferrer sponsored"
             data-measure="gear" data-measure-label={gear.asin}
             className="mt-1 inline-flex min-h-11 w-full items-center justify-between gap-3 rounded-lg border border-[#26324c] bg-[#1c2740] px-3 py-2 text-sm font-bold text-[#e8edf5] transition hover:border-[#34D399]">
-            <span>{gear.name}</span><span style={{ color: A }} aria-hidden>↗</span>
+            <span>{gear.name}</span><span className="pbr-accent" aria-hidden>↗</span>
           </a>
           <p className="mt-1 text-xs font-semibold leading-5 text-[#94a3b8]">
             {r.product?.covers && r.product.covers > 1
@@ -184,18 +184,18 @@ function ItemRow({ r, p }: { r: ResolvedItem; p: Planner }) {
           {qty !== null && (
             <p className="text-xs font-semibold leading-5 text-[#94a3b8]">
               {st.status === "needs" && remaining > 0 && cost > 0
-                ? <>Still to get: {formatQuantity(remaining, r.unit)}, about <Money>{formatMoney(remaining * cost)}</Money>. </>
+                ? <>Still to get: {formatQuantity(remaining, r.unit)}, about <Money>{formatEstimate(remaining * cost)}</Money>. </>
                 : null}
               Our cost figure is a rough planning estimate, not an Amazon or store price. Change it to what you see.
             </p>
           )}
-          {r.tip && <p className="text-sm font-semibold leading-6 text-[#cbd5e1]">{r.tip}</p>}
+          {r.tip && <p className="text-sm font-semibold leading-6 pbr-body">{r.tip}</p>}
           <p className="text-xs font-semibold leading-5 text-[#94a3b8]">
             {r.sources.map((s) => {
               const src = sources[s];
               return (
                 <span key={s} className="block">
-                  <a href={src.href} target="_blank" rel="noopener noreferrer" className="underline" style={{ color: A }}>
+                  <a href={src.href} target="_blank" rel="noopener noreferrer" className="underline pbr-accent">
                     {src.agency} · {src.title}
                   </a>
                   {" "}· checked {formatDate(src.checked)}{src.pageUpdated ? `, page updated ${formatDate(src.pageUpdated)}` : ""}
@@ -203,7 +203,7 @@ function ItemRow({ r, p }: { r: ResolvedItem; p: Planner }) {
               );
             })}
           </p>
-          <a href={reportItemUrl(r)} className="inline-flex min-h-11 items-center text-sm font-black underline" style={{ color: A }}>
+          <a href={reportItemUrl(r)} className="inline-flex min-h-11 items-center text-sm font-black underline pbr-accent">
             Report a missing or confusing item
           </a>
         </div>
@@ -250,7 +250,7 @@ export default function Checklist({ p, resolved, summary }: { p: Planner; resolv
               <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
                 <h3 className="text-lg font-black"><span aria-hidden>{b.emoji} </span>{b.title}</h3>
                 <p className="text-xs font-bold text-[#94a3b8]">
-                  {bt.counts.total} items · still to get about <Money>{formatMoney(bt.needed)}</Money>
+                  {bt.counts.total} items · still to get about <Money>{formatEstimate(bt.needed)}</Money>
                 </p>
               </div>
               <p className="mt-1 text-xs font-semibold leading-5 text-[#94a3b8]">{b.blurb}</p>
@@ -268,7 +268,7 @@ export default function Checklist({ p, resolved, summary }: { p: Planner; resolv
 
       <p className="mt-4 text-xs font-semibold leading-5 text-[#94a3b8]">
         Missing something, or is something confusing?{" "}
-        <a href={reportItemUrl(null)} className="font-black underline" style={{ color: A }}>Tell us</a>
+        <a href={reportItemUrl(null)} className="font-black underline pbr-accent">Tell us</a>
         {" "}(opens your email app; nothing is sent from this page).
       </p>
     </Section>

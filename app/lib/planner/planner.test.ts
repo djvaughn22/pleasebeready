@@ -4,7 +4,7 @@ import { describe, expect, test } from "vitest";
 import { AMAZON_TAG, amazonUrl } from "../gear";
 import { areas, levels } from "../readiness";
 import {
-  buildStages, defaultHousehold, formatMoney, formatQuantity, horizonDays, horizonLabel,
+  buildStages, defaultHousehold, formatEstimate, formatMoney, roundEstimate, formatQuantity, horizonDays, horizonLabel,
   normalizeHorizon, normalizeHousehold, ownedQuantity, planQuantity, remainingQuantity,
   resolvePlan, summarize, type PlanInputs,
 } from "./calc";
@@ -317,6 +317,15 @@ describe("budget totals", () => {
     expect(s.totals.needed).toBe(0);
   });
 
+  test("estimates are rounded so they do not look exact", () => {
+    expect(roundEstimate(3.4)).toBe(3);
+    expect(roundEstimate(56)).toBe(55);
+    expect(roundEstimate(395)).toBe(400);
+    expect(roundEstimate(1325)).toBe(1350);
+    expect(formatEstimate(1324)).toBe("$1,300");
+    expect(roundEstimate(-5)).toBe(0);
+  });
+
   test("money formats whole dollars", () => {
     expect(formatMoney(1234.4)).toBe("$1,234");
     expect(formatQuantity(1, { one: "gallon", many: "gallons" })).toBe("1 gallon");
@@ -436,7 +445,7 @@ describe("shopping lists", () => {
     const lines = shoppingLines(items, stateOf(), scope({ mode: "bucket", bucket: "water", onlyNeeded: true }));
     const text = listText(lines, "Water list");
     expect(text.startsWith("Water list")).toBe(true);
-    expect(text).toContain("[ ] 56 gallons - Drinking and cleaning water (about $56)");
+    expect(text).toContain("[ ] 56 gallons - Drinking and cleaning water (about $55)");
     expect(text).toContain("Rough total");
     expect(text).toContain("not store prices");
     expect(linesTotal(lines)).toBeGreaterThan(56);

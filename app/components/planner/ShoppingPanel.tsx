@@ -5,7 +5,7 @@
 // payment: checkout happens on Amazon, and the visitor chooses what to buy.
 
 import { useMemo, useState } from "react";
-import { formatMoney, formatQuantity } from "../../lib/planner/calc";
+import { formatEstimate, formatQuantity } from "../../lib/planner/calc";
 import { buckets } from "../../lib/planner/catalog";
 import {
   CART_FORM_ENABLED, cartFormUrl, linesTotal, listText, shoppingLines, type ShopLine, type ShopScope,
@@ -98,7 +98,7 @@ export default function ShoppingPanel({ p, resolved, heading }: {
         <div className="mt-5 flex flex-wrap items-baseline justify-between gap-2">
           <h3 className="text-base font-black">{scopeName}</h3>
           <p className="text-sm font-bold" aria-live="polite">
-            {lines.length} {lines.length === 1 ? "item" : "items"} · about <Money>{formatMoney(total)}</Money>
+            {lines.length} {lines.length === 1 ? "item" : "items"} · about <Money>{formatEstimate(total)}</Money>
           </p>
         </div>
 
@@ -111,7 +111,7 @@ export default function ShoppingPanel({ p, resolved, heading }: {
                 <span className="min-w-0 text-sm font-bold">
                   <span className="tabular-nums">{formatQuantity(l.toBuy, l.unit)}</span> · {l.name}
                 </span>
-                {l.estCost > 0 && <span className="text-xs font-semibold text-[#94a3b8]">about <Money>{formatMoney(l.estCost)}</Money></span>}
+                {l.estCost > 0 && <span className="text-xs font-semibold text-[#94a3b8]">about <Money>{formatEstimate(l.estCost)}</Money></span>}
               </li>
             ))}
           </ul>
@@ -147,7 +147,7 @@ export default function ShoppingPanel({ p, resolved, heading }: {
                   <a href={l.product.url} target="_blank" rel="noopener noreferrer sponsored"
                     data-measure="gear" data-measure-label={l.product.asin}
                     className="mt-1 inline-flex min-h-11 w-full items-center justify-between gap-3 rounded-lg border border-[#26324c] bg-[#1c2740] px-3 py-2 text-sm font-bold text-[#e8edf5] transition hover:border-[#34D399]">
-                    <span>{l.product.name}</span><span style={{ color: A }} aria-hidden>↗ Amazon</span>
+                    <span>{l.product.name}</span><span className="pbr-accent" aria-hidden>↗ Amazon</span>
                   </a>
                   <p className="mt-1 text-xs font-semibold leading-5 text-[#94a3b8]">
                     {l.product.exactCount

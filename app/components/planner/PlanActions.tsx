@@ -44,7 +44,7 @@ export default function PlanActions({ p }: { p: Planner }) {
         {" "}A plan holds only counts, yes/no boxes and numbers. Clearing your browser data removes it.
       </p>
       {p.restored && p.saving && (
-        <p className="mt-2 text-sm font-bold" style={{ color: A }}>Welcome back. Your saved plan is loaded.</p>
+        <p className="mt-2 text-sm font-bold pbr-accent">Welcome back. Your saved plan is loaded.</p>
       )}
 
       <div className="mt-4 flex flex-wrap gap-2">

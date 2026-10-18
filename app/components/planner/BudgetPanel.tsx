@@ -3,11 +3,11 @@
 // Step 4: a rough budget. Every dollar figure here is a planning estimate we
 // set (or the visitor edited), never an Amazon or store price.
 
-import { buildStages, formatMoney, type Summary } from "../../lib/planner/calc";
+import { buildStages, formatEstimate, formatMoney, type Summary } from "../../lib/planner/calc";
 import { buckets } from "../../lib/planner/catalog";
 import type { ResolvedItem } from "../../lib/planner/types";
 import type { Planner } from "./usePlanner";
-import { A, card, input, inset, label, Money, Section } from "./ui";
+import { card, input, inset, label, Money, Section } from "./ui";
 
 function MoneyInput({ id, text, value, onChange }: {
   id: string; text: string; value: number | null; onChange: (v: number | null) => void;
@@ -56,17 +56,17 @@ export default function BudgetPanel({ p, resolved, summary }: { p: Planner; reso
         </div>
 
         <dl className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4" aria-live="polite">
-          <Tile title="Still to get" value={`about ${formatMoney(totals.needed)}`} note="Everything marked Need it, minus what you already have." />
-          <Tile title="Already have" value={`about ${formatMoney(totals.owned)}`} note="Value of items you marked Have it, at the same rough costs." />
-          <Tile title="Optional extras" value={`about ${formatMoney(totals.optionalNeeded)}`} note="Part of Still to get. Skip these first if money is tight." />
-          <Tile title="Skipped" value={`about ${formatMoney(totals.skipped)}`} note="Not counted anywhere above." />
+          <Tile title="Still to get" value={`about ${formatEstimate(totals.needed)}`} note="Everything marked Need it, minus what you already have." />
+          <Tile title="Already have" value={`about ${formatEstimate(totals.owned)}`} note="Value of items you marked Have it, at the same rough costs." />
+          <Tile title="Optional extras" value={`about ${formatEstimate(totals.optionalNeeded)}`} note="Part of Still to get. Skip these first if money is tight." />
+          <Tile title="Skipped" value={`about ${formatEstimate(totals.skipped)}`} note="Not counted anywhere above." />
         </dl>
 
         {budget !== null && (
           <p className="mt-4 text-sm font-bold" role="status">
             {over > 0
-              ? <>The full plan is about <Money>{formatMoney(over)}</Money> over your <Money>{formatMoney(budget)}</Money> budget. The stages below show a way to build it up.</>
-              : <>The full plan fits your <Money>{formatMoney(budget)}</Money> budget, with about <Money>{formatMoney(budget - totals.needed)}</Money> to spare.</>}
+              ? <>The full plan is about <Money>{formatEstimate(over)}</Money> over your <Money>{formatMoney(budget)}</Money> budget. The stages below show a way to build it up.</>
+              : <>The full plan fits your <Money>{formatMoney(budget)}</Money> budget, with about <Money>{formatEstimate(budget - totals.needed)}</Money> to spare.</>}
           </p>
         )}
 
@@ -79,12 +79,12 @@ export default function BudgetPanel({ p, resolved, summary }: { p: Planner; reso
                 <div>
                   <p className="text-sm font-black"><span aria-hidden>{meta.emoji} </span>{meta.title}</p>
                   <p className="text-xs font-semibold leading-5 text-[#94a3b8]">
-                    Still to get about <Money>{formatMoney(b.needed)}</Money>
-                    {b.owned > 0 && <> · have about <Money>{formatMoney(b.owned)}</Money></>}
+                    Still to get about <Money>{formatEstimate(b.needed)}</Money>
+                    {b.owned > 0 && <> · have about <Money>{formatEstimate(b.owned)}</Money></>}
                   </p>
                   {b.budget !== null && (
-                    <p className="text-xs font-bold" style={{ color: b.over > 0 ? "#FBBF24" : A }}>
-                      {b.over > 0 ? `About ${formatMoney(b.over)} over this limit` : "Within this limit"}
+                    <p className={`text-xs font-bold ${b.over > 0 ? "pbr-amber" : "pbr-accent"}`}>
+                      {b.over > 0 ? `About ${formatEstimate(b.over)} over this limit` : "Within this limit"}
                     </p>
                   )}
                 </div>
@@ -108,17 +108,17 @@ export default function BudgetPanel({ p, resolved, summary }: { p: Planner; reso
               <li key={s.id} className={`${inset} p-4`}>
                 <div className="flex flex-wrap items-baseline justify-between gap-x-4">
                   <h4 className="text-sm font-black">Stage {i + 1}: {s.title}</h4>
-                  <p className="text-sm font-black"><Money>about {formatMoney(s.cost)}</Money></p>
+                  <p className="text-sm font-black"><Money>about {formatEstimate(s.cost)}</Money></p>
                 </div>
                 <p className="text-xs font-semibold leading-5 text-[#94a3b8]">
-                  {s.detail} Running total about <Money>{formatMoney(s.cumulative)}</Money>
+                  {s.detail} Running total about <Money>{formatEstimate(s.cumulative)}</Money>
                   {s.fits !== null && (s.fits ? " (within your budget)" : " (over your budget)")}.
                 </p>
                 <details className="mt-1">
                   <summary className="flex min-h-11 cursor-pointer items-center text-xs font-black text-[#94a3b8]">
                     {s.itemIds.length} {s.itemIds.length === 1 ? "item" : "items"}
                   </summary>
-                  <ul className="list-disc pl-5 text-xs font-semibold leading-6 text-[#cbd5e1]">
+                  <ul className="list-disc pl-5 text-xs font-semibold leading-6 pbr-body">
                     {s.itemIds.map((id) => <li key={id}>{names.get(id)}</li>)}
                   </ul>
                 </details>
@@ -128,7 +128,7 @@ export default function BudgetPanel({ p, resolved, summary }: { p: Planner; reso
         )}
         {reachable && over > 0 && (
           <p className="mt-3 text-sm font-bold">
-            Your budget reaches through Stage {stages.indexOf(reachable) + 1} (about <Money>{formatMoney(reachable.cumulative)}</Money>).
+            Your budget reaches through Stage {stages.indexOf(reachable) + 1} (about <Money>{formatEstimate(reachable.cumulative)}</Money>).
           </p>
         )}
         {budget !== null && over > 0 && !reachable && (

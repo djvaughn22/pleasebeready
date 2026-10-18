@@ -135,3 +135,17 @@ a[href]:hover {
   html, body, main { background: #fff !important; color: #000 !important; }
   .pbr-planner, .pbr-planner * { color: #000 !important; background: transparent !important; border-color: #999 !important; box-shadow: none !important; }
 }
+
+/* Planner colors that stay readable in both themes. */
+.pbr-accent { color: #34D399; }
+.pbr-body { color: #cbd5e1; }
+html[data-om-theme="light"] .pbr-accent { color: #047857 !important; }
+html[data-om-theme="light"] .pbr-body { color: #334155 !important; }
+/* Visually hidden radios: show focus on the label that wraps them. */
+.pbr-planner label:has(input:focus-visible) { outline: 2px solid #34D399; outline-offset: 2px; }
+html[data-om-theme="light"] .pbr-planner label:has(input:focus-visible),
+html[data-om-theme="light"] .pbr-planner :focus-visible { outline-color: #047857; }
+.pbr-blue { color: #60A5FA; }
+.pbr-amber { color: #FBBF24; }
+html[data-om-theme="light"] .pbr-blue { color: #1d4ed8 !important; }
+html[data-om-theme="light"] .pbr-amber { color: #92400e !important; }

@@ -6,7 +6,7 @@
 // Associates tag stays in one place. Product names come from gear.ts.
 
 import { AMAZON_TAG, amazonUrl } from "../gear";
-import { formatMoney, formatQuantity, planQuantity, remainingQuantity, stateFor, unitCost } from "./calc";
+import { formatEstimate, formatQuantity, planQuantity, remainingQuantity, stateFor, unitCost } from "./calc";
 import { gearFor } from "./catalog";
 import type { BucketId, PlanState, ResolvedItem, Unit } from "./types";
 
@@ -79,11 +79,11 @@ export function linesTotal(lines: ShopLine[]): number {
 export function listText(lines: ShopLine[], heading: string): string {
   const out = [heading, ""];
   for (const l of lines) {
-    const cost = l.estCost > 0 ? ` (about ${formatMoney(l.estCost)})` : "";
+    const cost = l.estCost > 0 ? ` (about ${formatEstimate(l.estCost)})` : "";
     out.push(`[ ] ${formatQuantity(l.toBuy, l.unit)} - ${l.name}${cost}`);
   }
   const total = linesTotal(lines);
-  if (total > 0) out.push("", `Rough total: about ${formatMoney(total)}`);
+  if (total > 0) out.push("", `Rough total: about ${formatEstimate(total)}`);
   out.push(
     "",
     "Amounts are suggestions and costs are rough planning figures, not store prices.",
