@@ -71,7 +71,7 @@ function BookCard({ book }: { book: PrepBook }) {
             className="flex min-h-11 items-center justify-between gap-2 rounded-xl px-4 py-2.5 text-sm font-black"
             style={{ background: A, color: "#0b1220" }}
           >
-            <span>{book.freeToRead ? "📖 Read free on Open Library" : "📚 Borrow on Open Library"}</span>
+            <span>{book.freeToRead ? "📖 Read on Open Library" : "📚 Borrow on Open Library"}</span>
             <span>→</span>
           </a>
         )}
@@ -143,7 +143,7 @@ export default async function BooksPage({ searchParams }: { searchParams: Promis
 
         <div className="mt-8 flex flex-col items-center gap-3 text-center">
           <p className="max-w-md text-xs font-semibold leading-5 text-[#94a3b8]">
-            Get the free Libby app to borrow ebooks and audiobooks from your public library:{" "}
+            Get the Libby app to borrow ebooks and audiobooks from your public library:{" "}
             <a href={LIBBY_APP_URL} target="_blank" rel="noopener noreferrer" style={{ color: A }}>overdrive.com/apps/libby</a>.
           </p>
           <Link href="/" className="font-black" style={{ color: A }}>

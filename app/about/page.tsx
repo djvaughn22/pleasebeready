@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "About PleaseBeReady",
   description:
-    "Friendly emergency preparedness — calm, practical, one small step at a time. Free checklists and a daily readiness habit.",
+    "Friendly emergency preparedness — calm, practical, one small step at a time. Checklists and a daily readiness habit.",
 };
 
 const A = "#34D399";
@@ -22,22 +22,21 @@ export default function AboutPage() {
 
         <h2 style={{ fontSize: 17, fontWeight: 900, margin: "0 0 8px" }}>What you can do here</h2>
         <ul style={{ fontSize: 15, lineHeight: 1.8, color: "#94a3b8", margin: "0 0 28px", paddingLeft: 18 }}>
-          <li>Pick what you&apos;re getting ready for and do one small free step today.</li>
+          <li>Pick what you&apos;re getting ready for and do one small step today.</li>
           <li>Work through calm, practical checklists for each area of readiness. Check marks stay on your device.</li>
           <li>Work out how much water and food your household needs.</li>
           <li>Do one small readiness task a day with the Daily Readiness Check.</li>
           <li>See optional gear, clearly marked 🛒 — never required to be prepared.</li>
         </ul>
 
-        <h2 style={{ fontSize: 17, fontWeight: 900, margin: "0 0 8px" }}>Cost and honesty</h2>
+        <h2 style={{ fontSize: 17, fontWeight: 900, margin: "0 0 8px" }}>Good to know</h2>
         <p style={{ background: "#141d2e", border: "1px solid #26324c", borderRadius: 14, padding: "14px 16px", fontSize: 15, lineHeight: 1.65, margin: "0 0 28px" }}>
-          Free to read, no account. The checklists are general preparedness information —
+          No account needed. The checklists are general preparedness information —
           official guidance from sources like Ready.gov, FEMA, the Red Cross, and the CDC takes
           priority, and this is not professional, medical, or emergency-response advice. In an
           emergency, follow official local guidance. Some optional product links are affiliate
           links: as an Amazon Associate, PleaseBeReady earns from qualifying purchases, and Open
-          Mirror LLC may earn a commission at no extra cost to you. There are no paid tools here
-          today. The site uses Google Analytics to count visits. It also counts a few anonymous clicks (which
+          Mirror LLC may earn a commission at no extra cost to you. The site uses Google Analytics to count visits. It also counts a few anonymous clicks (which
           need, guide, or gear link was picked), except in browsers that ask not to be tracked. Nothing you type is sent.
         </p>
 

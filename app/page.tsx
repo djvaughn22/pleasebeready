@@ -7,13 +7,11 @@ import { areas, levels, resources } from "./lib/readiness";
 
 const A = "#34D399";
 
-// Three kinds of help, labelled once near the top so nothing on the page is
-// mistaken for something else. There is no paid tool today; say so plainly
-// rather than hint at one.
+// Two kinds of help, labelled once near the top so nothing on the page is
+// mistaken for something else. (2026-10-17, owner: no free/paid framing.)
 const lanes = [
-  { title: "Free help", text: "Every checklist, guide link, and tool on this site. No account." },
+  { title: "Checklists and tools", text: "Step-by-step checklists, official guide links, and a household supply calculator. No account needed." },
   { title: "Gear picks 🛒", text: "Optional Amazon links, folded under each section. They may earn us a commission." },
-  { title: "Paid tools", text: "None yet. If one is ever offered, it will show its price before you click." },
 ];
 
 export default function PleaseBeReady() {
@@ -29,7 +27,7 @@ export default function PleaseBeReady() {
         <section className="mb-8">
           <h1 className="mb-3 text-4xl font-black leading-tight sm:text-5xl">Get your household ready, one step at a time</h1>
           <p className="max-w-2xl text-base font-semibold leading-7 text-[#94a3b8]">
-            Free checklists for water, food, power, medicine, documents, and a go-bag, each linked to an official guide
+            Checklists for water, food, power, medicine, documents, and a go-bag, each linked to an official guide
             (Ready.gov, FEMA, Red Cross, CDC).
           </p>
         </section>

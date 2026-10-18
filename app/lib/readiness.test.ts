@@ -73,9 +73,10 @@ describe("homepage honesty and privacy", () => {
     expect(page).toContain("As an Amazon Associate, PleaseBeReady earns from qualifying purchases.");
   });
 
-  test("says plainly that there is no paid tool yet", () => {
-    expect(page).toContain("Paid tools");
-    expect(page).toContain("None yet.");
+  // 2026-10-17 (owner): no free/paid/price framing on the site for now.
+  test("talks about what is here, not about paid tools or prices", () => {
+    expect(page).toContain("Checklists and tools");
+    expect(page).not.toMatch(/Paid tools|its price|\bFree help\b/);
   });
 
   test("gear links carry the commission note and rel=sponsored", () => {

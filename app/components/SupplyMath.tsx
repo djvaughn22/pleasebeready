@@ -15,7 +15,7 @@ export default function SupplyMath() {
 
   return (
     <section id="supply-math" aria-labelledby="supply-title" className="mb-12 scroll-mt-20 rounded-2xl border border-[#26324c] bg-[#141d2e] p-6">
-      <p className="text-xs font-black uppercase tracking-[0.14em]" style={{ color: A }}>Free tool</p>
+      <p className="text-xs font-black uppercase tracking-[0.14em]" style={{ color: A }}>Tool</p>
       <h2 id="supply-title" className="mt-1 text-xl font-black">Household supply math</h2>
       <p className="mt-1 text-sm font-semibold leading-6 text-[#94a3b8]">
         How much water and food to keep on hand. Nothing you enter is saved or sent.

@@ -38,7 +38,7 @@ export default function StartHere() {
           <div className="mt-5 flex flex-col gap-4">
             <div className="rounded-2xl border-2 bg-[#141d2e] p-6" style={{ borderColor: A }}>
               <p className="text-xs font-black uppercase tracking-[0.14em]" style={{ color: A }}>
-                2. Do this today · free · about {need.step.minutes} minutes
+                2. Do this today · about {need.step.minutes} minutes
               </p>
               <h3 className="mt-2 text-2xl font-black leading-tight">{need.step.title}</h3>
               <p className="mt-2 text-base font-semibold leading-7 text-[#94a3b8]">{need.step.detail}</p>
