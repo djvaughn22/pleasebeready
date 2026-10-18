@@ -43,6 +43,12 @@ export default function PleaseBeReady() {
           ))}
         </ul>
 
+        <a href="/planner"
+          className="mb-6 flex items-center justify-between gap-2 rounded-xl border border-[#26324c] bg-[#141d2e] px-4 py-3 text-sm font-black transition hover:border-[#34D399]"
+          style={{ color: A }}>
+          <span>📋 Household planner — a checklist, budget and shopping list sized to your household</span><span aria-hidden>→</span>
+        </a>
+
         <SupplyMath />
 
         <a href="/today"

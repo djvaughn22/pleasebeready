@@ -25,6 +25,7 @@ export default function AboutPage() {
           <li>Pick what you&apos;re getting ready for and do one small step today.</li>
           <li>Work through calm, practical checklists for each area of readiness. Check marks stay on your device.</li>
           <li>Work out how much water and food your household needs.</li>
+          <li>Build a household plan with a checklist, rough budget and shopping list. It stays on your device.</li>
           <li>Do one small readiness task a day with the Daily Readiness Check.</li>
           <li>See optional gear, clearly marked 🛒 — never required to be prepared.</li>
         </ul>
