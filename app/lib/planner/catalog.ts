@@ -10,8 +10,8 @@
 //    `suggestion`; say so in `reason` and do not make it sound official.
 //  - Priority: `essential` = on the Red Cross minimum list or a core Ready.gov
 //    kit item; `next` = other listed items; `optional` = "consider" lists.
-//  - `cost` is a rough planning figure set here, not an Amazon price, and
-//    never a quote. Leave it out for anything that is not a purchase.
+//  - No prices live here. We have no approved, verifiable price source, so
+//    dollar amounts come only from what the visitor types in.
 //  - `product.asin` must already exist in gear.ts (it is title-verified
 //    there). Never add an ASIN here that gear.ts does not hold.
 
@@ -46,7 +46,7 @@ export const catalog: CatalogItem[] = [
   {
     id: "water", bucket: "water", name: "Drinking and cleaning water",
     unit: u("gallon"), qty: { kind: "daily", subject: "people", n: 1 }, hotWeather: true,
-    priority: "essential", basis: "official", cost: 1,
+    priority: "essential", basis: "official",
     reason: "One gallon per person per day covers drinking and basic cleaning.",
     tip: "Ready.gov says children, nursing mothers and sick people may need more, and that needs can double in very hot weather. Ready.gov says to store commercially bottled water in its sealed original container in a cool, dark place, and to replace water you bottled yourself every six months.",
     sources: ["rc-kit", "rg-water"],
@@ -54,7 +54,7 @@ export const catalog: CatalogItem[] = [
   {
     id: "water-containers", bucket: "water", name: "Containers for stored water",
     unit: u("container"), qty: { kind: "coverOf", itemId: "water", per: 7 },
-    priority: "optional", basis: "suggestion", cost: 25,
+    priority: "optional", basis: "suggestion",
     raise: { water: "next" },
     reason: "Only needed if you fill your own water instead of buying it bottled. The count assumes 7-gallon containers.",
     tip: "Edit the number if you use a different size.",
@@ -72,7 +72,7 @@ export const catalog: CatalogItem[] = [
   {
     id: "water-bleach", bucket: "water", name: "Unscented household bleach (for making water safe)",
     unit: u("bottle"), qty: { kind: "fixed", n: 1 },
-    priority: "optional", basis: "suggestion", cost: 4,
+    priority: "optional", basis: "suggestion",
     raise: { water: "next" },
     reason: "Both Red Cross and CDC list it. Use the amounts on the bottle's label or CDC's table, and let the water stand 30 minutes.",
     tip: "CDC says boiling is the best way to kill germs in water.",
@@ -81,7 +81,7 @@ export const catalog: CatalogItem[] = [
   {
     id: "water-filter", bucket: "water", name: "Backup water filter or purification tablets",
     unit: u("filter or pack", "filters or packs"), qty: { kind: "fixed", n: 1 },
-    priority: "optional", basis: "suggestion", cost: 20,
+    priority: "optional", basis: "suggestion",
     raise: { water: "next" },
     reason: "CDC lists purification tablets and bleach for disinfecting water. A filter is our added suggestion; check what a given filter removes before relying on it.",
     sources: ["cdc-water"],
@@ -92,7 +92,7 @@ export const catalog: CatalogItem[] = [
   {
     id: "food", bucket: "food", name: "Non-perishable, easy-to-prepare food",
     unit: u("person-day"), qty: { kind: "daily", subject: "people", n: 1 },
-    priority: "essential", basis: "official", cost: 6,
+    priority: "essential", basis: "official",
     reason: "Red Cross: a 3-day supply to take with you and a 2-week supply for home. One person-day is a day of food for one person.",
     tip: "Choose foods your household will eat, and plan around any special diets.",
     sources: ["rc-kit", "rg-food"],
@@ -101,7 +101,7 @@ export const catalog: CatalogItem[] = [
   {
     id: "can-opener", bucket: "food", name: "Manual can opener",
     unit: u("can opener"), qty: { kind: "fixed", n: 1 },
-    priority: "essential", basis: "suggestion", cost: 10,
+    priority: "essential", basis: "suggestion",
     reason: "Ready.gov puts a manual can opener in the basic kit, since canned food is a common choice.",
     sources: ["rg-kit", "rg-food"],
     product: { asin: "B09HKDZ3CV", covers: 1 },
@@ -109,14 +109,14 @@ export const catalog: CatalogItem[] = [
   {
     id: "cups-plates", bucket: "food", name: "Paper plates, cups and utensils",
     unit: u("set"), qty: { kind: "fixed", n: 1 },
-    priority: "optional", basis: "suggestion", cost: 8,
+    priority: "optional", basis: "suggestion",
     reason: "Ready.gov lists mess kits, paper cups and plates.",
     sources: ["rg-kit", "rg-food"],
   },
   {
     id: "comfort-food", bucket: "food", name: "Comfort foods and snacks",
     unit: u("person-day"), qty: { kind: "daily", subject: "people", n: 1 },
-    priority: "optional", basis: "suggestion", cost: 1.5,
+    priority: "optional", basis: "suggestion",
     reason: "Ready.gov suggests including comfort and stress foods.",
     sources: ["rg-food"],
   },
@@ -125,7 +125,7 @@ export const catalog: CatalogItem[] = [
   {
     id: "first-aid-kit", bucket: "health", name: "First-aid kit",
     unit: u("kit"), qty: { kind: "fixed", n: 1 },
-    priority: "essential", basis: "suggestion", cost: 25,
+    priority: "essential", basis: "suggestion",
     reason: "On both the Red Cross and Ready.gov lists.",
     sources: ["rc-kit", "rg-kit"],
     product: { asin: "B000069EYA", covers: 1 },
@@ -155,14 +155,14 @@ export const catalog: CatalogItem[] = [
   {
     id: "otc-meds", bucket: "health", name: "Non-prescription medicines (pain reliever, anti-diarrhea, antacid, laxative)",
     unit: u("set"), qty: { kind: "fixed", n: 1 },
-    priority: "next", basis: "suggestion", cost: 20,
+    priority: "next", basis: "suggestion",
     reason: "Ready.gov lists these. Choose ones that suit everyone in your household, and ask a pharmacist if you are unsure.",
     sources: ["rg-kit"],
   },
   {
     id: "masks", bucket: "health", name: "Dust masks or N95 / surgical masks",
     unit: u("mask"), qty: { kind: "each", subject: "people", n: 1 },
-    priority: "optional", basis: "suggestion", cost: 1.5,
+    priority: "optional", basis: "suggestion",
     reason: "Ready.gov lists a dust mask and Red Cross lists N95 or surgical masks, depending on what is common where you live.",
     sources: ["rg-kit", "rc-kit"],
   },
@@ -171,7 +171,7 @@ export const catalog: CatalogItem[] = [
   {
     id: "flashlights", bucket: "power", name: "Flashlights or headlamps",
     unit: u("light"), qty: { kind: "each", subject: "people", n: 1 },
-    priority: "essential", basis: "suggestion", cost: 8,
+    priority: "essential", basis: "suggestion",
     reason: "Ready.gov: a flashlight for every household member.",
     sources: ["rg-power", "rc-kit"],
     product: { asin: "B092RHC2FY", covers: 2 },
@@ -179,14 +179,14 @@ export const catalog: CatalogItem[] = [
   {
     id: "batteries", bucket: "power", name: "Extra batteries (for flashlights and radio)",
     unit: u("spare set"), qty: { kind: "each", subject: "people", n: 1 },
-    priority: "essential", basis: "suggestion", cost: 6,
+    priority: "essential", basis: "suggestion",
     reason: "Red Cross and Ready.gov both list extra batteries. The count is our suggestion; match the sizes your devices use.",
     sources: ["rc-kit", "rg-kit", "rg-winter"],
   },
   {
     id: "power-bank", bucket: "power", name: "Phone power bank",
     unit: u("power bank"), qty: { kind: "each", subject: "adults", n: 1 },
-    priority: "essential", basis: "suggestion", cost: 25,
+    priority: "essential", basis: "suggestion",
     reason: "Ready.gov: a cell phone with chargers and a backup battery or power bank. One per adult is our suggestion.",
     tip: "Keep it charged. If someone relies on a medical device, ask their provider about backup power too.",
     sources: ["rg-kit", "rg-power"],
@@ -195,14 +195,14 @@ export const catalog: CatalogItem[] = [
   {
     id: "chargers", bucket: "power", name: "Phone chargers and cables (wall and car)",
     unit: u("charger"), qty: { kind: "each", subject: "adults", n: 1 },
-    priority: "essential", basis: "suggestion", cost: 10,
+    priority: "essential", basis: "suggestion",
     reason: "Red Cross lists a cell phone with chargers.",
     sources: ["rc-kit", "rg-kit"],
   },
   {
     id: "thermometers", bucket: "power", name: "Fridge and freezer thermometers",
     unit: u("thermometer"), qty: { kind: "fixed", n: 2 },
-    priority: "optional", basis: "suggestion", cost: 6,
+    priority: "optional", basis: "suggestion",
     raise: { outage: "next" },
     reason: "Ready.gov: an unopened fridge keeps food cold for about 4 hours and a full freezer about 48 hours. A thermometer tells you where you stand.",
     sources: ["rg-power", "rg-food"],
@@ -210,7 +210,7 @@ export const catalog: CatalogItem[] = [
   {
     id: "co-detector", bucket: "power", name: "Carbon monoxide detectors",
     unit: u("detector (one per level)", "detectors (one per level)"), qty: { kind: "fixed", n: 1 },
-    priority: "next", basis: "suggestion", cost: 35,
+    priority: "next", basis: "suggestion",
     raise: { outage: "essential", weather: "next" },
     reason: "Ready.gov: working carbon monoxide detectors on every level of your home. Edit the number to match your levels, and replace batteries on schedule.",
     tip: "Run generators and fuel only outdoors, at least 20 feet from windows, doors and attached garages.",
@@ -222,21 +222,21 @@ export const catalog: CatalogItem[] = [
   {
     id: "hygiene", bucket: "sanitation", name: "Soap, toilet paper, toothpaste and personal hygiene items",
     unit: u("person-day"), qty: { kind: "daily", subject: "people", n: 1 },
-    priority: "essential", basis: "suggestion", cost: 1.5,
+    priority: "essential", basis: "suggestion",
     reason: "Red Cross lists sanitation and personal hygiene items; Ready.gov adds feminine supplies and soap. Counted in person-days so it grows with the plan.",
     sources: ["rc-kit", "rg-kit"],
   },
   {
     id: "wipes", bucket: "sanitation", name: "Moist towelettes, hand sanitizer and disinfecting wipes",
     unit: u("pack"), qty: { kind: "fixed", n: 2 },
-    priority: "essential", basis: "suggestion", cost: 5,
+    priority: "essential", basis: "suggestion",
     reason: "Ready.gov lists moist towelettes for personal sanitation, and hand sanitizer and disinfecting wipes.",
     sources: ["rg-kit"],
   },
   {
     id: "trash-bags", bucket: "sanitation", name: "Garbage bags and plastic ties",
     unit: u("box"), qty: { kind: "fixed", n: 1 },
-    priority: "essential", basis: "suggestion", cost: 6,
+    priority: "essential", basis: "suggestion",
     reason: "Ready.gov lists garbage bags and plastic ties for personal sanitation.",
     sources: ["rg-kit"],
   },
@@ -245,7 +245,7 @@ export const catalog: CatalogItem[] = [
   {
     id: "emergency-blankets", bucket: "warmth", name: "Emergency blanket for each person",
     unit: u("blanket"), qty: { kind: "each", subject: "people", n: 1 },
-    priority: "essential", basis: "suggestion", cost: 3,
+    priority: "essential", basis: "suggestion",
     reason: "Red Cross lists an emergency blanket in its minimum supplies.",
     sources: ["rc-kit"],
     product: { asin: "B01LYNWRLA", covers: 4 },
@@ -253,7 +253,7 @@ export const catalog: CatalogItem[] = [
   {
     id: "sleeping-bags", bucket: "warmth", name: "Sleeping bag or warm blanket for each person",
     unit: u("bag or blanket", "bags or blankets"), qty: { kind: "each", subject: "people", n: 1 },
-    priority: "optional", basis: "suggestion", cost: 20,
+    priority: "optional", basis: "suggestion",
     raise: { weather: "next", outage: "next" },
     reason: "Ready.gov and Red Cross list them. Use ones you already own if you can.",
     sources: ["rg-kit", "rc-kit", "rg-winter"],
@@ -269,21 +269,21 @@ export const catalog: CatalogItem[] = [
   {
     id: "multi-tool", bucket: "warmth", name: "Multi-purpose tool, plus a wrench or pliers",
     unit: u("tool set"), qty: { kind: "fixed", n: 1 },
-    priority: "essential", basis: "suggestion", cost: 20,
+    priority: "essential", basis: "suggestion",
     reason: "Red Cross lists a multi-purpose tool; Ready.gov lists a wrench or pliers for turning off utilities.",
     sources: ["rc-kit", "rg-kit"],
   },
   {
     id: "whistles", bucket: "warmth", name: "Whistle to signal for help",
     unit: u("whistle"), qty: { kind: "each", subject: "people", n: 1 },
-    priority: "next", basis: "suggestion", cost: 3,
+    priority: "next", basis: "suggestion",
     reason: "Ready.gov lists a whistle to signal for help. Red Cross lists it for places where it is likely to matter.",
     sources: ["rg-kit", "rc-kit"],
   },
   {
     id: "sheeting-tape", bucket: "warmth", name: "Plastic sheeting, scissors and duct tape",
     unit: u("set"), qty: { kind: "fixed", n: 1 },
-    priority: "optional", basis: "suggestion", cost: 20,
+    priority: "optional", basis: "suggestion",
     raise: { weather: "next" },
     reason: "Ready.gov lists them for sheltering in place.",
     sources: ["rg-kit", "rc-kit"],
@@ -291,21 +291,21 @@ export const catalog: CatalogItem[] = [
   {
     id: "matches", bucket: "warmth", name: "Matches in a waterproof container",
     unit: u("box"), qty: { kind: "fixed", n: 1 },
-    priority: "optional", basis: "suggestion", cost: 4,
+    priority: "optional", basis: "suggestion",
     reason: "Ready.gov and Red Cross list matches.",
     sources: ["rg-kit", "rc-kit"],
   },
   {
     id: "rain-gloves", bucket: "warmth", name: "Rain gear and work gloves",
     unit: u("set"), qty: { kind: "each", subject: "adults", n: 1 },
-    priority: "optional", basis: "suggestion", cost: 15,
+    priority: "optional", basis: "suggestion",
     reason: "Red Cross lists them for places where storms or cleanup are common.",
     sources: ["rc-kit"],
   },
   {
     id: "fire-extinguisher", bucket: "warmth", name: "Fire extinguisher",
     unit: u("extinguisher"), qty: { kind: "fixed", n: 1 },
-    priority: "optional", basis: "suggestion", cost: 30,
+    priority: "optional", basis: "suggestion",
     reason: "Ready.gov lists one in its additional supplies.",
     sources: ["rg-kit"],
     product: { asin: "B01LTICQYE", covers: 1 },
@@ -315,7 +315,7 @@ export const catalog: CatalogItem[] = [
   {
     id: "weather-radio", bucket: "comms", name: "Battery or hand-crank radio with NOAA Weather Radio",
     unit: u("radio"), qty: { kind: "fixed", n: 1 },
-    priority: "essential", basis: "suggestion", cost: 30,
+    priority: "essential", basis: "suggestion",
     reason: "On both the Red Cross and Ready.gov lists, so you can hear alerts if phones or power are down.",
     sources: ["rc-kit", "rg-kit"],
     product: { asin: "B015QIC1PW", covers: 1 },
@@ -344,7 +344,7 @@ export const catalog: CatalogItem[] = [
   {
     id: "documents", bucket: "comms", name: "Copies of important papers in a waterproof, portable container",
     unit: u("container"), qty: { kind: "fixed", n: 1 },
-    priority: "essential", basis: "suggestion", cost: 20,
+    priority: "essential", basis: "suggestion",
     reason: "Red Cross lists copies of ID, insurance and medical papers; Ready.gov also suggests saving them electronically.",
     sources: ["rc-kit", "rg-kit", "rg-financial"],
     product: { asin: "B07SPZ93V5", covers: 1 },
@@ -359,14 +359,14 @@ export const catalog: CatalogItem[] = [
   {
     id: "maps", bucket: "comms", name: "Paper map of your area",
     unit: u("map"), qty: { kind: "fixed", n: 1 },
-    priority: "essential", basis: "suggestion", cost: 8,
+    priority: "essential", basis: "suggestion",
     reason: "Red Cross and Ready.gov both list local maps.",
     sources: ["rc-kit", "rg-kit"],
   },
   {
     id: "spare-keys", bucket: "comms", name: "Extra car and house keys",
     unit: u("set"), qty: { kind: "fixed", n: 1 },
-    priority: "optional", basis: "suggestion", cost: 5,
+    priority: "optional", basis: "suggestion",
     reason: "Red Cross lists an extra set of car and house keys.",
     sources: ["rc-kit"],
   },
@@ -380,59 +380,59 @@ export const catalog: CatalogItem[] = [
   {
     id: "go-bag", bucket: "comms", name: "Go-bag for each person",
     unit: u("bag"), qty: { kind: "each", subject: "people", n: 1 }, scenarioOnly: ["evacuation"],
-    priority: "essential", basis: "suggestion", cost: 25,
+    priority: "essential", basis: "suggestion",
     reason: "Ready.gov suggests a go-bag so you do not scramble. Red Cross counts a 3-day water and food supply for evacuation; the first three days of the quantities above can live in the bag.",
     sources: ["rg-evacuation", "rc-kit"],
-    product: { asin: "B000FJQQVI", covers: 2 },
+    product: { asin: "B000FJQQVI" },
   },
 
   // ── Children, pets and special needs ─────────────────────────────────────
   {
     id: "baby-food", bucket: "family", name: "Infant formula or baby food, and bottles",
     unit: u("baby-day"), qty: { kind: "daily", subject: "babies", n: 1 }, needs: "baby",
-    priority: "essential", basis: "suggestion", cost: 8,
+    priority: "essential", basis: "suggestion",
     reason: "Ready.gov and Red Cross list formula, bottles and baby food. Use what your baby already eats.",
     sources: ["rg-kit", "rc-kit", "rg-food"],
   },
   {
     id: "baby-care", bucket: "family", name: "Diapers, wipes and diaper rash cream",
     unit: u("baby-day"), qty: { kind: "daily", subject: "babies", n: 1 }, needs: "baby",
-    priority: "essential", basis: "suggestion", cost: 3,
+    priority: "essential", basis: "suggestion",
     reason: "Ready.gov lists diapers, wipes and diaper rash cream.",
     sources: ["rg-kit", "rc-kit"],
   },
   {
     id: "kids-activities", bucket: "family", name: "Games, books and activities for children",
     unit: u("set"), qty: { kind: "each", subject: "children", n: 1 }, needs: "child",
-    priority: "next", basis: "suggestion", cost: 5,
+    priority: "next", basis: "suggestion",
     reason: "Red Cross lists games and activities for children. They help a long wait go easier.",
     sources: ["rc-kit"],
   },
   {
     id: "pet-food", bucket: "family", name: "Pet food in an airtight, waterproof container",
     unit: u("pet-day"), qty: { kind: "daily", subject: "pets", n: 1 }, needs: "pet",
-    priority: "essential", basis: "suggestion", cost: 1.5,
+    priority: "essential", basis: "suggestion",
     reason: "Ready.gov: several days' supply of food. We scale it to your plan length.",
     sources: ["rg-pets", "rg-kit"],
   },
   {
     id: "pet-water", bucket: "family", name: "Water and a bowl for pets",
     unit: u("pet-day"), qty: { kind: "daily", subject: "pets", n: 1 }, needs: "pet",
-    priority: "essential", basis: "suggestion", cost: 0.3,
+    priority: "essential", basis: "suggestion",
     reason: "Ready.gov: a water bowl and several days' supply of water. Ready.gov gives no amount per pet, so ask your vet.",
     sources: ["rg-pets"],
   },
   {
     id: "pet-carrier", bucket: "family", name: "Carrier or crate, collar with ID tag and leash",
     unit: u("pet kit"), qty: { kind: "each", subject: "pets", n: 1 }, needs: "pet",
-    priority: "next", basis: "suggestion", cost: 30, raise: { evacuation: "essential" },
+    priority: "next", basis: "suggestion", raise: { evacuation: "essential" },
     reason: "Ready.gov lists a collar with ID tag, a leash, and a sturdy carrier, ideally one for each pet.",
     sources: ["rg-pets"],
   },
   {
     id: "pet-sanitation", bucket: "family", name: "Litter, waste bags and paper towels",
     unit: u("set"), qty: { kind: "fixed", n: 1 }, needs: "pet",
-    priority: "next", basis: "suggestion", cost: 10,
+    priority: "next", basis: "suggestion",
     reason: "Ready.gov lists litter and litter box where it applies, paper towels and trash bags.",
     sources: ["rg-pets"],
   },
@@ -481,7 +481,7 @@ export const catalog: CatalogItem[] = [
   {
     id: "cold-packs", bucket: "family", name: "Chemical cold packs for temperature-sensitive medicine",
     unit: u("pack"), qty: { kind: "fixed", n: 1 }, needs: "electricMedical",
-    priority: "next", basis: "suggestion", cost: 10,
+    priority: "next", basis: "suggestion",
     reason: "Ready.gov lists chemical ice packs for medicines that need to stay cool. Check with the prescriber.",
     sources: ["rg-disability"],
   },
@@ -495,14 +495,14 @@ export const catalog: CatalogItem[] = [
   {
     id: "sense-backups", bucket: "family", name: "Spare glasses, contact lens solution and hearing-aid batteries",
     unit: u("set"), qty: { kind: "fixed", n: 1 }, needs: "senseComm",
-    priority: "next", basis: "suggestion", cost: 15,
+    priority: "next", basis: "suggestion",
     reason: "Ready.gov lists extra eyeglasses, contact lens solution, hearing aids and batteries.",
     sources: ["rg-disability", "rg-kit"],
   },
   {
     id: "comm-aids", bucket: "family", name: "Communication aids: pen and paper, phrase cards, text-display radio",
     unit: u("set"), qty: { kind: "fixed", n: 1 }, needs: "senseComm",
-    priority: "next", basis: "suggestion", cost: 5,
+    priority: "next", basis: "suggestion",
     reason: "Ready.gov lists pen and paper for people who are deaf or hard of hearing, laminated phrase cards for speech disabilities, and a weather radio with a text display.",
     sources: ["rg-disability"],
   },

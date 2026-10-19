@@ -21,7 +21,7 @@ export default function PlannerPage() {
           <h1 className="mt-3 text-3xl font-black leading-tight sm:text-4xl">Household planner</h1>
           <p className="mt-3 max-w-2xl text-base font-semibold leading-7 text-[#94a3b8]">
             Tell us who is at home and how long you want to be covered. You get a checklist sized to your household that you can edit,
-            a rough budget, and a shopping list. It is useful for ordinary disruptions like a storm, an outage or a water-main break.
+            a budget you fill in with your own prices, and a shopping list. It is useful for ordinary disruptions like a storm, an outage or a water-main break.
           </p>
         </div>
 

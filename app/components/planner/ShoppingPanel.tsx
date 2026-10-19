@@ -5,10 +5,10 @@
 // payment: checkout happens on Amazon, and the visitor chooses what to buy.
 
 import { useMemo, useState } from "react";
-import { formatEstimate, formatQuantity } from "../../lib/planner/calc";
+import { formatMoney, formatQuantity } from "../../lib/planner/calc";
 import { buckets } from "../../lib/planner/catalog";
 import {
-  CART_FORM_ENABLED, cartFormUrl, linesTotal, listText, shoppingLines, type ShopLine, type ShopScope,
+  CART_FORM_ENABLED, cartFormUrl, linesTotal, listText, shoppingLines, unpricedCount, type ShopLine, type ShopScope,
 } from "../../lib/planner/shopping";
 import { AMAZON_DISCLOSURE } from "../../lib/bookLinks";
 import type { BucketId, ResolvedItem } from "../../lib/planner/types";
@@ -98,7 +98,8 @@ export default function ShoppingPanel({ p, resolved, heading }: {
         <div className="mt-5 flex flex-wrap items-baseline justify-between gap-2">
           <h3 className="text-base font-black">{scopeName}</h3>
           <p className="text-sm font-bold" aria-live="polite">
-            {lines.length} {lines.length === 1 ? "item" : "items"} · about <Money>{formatEstimate(total)}</Money>
+            {lines.length} {lines.length === 1 ? "item" : "items"} ·{" "}
+            {total > 0 ? <>your prices <Money>{formatMoney(total)}</Money>{unpricedCount(lines) > 0 && `, ${unpricedCount(lines)} without a price`}</> : "no prices entered"}
           </p>
         </div>
 
@@ -111,7 +112,7 @@ export default function ShoppingPanel({ p, resolved, heading }: {
                 <span className="min-w-0 text-sm font-bold">
                   <span className="tabular-nums">{formatQuantity(l.toBuy, l.unit)}</span> · {l.name}
                 </span>
-                {l.estCost > 0 && <span className="text-xs font-semibold text-[#94a3b8]">about <Money>{formatEstimate(l.estCost)}</Money></span>}
+                <span className="text-xs font-semibold text-[#94a3b8]">{l.priced ? <>your price <Money>{formatMoney(l.cost)}</Money></> : "no price entered"}</span>
               </li>
             ))}
           </ul>

@@ -6,7 +6,7 @@
 
 import { useState } from "react";
 import {
-  formatEstimate, formatQuantity, planQuantity, remainingQuantity, stateFor, unitCost, type Summary,
+  formatMoney, formatQuantity, planQuantity, remainingQuantity, stateFor, unitCost, type Summary,
 } from "../../lib/planner/calc";
 import { buckets, gearFor } from "../../lib/planner/catalog";
 import { reportItemUrl } from "../../lib/planner/shopping";
@@ -50,7 +50,6 @@ function ItemRow({ r, p }: { r: ResolvedItem; p: Planner }) {
   const basis = BASIS[r.effectiveBasis];
   const pri = PRIORITY[r.effective];
   const picked = p.state.picks.includes(r.id);
-  const defaultCost = r.cost ?? 0;
   const remaining = remainingQuantity(r, st);
   const cost = unitCost(r, st);
   const skipped = st.status === "skip";
@@ -164,29 +163,27 @@ function ItemRow({ r, p }: { r: ResolvedItem; p: Planner }) {
                   }}
                   className={`${input} disabled:opacity-50`} />
               </div>
-              {defaultCost > 0 && (
-                <div className="flex flex-col gap-1.5">
-                  <label htmlFor={`cost-${r.id}`} className={label}>Cost each (rough)</label>
-                  <div className="flex items-center gap-1">
-                    <span aria-hidden className="text-[#94a3b8]">$</span>
-                    <input id={`cost-${r.id}`} type="number" inputMode="decimal" min={0} step="0.01"
-                      value={st.cost ?? defaultCost}
-                      onChange={(e) => {
-                        const n = Math.max(0, Number(e.target.value) || 0);
-                        p.setItem(r.id, { cost: n === defaultCost ? undefined : n });
-                      }}
-                      className={`${input} w-full`} />
-                  </div>
+              <div className="flex flex-col gap-1.5">
+                <label htmlFor={`cost-${r.id}`} className={label}>Your price each (optional)</label>
+                <div className="flex items-center gap-1">
+                  <span aria-hidden className="text-[#94a3b8]">$</span>
+                  <input id={`cost-${r.id}`} type="number" inputMode="decimal" min={0} step="0.01" placeholder="Not entered"
+                    value={st.cost ?? ""}
+                    onChange={(e) => {
+                      const n = Number(e.target.value);
+                      p.setItem(r.id, { cost: e.target.value === "" || !Number.isFinite(n) || n <= 0 ? undefined : n });
+                    }}
+                    className={`${input} w-full`} />
                 </div>
-              )}
+              </div>
             </div>
           )}
           {qty !== null && (
             <p className="text-xs font-semibold leading-5 text-[#94a3b8]">
               {st.status === "needs" && remaining > 0 && cost > 0
-                ? <>Still to get: {formatQuantity(remaining, r.unit)}, about <Money>{formatEstimate(remaining * cost)}</Money>. </>
+                ? <>Still to get: {formatQuantity(remaining, r.unit)}, <Money>{formatMoney(remaining * cost)}</Money> at your price. </>
                 : null}
-              Our cost figure is a rough planning estimate, not an Amazon or store price. Change it to what you see.
+              We do not show prices. Enter what you see in a store or on Amazon; the price at Amazon&apos;s checkout may differ.
             </p>
           )}
           {r.tip && <p className="text-sm font-semibold leading-6 pbr-body">{r.tip}</p>}
@@ -250,7 +247,7 @@ export default function Checklist({ p, resolved, summary }: { p: Planner; resolv
               <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
                 <h3 className="text-lg font-black"><span aria-hidden>{b.emoji} </span>{b.title}</h3>
                 <p className="text-xs font-bold text-[#94a3b8]">
-                  {bt.counts.total} items · still to get about <Money>{formatEstimate(bt.needed)}</Money>
+                  {bt.counts.total} items · {bt.needed > 0 ? <>your prices so far <Money>{formatMoney(bt.needed)}</Money></> : "no prices entered"}
                 </p>
               </div>
               <p className="mt-1 text-xs font-semibold leading-5 text-[#94a3b8]">{b.blurb}</p>

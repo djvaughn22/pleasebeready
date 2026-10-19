@@ -4,7 +4,7 @@ import { describe, expect, test } from "vitest";
 import { AMAZON_TAG, amazonUrl } from "../gear";
 import { areas, levels } from "../readiness";
 import {
-  buildStages, defaultHousehold, formatEstimate, formatMoney, roundEstimate, formatQuantity, horizonDays, horizonLabel,
+  buildStages, defaultHousehold, formatMoney, formatQuantity, horizonDays, horizonLabel,
   normalizeHorizon, normalizeHousehold, ownedQuantity, planQuantity, remainingQuantity,
   resolvePlan, summarize, type PlanInputs,
 } from "./calc";
@@ -60,13 +60,6 @@ describe("catalog", () => {
   test("only the figures we can cite are marked official", () => {
     const official = catalog.filter((c) => c.basis === "official").map((c) => c.id).sort();
     expect(official).toEqual(["food", "rx-supply", "water"]);
-  });
-
-  test("items you buy have a cost; tasks do not", () => {
-    for (const c of catalog) {
-      if (c.qty.kind === "none") expect(c.cost, c.id).toBeUndefined();
-      if (c.cost !== undefined) expect(c.cost, c.id).toBeGreaterThan(0);
-    }
   });
 
   test("buckets match the order the spec asks for", () => {
@@ -235,11 +228,71 @@ describe("situations", () => {
   });
 });
 
+// ── prices: only what the visitor types ──────────────────────────────────
+
+/** Item choices that give every item the same visitor-entered price. */
+const pricedAt = (items: ResolvedItem[], price: number, extra: PlanState["items"] = {}): PlanState["items"] => {
+  const out: PlanState["items"] = {};
+  for (const r of items) out[r.id] = { status: "needs", cost: price };
+  for (const [id, v] of Object.entries(extra)) out[id] = { cost: price, ...v };
+  return out;
+};
+
+describe("no default prices", () => {
+  test("the catalog carries no dollar amounts at all", () => {
+    for (const c of catalog) expect(Object.keys(c), c.id).not.toContain("cost");
+    const src = readFileSync(join(__dirname, "catalog.ts"), "utf8");
+    expect(src).not.toMatch(/\bcost\s*:/);
+  });
+
+  test("with no prices entered every total is zero and nothing is priced", () => {
+    const items = plan({ household: { people: 4 }, horizon: { mode: "2w", amount: 1, unit: "weeks" } });
+    const s = summarize(items, stateOf());
+    expect(s.totals.needed).toBe(0);
+    expect(s.totals.owned).toBe(0);
+    expect(s.totals.skipped).toBe(0);
+    expect(s.totals.unpriced).toBe(items.filter((i) => i.suggested !== null && i.suggested > 0).length);
+    for (const st of buildStages(items, stateOf())) expect(st.cost).toBe(0);
+    for (const l of shoppingLines(items, stateOf(), { mode: "plan", onlyNeeded: false })) {
+      expect(l.priced).toBe(false);
+      expect(l.cost).toBe(0);
+    }
+  });
+
+  test("totals come only from entered prices, and unpriced items are counted", () => {
+    const items = plan({ household: { people: 4 }, horizon: { mode: "2w", amount: 1, unit: "weeks" } });
+    const st = stateOf({ items: { water: { status: "needs", cost: 1.25 }, food: { status: "needs", cost: 5 } } });
+    const s = summarize(items, st);
+    expect(s.totals.needed).toBeCloseTo(56 * 1.25 + 56 * 5, 6);
+    expect(s.totals.unpriced).toBe(items.filter((i) => i.suggested !== null && i.suggested > 0).length - 2);
+  });
+
+  test("a price of zero, a negative price or a non-number counts as no price", () => {
+    const items = plan();
+    const st = sanitizeState({ items: { water: { status: "needs", cost: 0 }, food: { status: "needs", cost: -3 }, flashlights: { cost: "abc" } } });
+    expect(summarize(items, st).totals.needed).toBe(0);
+  });
+
+  test("money shows cents only when there are cents", () => {
+    expect(formatMoney(1234)).toBe("$1,234");
+    expect(formatMoney(0.35 * 3)).toBe("$1.05");
+    expect(formatMoney(-4)).toBe("$0");
+  });
+
+  test("no Amazon or store price is ever displayed by the planner", () => {
+    const dir = join(__dirname, "..", "..", "components", "planner");
+    for (const f of readdirSync(dir)) {
+      const src = readFileSync(join(dir, f), "utf8");
+      expect(src, f).not.toMatch(/\bestimate|rough (planning|cost)|about \$\d|about \$?\{?\s*formatMoney|Our cost figure/i);
+    }
+  });
+});
+
 // ── editing, owned and skipped items ─────────────────────────────────────
 
 describe("choices: edit, have, skip", () => {
   const items = plan({ household: { people: 4 }, horizon: { mode: "2w", amount: 1, unit: "weeks" } });
-  const water = find(items, "water"); // 56 gallons at $1
+  const water = find(items, "water"); // 56 gallons
 
   test("an edited quantity replaces the suggestion", () => {
     expect(planQuantity(water, { status: "needs" })).toBe(56);
@@ -260,19 +313,18 @@ describe("choices: edit, have, skip", () => {
   });
 
   test("skipped items cost and count nothing", () => {
-    const st = stateOf({ items: { water: { status: "skip" } } });
-    const s = summarize(items, st);
-    const all = summarize(items, stateOf());
-    expect(s.totals.needed).toBeLessThan(all.totals.needed);
+    const priced = pricedAt(items, 1);
+    const all = summarize(items, stateOf({ items: priced }));
+    const s = summarize(items, stateOf({ items: pricedAt(items, 1, { water: { status: "skip" } }) }));
     expect(all.totals.needed - s.totals.needed).toBe(56);
     expect(s.totals.counts.skip).toBe(1);
+    expect(s.totals.skipped).toBe(56);
     expect(s.totals.owned).toBe(all.totals.owned);
   });
 
-  test("changing an item's cost changes the totals", () => {
-    const base = summarize(items, stateOf()).totals.needed;
-    const cheaper = summarize(items, stateOf({ items: { water: { status: "needs", cost: 0.5 } } })).totals.needed;
-    expect(base - cheaper).toBe(28);
+  test("changing the entered price changes the totals", () => {
+    const at = (cost: number) => summarize(items, stateOf({ items: { water: { status: "needs", cost } } })).totals.needed;
+    expect(at(1) - at(0.5)).toBe(28);
   });
 });
 
@@ -280,27 +332,29 @@ describe("choices: edit, have, skip", () => {
 
 describe("budget totals", () => {
   const items = plan({ household: { people: 2 } });
+  const priced = pricedAt(items, 2);
 
   test("bucket subtotals add up to the total, priorities add up to it too", () => {
-    const s = summarize(items, stateOf());
-    const sum = s.buckets.reduce((a, b) => a + b.needed, 0);
-    expect(sum).toBeCloseTo(s.totals.needed, 6);
+    const s = summarize(items, stateOf({ items: priced }));
+    expect(s.totals.needed).toBeGreaterThan(0);
+    expect(s.buckets.reduce((a, b) => a + b.needed, 0)).toBeCloseTo(s.totals.needed, 6);
     expect(s.totals.essentialNeeded + s.totals.nextNeeded + s.totals.optionalNeeded).toBeCloseTo(s.totals.needed, 6);
     expect(s.totals.counts.total).toBe(items.length);
+    expect(s.totals.unpriced).toBe(0);
   });
 
   test("owned items move from needed to owned without changing the plan's size", () => {
-    const before = summarize(items, stateOf());
-    const st = stateOf({ items: { water: { status: "have" }, "first-aid-kit": { status: "have" } } });
+    const before = summarize(items, stateOf({ items: priced }));
+    const st = stateOf({ items: pricedAt(items, 2, { water: { status: "have" }, "first-aid-kit": { status: "have" } }) });
     const after = summarize(items, st);
     expect(after.totals.needed + after.totals.owned).toBeCloseTo(before.totals.needed + before.totals.owned, 6);
-    expect(after.totals.owned).toBe(6 + 25);
+    expect(after.totals.owned).toBe(6 * 2 + 1 * 2);
     expect(after.totals.counts.have).toBe(2);
   });
 
   test("a total budget and bucket budgets report how far over", () => {
-    const s0 = summarize(items, stateOf());
-    const st = stateOf({ budget: { total: 100, buckets: { water: 2, food: 10_000 } } });
+    const s0 = summarize(items, stateOf({ items: priced }));
+    const st = stateOf({ items: priced, budget: { total: 100, buckets: { water: 2, food: 10_000 } } });
     const s = summarize(items, st);
     expect(s.budget).toBe(100);
     expect(s.over).toBeCloseTo(Math.max(0, s0.totals.needed - 100), 6);
@@ -310,26 +364,16 @@ describe("budget totals", () => {
     expect(s.buckets.find((b) => b.bucket === "power")!.budget).toBeNull();
   });
 
-  test("tasks never add cost", () => {
+  test("tasks never add cost, even if a price were set on them", () => {
     const tasks = items.filter((i) => i.suggested === null);
     expect(tasks.length).toBeGreaterThan(0);
-    const s = summarize(tasks, stateOf());
-    expect(s.totals.needed).toBe(0);
+    expect(summarize(tasks, stateOf({ items: pricedAt(tasks, 9) })).totals.needed).toBe(0);
   });
 
-  test("estimates are rounded so they do not look exact", () => {
-    expect(roundEstimate(3.4)).toBe(3);
-    expect(roundEstimate(56)).toBe(55);
-    expect(roundEstimate(395)).toBe(400);
-    expect(roundEstimate(1325)).toBe(1350);
-    expect(formatEstimate(1324)).toBe("$1,300");
-    expect(roundEstimate(-5)).toBe(0);
-  });
-
-  test("money formats whole dollars", () => {
-    expect(formatMoney(1234.4)).toBe("$1,234");
+  test("quantities format with the right unit form", () => {
     expect(formatQuantity(1, { one: "gallon", many: "gallons" })).toBe("1 gallon");
     expect(formatQuantity(12, { one: "gallon", many: "gallons" })).toBe("12 gallons");
+    expect(formatQuantity(14560, { one: "gallon", many: "gallons" })).toBe("14,560 gallons");
   });
 });
 
@@ -337,44 +381,136 @@ describe("budget totals", () => {
 
 describe("staged plan", () => {
   const items = plan({ household: { people: 4 }, horizon: { mode: "1m", amount: 1, unit: "months" }, scenarios: ["evacuation"] });
+  const priced = () => stateOf({ items: pricedAt(items, 3) });
 
   test("stages add up to everything still needed", () => {
-    const st = stateOf();
+    const st = priced();
     const stages = buildStages(items, st);
-    const last = stages[stages.length - 1];
-    expect(last.cumulative).toBeCloseTo(summarize(items, st).totals.needed, 6);
+    expect(stages[stages.length - 1].cumulative).toBeCloseTo(summarize(items, st).totals.needed, 6);
     expect(stages.map((s) => s.id)).toEqual(["first-days", "finish-essentials", "next-steps", "optional"]);
   });
 
   test("the first stage is the essentials sized for 3 days", () => {
-    const stages = buildStages(items, stateOf());
+    const stages = buildStages(items, priced());
     expect(stages[0].itemIds).toContain("water");
-    // 4 people × 3 days × $1 of water is in stage one; the other 27 days are stage two.
-    const rest = stages[1];
-    expect(rest.itemIds).toContain("water");
+    expect(stages[1].itemIds).toContain("water"); // the other 27 days
     expect(stages[0].cost).toBeGreaterThan(0);
-    expect(rest.cost).toBeGreaterThan(0);
-    expect(stages[0].cost).toBeLessThan(stages[0].cost + rest.cost);
+    expect(stages[1].cost).toBeGreaterThan(0);
+  });
+
+  test("stage one holds 3 days of water and stage two holds the rest", () => {
+    const st = stateOf({ items: { water: { status: "needs", cost: 1 } } });
+    const stages = buildStages(items, st);
+    expect(stages[0].cost).toBe(12); // 4 people × 3 days
+    expect(stages[1].cost).toBe(108); // 4 people × 27 more days
   });
 
   test("with a 3-day plan there is nothing left for the second stage", () => {
     const short = plan({ household: { people: 4 } });
-    expect(buildStages(short, stateOf())[1].cost).toBe(0);
+    const st = stateOf({ items: pricedAt(short, 3) });
+    expect(buildStages(short, st)[1].itemIds).toEqual([]);
+  });
+
+  test("unpriced items still appear in their stage and are counted, but add no cost", () => {
+    const stages = buildStages(items, stateOf());
+    expect(stages[0].itemIds.length).toBeGreaterThan(0);
+    for (const s of stages) {
+      expect(s.cost).toBe(0);
+      expect(s.unpriced).toBe(s.itemIds.length);
+    }
   });
 
   test("stages report which fit the budget", () => {
-    const st = stateOf({ budget: { total: 150, buckets: {} } });
+    const st = { ...priced(), budget: { total: 150, buckets: {} } };
     const stages = buildStages(items, st);
     expect(stages[0].fits).toBe(stages[0].cumulative <= 150);
-    for (let i = 1; i < stages.length; i++) {
-      expect(stages[i].cumulative).toBeGreaterThanOrEqual(stages[i - 1].cumulative);
-    }
-    expect(buildStages(items, stateOf())[0].fits).toBeNull();
+    for (let i = 1; i < stages.length; i++) expect(stages[i].cumulative).toBeGreaterThanOrEqual(stages[i - 1].cumulative);
+    expect(buildStages(items, priced())[0].fits).toBeNull();
   });
 
   test("owned items drop out of every stage", () => {
-    const st = stateOf({ items: { water: { status: "have" } } });
+    const st = stateOf({ items: pricedAt(items, 3, { water: { status: "have" } }) });
     for (const s of buildStages(items, st)) expect(s.itemIds).not.toContain("water");
+  });
+});
+
+// ── the largest supported household ──────────────────────────────────────
+
+describe("largest supported household", () => {
+  const maxHousehold = {
+    people: 20, children: 19, babies: 19, olderAdults: 1, pets: 20,
+    takesMeds: true, electricMedical: true, mobility: true, senseComm: true,
+  };
+  const longest: PlanInputs["horizon"] = { mode: "custom", amount: 52, unit: "weeks" };
+  const everything = ["outage", "weather", "water", "evacuation"] as const;
+
+  test("limits are what the form promises", () => {
+    expect(normalizeHousehold({ ...maxHousehold, people: 99, pets: 99 })).toMatchObject({ people: 20, pets: 20 });
+    expect(horizonDays(longest)).toBe(364);
+    expect(horizonDays({ mode: "custom", amount: 12, unit: "months" })).toBe(360);
+  });
+
+  test("every quantity is a finite, whole, non-negative number at the largest size", () => {
+    for (const hz of [longest, { mode: "custom", amount: 12, unit: "months" }] as const) {
+      for (const hot of [false, true]) {
+        const items = resolvePlan({ household: normalizeHousehold(maxHousehold), horizon: hz, scenarios: [...everything], hotWeather: hot });
+        expect(items.length).toBeGreaterThan(50);
+        for (const r of items) {
+          if (r.qty.kind === "none") { expect(r.suggested, r.id).toBeNull(); continue; }
+          for (const q of [r.suggested, r.suggested3]) {
+            expect(Number.isSafeInteger(q), `${r.id} ${q}`).toBe(true);
+            expect(q as number, r.id).toBeGreaterThanOrEqual(0);
+          }
+          expect(r.suggested3 as number, r.id).toBeLessThanOrEqual((r.suggested ?? 0) as number);
+        }
+      }
+    }
+  });
+
+  test("water at the extremes is exactly the arithmetic", () => {
+    const base = { household: normalizeHousehold(maxHousehold), horizon: longest, scenarios: [] };
+    const plain = resolvePlan({ ...base, hotWeather: false });
+    const hot = resolvePlan({ ...base, hotWeather: true });
+    expect(find(plain, "water").suggested).toBe(20 * 364);
+    expect(find(hot, "water").suggested).toBe(20 * 364 * 2);
+    expect(find(plain, "water-containers").suggested).toBe(Math.ceil((20 * 364) / 7));
+    expect(find(plain, "water").effectiveBasis).toBe("derived");
+    expect(find(plain, "pet-food").suggested).toBe(20 * 364);
+    expect(find(plain, "baby-food").suggested).toBe(19 * 364);
+    expect(find(plain, "power-bank").suggested).toBe(1); // one adult
+  });
+
+  test("totals, stages and shopping stay valid and finite with prices entered", () => {
+    const items = resolvePlan({ household: normalizeHousehold(maxHousehold), horizon: longest, scenarios: [...everything], hotWeather: true });
+    const st = stateOf({ items: pricedAt(items, 999_999), budget: { total: 1_000_000, buckets: { water: 5 } }, picks: items.filter((i) => i.product).map((i) => i.id) });
+    const s = summarize(items, st);
+    for (const n of [s.totals.needed, s.totals.owned, s.totals.skipped, s.over]) expect(Number.isFinite(n)).toBe(true);
+    for (const stage of buildStages(items, st)) {
+      expect(Number.isFinite(stage.cost)).toBe(true);
+      expect(Number.isFinite(stage.cumulative)).toBe(true);
+    }
+    for (const mode of [{ mode: "plan", onlyNeeded: false }, { mode: "plan", onlyNeeded: true }, { mode: "picks" }] as const) {
+      const lines = shoppingLines(items, st, mode);
+      expect(lines.length).toBeGreaterThan(0);
+      for (const l of lines) {
+        expect(Number.isSafeInteger(l.toBuy), l.itemId).toBe(true);
+        expect(Number.isFinite(l.cost), l.itemId).toBe(true);
+        if (l.product) expect(Number.isSafeInteger(l.product.units) && l.product.units > 0, l.itemId).toBe(true);
+      }
+      expect(listText(lines, "x")).not.toMatch(/NaN|Infinity|undefined/);
+    }
+    expect(formatMoney(s.totals.needed)).not.toMatch(/NaN|Infinity/);
+  });
+
+  test("a saved plan at the limits round-trips", () => {
+    const st = stateOf({ household: normalizeHousehold(maxHousehold), horizon: longest, scenarios: [...everything], hotWeather: true });
+    expect(parseBackup(JSON.stringify(toBackup(st)))).toEqual(st);
+  });
+
+  test("the saved-plan cleaner cannot be pushed past the limits", () => {
+    const h = sanitizeState({ household: { people: 1e9, children: 1e9, babies: 1e9, olderAdults: 1e9, pets: 1e9 }, horizon: { mode: "custom", amount: 1e9, unit: "months" } });
+    expect(h.household).toMatchObject({ people: 20, children: 20, babies: 20, olderAdults: 0, pets: 20 });
+    expect(h.horizon.amount).toBe(12);
   });
 });
 
@@ -405,10 +541,11 @@ describe("shopping lists", () => {
   });
 
   test("a partly stocked item lists only the difference", () => {
-    const st = stateOf({ items: { water: { status: "needs", have: 20 } } });
+    const st = stateOf({ items: { water: { status: "needs", have: 20, cost: 2 } } });
     const line = shoppingLines(items, st, scope({ mode: "plan", onlyNeeded: true })).find((l) => l.itemId === "water")!;
     expect(line.toBuy).toBe(36);
-    expect(line.estCost).toBe(36);
+    expect(line.cost).toBe(72);
+    expect(line.priced).toBe(true);
   });
 
   test("one bucket at a time", () => {
@@ -441,14 +578,19 @@ describe("shopping lists", () => {
     expect(food.product).toMatchObject({ units: 1, exactCount: false });
   });
 
-  test("the list text is plain, checkable, and says costs are rough", () => {
-    const lines = shoppingLines(items, stateOf(), scope({ mode: "bucket", bucket: "water", onlyNeeded: true }));
+  test("the list text is plain and checkable, uses only entered prices, and says Amazon may differ", () => {
+    const st = stateOf({ items: { water: { status: "needs", cost: 1.5 } } });
+    const lines = shoppingLines(items, st, scope({ mode: "bucket", bucket: "water", onlyNeeded: true }));
     const text = listText(lines, "Water list");
     expect(text.startsWith("Water list")).toBe(true);
-    expect(text).toContain("[ ] 56 gallons - Drinking and cleaning water (about $55)");
-    expect(text).toContain("Rough total");
-    expect(text).toContain("not store prices");
-    expect(linesTotal(lines)).toBeGreaterThan(56);
+    expect(text).toContain("[ ] 56 gallons - Drinking and cleaning water (your price: $84)");
+    expect(text).toContain("[ ] 8 containers - Containers for stored water\n"); // no price, no amount shown
+    expect(text).toContain("Total of the prices you entered: $84 (");
+    expect(text).toContain("Amazon's price at checkout may differ");
+    expect(linesTotal(lines)).toBe(84);
+    const none = listText(shoppingLines(items, stateOf(), scope({ mode: "plan", onlyNeeded: true })), "x");
+    expect(none).not.toContain("Total of the prices");
+    expect(none).not.toContain("$");
   });
 });
 
@@ -470,6 +612,18 @@ describe("Amazon links", () => {
       expect(l.product!.url).toContain(`tag=${AMAZON_TAG}`);
       expect(l.product!.url).toMatch(/^https:\/\/www\.amazon\.com\/dp\/[A-Z0-9]{10}\?tag=/);
     }
+  });
+
+  test("a pack size above one is used only when the product's own name states it", () => {
+    for (const c of catalog) {
+      const covers = c.product?.covers;
+      if (!covers || covers === 1) continue;
+      expect(gearFor(c.product!.asin)!.name, c.id).toMatch(new RegExp(`\\b${covers}-pack\\b`, "i"));
+    }
+    // A pre-packed kit's contents are not verified, so it never carries a coverage claim.
+    expect(catalog.find((c) => c.id === "go-bag")!.product).toEqual({ asin: "B000FJQQVI" });
+    // Food packages are examples: how much one holds is not known here.
+    expect(catalog.find((c) => c.id === "food")!.product!.covers).toBeUndefined();
   });
 
   test("products are suggested only where they help, never as a quantity of a task", () => {

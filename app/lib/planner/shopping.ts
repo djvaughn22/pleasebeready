@@ -6,7 +6,7 @@
 // Associates tag stays in one place. Product names come from gear.ts.
 
 import { AMAZON_TAG, amazonUrl } from "../gear";
-import { formatEstimate, formatQuantity, planQuantity, remainingQuantity, stateFor, unitCost } from "./calc";
+import { formatMoney, formatQuantity, planQuantity, remainingQuantity, stateFor, unitCost } from "./calc";
 import { gearFor } from "./catalog";
 import type { BucketId, PlanState, ResolvedItem, Unit } from "./types";
 
@@ -22,8 +22,10 @@ export type ShopLine = {
   /** How many of the item to get. */
   toBuy: number;
   unit: Unit;
-  /** Rough cost for these, from planning estimates (never an Amazon price). */
-  estCost: number;
+  /** The visitor's own price times the quantity; 0 when they have not entered one. */
+  cost: number;
+  /** Whether the visitor entered a price for this item. */
+  priced: boolean;
   product?: {
     asin: string;
     name: string;
@@ -57,7 +59,8 @@ export function shoppingLines(resolved: ResolvedItem[], state: PlanState, scope:
     const covers = r.product?.covers;
     lines.push({
       itemId: r.id, bucket: r.bucket, name: r.name, toBuy, unit: r.unit,
-      estCost: toBuy * unitCost(r, st),
+      cost: toBuy * unitCost(r, st),
+      priced: unitCost(r, st) > 0,
       product: r.product && gear
         ? {
             asin: gear.asin, name: gear.name, url: amazonUrl(gear.asin),
@@ -70,8 +73,13 @@ export function shoppingLines(resolved: ResolvedItem[], state: PlanState, scope:
   return lines;
 }
 
+/** Sum of the prices the visitor entered. Unpriced lines add nothing. */
 export function linesTotal(lines: ShopLine[]): number {
-  return lines.reduce((sum, l) => sum + l.estCost, 0);
+  return lines.reduce((sum, l) => sum + l.cost, 0);
+}
+
+export function unpricedCount(lines: ShopLine[]): number {
+  return lines.filter((l) => !l.priced).length;
 }
 
 // ── Plain-text list (copy and print) ────────────────────────────────────────
@@ -79,14 +87,17 @@ export function linesTotal(lines: ShopLine[]): number {
 export function listText(lines: ShopLine[], heading: string): string {
   const out = [heading, ""];
   for (const l of lines) {
-    const cost = l.estCost > 0 ? ` (about ${formatEstimate(l.estCost)})` : "";
+    const cost = l.priced ? ` (your price: ${formatMoney(l.cost)})` : "";
     out.push(`[ ] ${formatQuantity(l.toBuy, l.unit)} - ${l.name}${cost}`);
   }
   const total = linesTotal(lines);
-  if (total > 0) out.push("", `Rough total: about ${formatEstimate(total)}`);
+  const missing = unpricedCount(lines);
+  if (total > 0) {
+    out.push("", `Total of the prices you entered: ${formatMoney(total)}${missing > 0 ? ` (${missing} ${missing === 1 ? "item has" : "items have"} no price yet)` : ""}`);
+  }
   out.push(
     "",
-    "Amounts are suggestions and costs are rough planning figures, not store prices.",
+    "Amounts are suggestions. Prices are the ones you entered; Amazon's price at checkout may differ.",
     "Made with the PleaseBeReady household planner (pleasebeready.com/planner).",
   );
   return out.join("\n");

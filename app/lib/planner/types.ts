@@ -79,8 +79,6 @@ export type CatalogItem = {
   raise?: Partial<Record<ScenarioId, Priority>>;
   /** Doubles with the hot-weather option (water only). */
   hotWeather?: boolean;
-  /** Rough planning cost per unit, USD. Absent means not something you buy. */
-  cost?: number;
   product?: ProductRef;
 };
 
@@ -106,7 +104,7 @@ export type ItemState = {
   qty?: number;
   /** How many the household already has (when status is "needs"). */
   have?: number;
-  /** Overrides the rough unit cost. */
+  /** The visitor's own price per unit, USD. There is no default price. */
   cost?: number;
 };
 

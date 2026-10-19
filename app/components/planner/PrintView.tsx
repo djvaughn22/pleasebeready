@@ -1,7 +1,7 @@
 // What prints: a plain, black-on-white version of the plan. Hidden on screen.
 // It reads the same resolved plan the checklist uses, so print and screen agree.
 
-import { formatEstimate, formatMoney, formatQuantity, horizonLabel, planQuantity, remainingQuantity, stateFor, type Summary } from "../../lib/planner/calc";
+import { formatMoney, formatQuantity, horizonLabel, planQuantity, remainingQuantity, stateFor, type Summary } from "../../lib/planner/calc";
 import { buckets, scenarios } from "../../lib/planner/catalog";
 import { formatDate, sources } from "../../lib/planner/sources";
 import type { PlanState, ResolvedItem } from "../../lib/planner/types";
@@ -24,8 +24,10 @@ export default function PrintView({ state, resolved, summary }: { state: PlanSta
         {state.hotWeather && " · double water for hot weather"}
       </p>
       <p className="text-sm">
-        Still to get: about {formatEstimate(summary.totals.needed)} · already have about {formatEstimate(summary.totals.owned)}
-        {summary.budget !== null && ` · budget ${formatMoney(summary.budget)}`}. Costs are rough planning figures, not store prices.
+        {summary.totals.needed > 0 || summary.totals.owned > 0
+          ? `Prices you entered: still to get ${formatMoney(summary.totals.needed)}, already have ${formatMoney(summary.totals.owned)}${summary.totals.unpriced > 0 ? `, ${summary.totals.unpriced} items without a price` : ""}`
+          : "No prices entered"}
+        {summary.budget !== null && ` · budget ${formatMoney(summary.budget)}`}. Amazon&apos;s price at checkout may differ.
       </p>
       {buckets.map((b) => {
         const items = resolved.filter((r) => r.bucket === b.id);

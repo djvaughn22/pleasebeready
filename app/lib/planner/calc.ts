@@ -209,15 +209,21 @@ export function ownedQuantity(r: ResolvedItem, st: ItemState): number {
   return Math.min(q, Math.max(0, Math.round(st.have ?? 0)));
 }
 
-export function unitCost(r: ResolvedItem, st: ItemState): number {
-  const c = st.cost !== undefined ? st.cost : r.cost;
+/** The visitor's own price per unit. There is no default price: 0 means none entered. */
+export function unitCost(_r: ResolvedItem, st: ItemState): number {
+  const c = st.cost;
   return c !== undefined && Number.isFinite(c) && c > 0 ? c : 0;
+}
+
+/** True when the visitor has entered a price for this item. */
+export function hasPrice(r: ResolvedItem, st: ItemState): boolean {
+  return unitCost(r, st) > 0;
 }
 
 // ── Totals ──────────────────────────────────────────────────────────────────
 
 export type Totals = {
-  /** Rough cost of everything still to get (not skipped, not owned). */
+  /** Cost of everything still to get that has a price entered (not skipped, not owned). */
   needed: number;
   essentialNeeded: number;
   nextNeeded: number;
@@ -226,13 +232,15 @@ export type Totals = {
   owned: number;
   /** Rough cost of what was skipped, for reference. */
   skipped: number;
+  /** Items still to get that have no price entered, so they are not in the totals. */
+  unpriced: number;
   counts: { total: number; have: number; needs: number; skip: number };
 };
 
 export type BucketTotals = Totals & { bucket: BucketId; budget: number | null; over: number };
 
 const emptyTotals = (): Totals => ({
-  needed: 0, essentialNeeded: 0, nextNeeded: 0, optionalNeeded: 0, owned: 0, skipped: 0,
+  needed: 0, essentialNeeded: 0, nextNeeded: 0, optionalNeeded: 0, owned: 0, skipped: 0, unpriced: 0,
   counts: { total: 0, have: 0, needs: 0, skip: 0 },
 });
 
@@ -243,6 +251,7 @@ function addItem(t: Totals, r: ResolvedItem, st: ItemState) {
   t.counts.total += 1;
   t.counts[st.status] += 1;
   if (st.status === "needs") {
+    if (remainingQuantity(r, st) > 0 && cost === 0) t.unpriced += 1;
     t.needed += rem;
     if (r.effective === "essential") t.essentialNeeded += rem;
     else if (r.effective === "next") t.nextNeeded += rem;
@@ -277,7 +286,10 @@ export type Stage = {
   id: "first-days" | "finish-essentials" | "next-steps" | "optional";
   title: string;
   detail: string;
+  /** Sum of the prices the visitor entered; unpriced items add nothing. */
   cost: number;
+  /** Items in this stage with no price entered. */
+  unpriced: number;
   /** Running total through this stage. */
   cumulative: number;
   /** Whether the running total fits the total budget (null when no budget). */
@@ -300,26 +312,28 @@ function firstSliceRemaining(r: ResolvedItem, st: ItemState): number {
  */
 export function buildStages(resolved: ResolvedItem[], state: Pick<PlanState, "items" | "budget">): Stage[] {
   const raw: Omit<Stage, "cumulative" | "fits">[] = [
-    { id: "first-days", title: "Essentials for the first 3 days", detail: "The basics every household needs, sized for 3 days.", cost: 0, itemIds: [] },
-    { id: "finish-essentials", title: "Finish the essentials", detail: "The rest of the essentials, up to your plan length.", cost: 0, itemIds: [] },
-    { id: "next-steps", title: "Useful next steps", detail: "Helpful additions once the essentials are in place.", cost: 0, itemIds: [] },
-    { id: "optional", title: "Nice to have", detail: "Optional items from the sources' \"consider\" lists.", cost: 0, itemIds: [] },
+    { id: "first-days", title: "Essentials for the first 3 days", detail: "The basics every household needs, sized for 3 days.", cost: 0, unpriced: 0, itemIds: [] },
+    { id: "finish-essentials", title: "Finish the essentials", detail: "The rest of the essentials, up to your plan length.", cost: 0, unpriced: 0, itemIds: [] },
+    { id: "next-steps", title: "Useful next steps", detail: "Helpful additions once the essentials are in place.", cost: 0, unpriced: 0, itemIds: [] },
+    { id: "optional", title: "Nice to have", detail: "Optional items from the sources' \"consider\" lists.", cost: 0, unpriced: 0, itemIds: [] },
   ];
   const [first, rest, next, opt] = raw;
   for (const r of resolved) {
     const st = stateFor(state.items, r.id);
     const cost = unitCost(r, st);
     const remaining = remainingQuantity(r, st);
-    if (remaining === 0 || cost === 0) continue;
+    if (remaining === 0) continue;
+    const add = (stage: (typeof raw)[number], qty: number) => {
+      stage.cost += qty * cost;
+      if (cost === 0) stage.unpriced += 1;
+      stage.itemIds.push(r.id);
+    };
     if (r.effective === "essential") {
       const slice = firstSliceRemaining(r, st);
-      if (slice > 0) { first.cost += slice * cost; first.itemIds.push(r.id); }
-      if (remaining - slice > 0) { rest.cost += (remaining - slice) * cost; rest.itemIds.push(r.id); }
-    } else if (r.effective === "next") {
-      next.cost += remaining * cost; next.itemIds.push(r.id);
-    } else {
-      opt.cost += remaining * cost; opt.itemIds.push(r.id);
-    }
+      if (slice > 0) add(first, slice);
+      if (remaining - slice > 0) add(rest, remaining - slice);
+    } else if (r.effective === "next") add(next, remaining);
+    else add(opt, remaining);
   }
   let run = 0;
   return raw.map((s) => {
@@ -331,24 +345,11 @@ export function buildStages(resolved: ResolvedItem[], state: Pick<PlanState, "it
 // ── Display helpers ─────────────────────────────────────────────────────────
 
 export function formatQuantity(n: number, unit: { one: string; many: string }): string {
-  return `${n} ${n === 1 ? unit.one : unit.many}`;
+  return `${n.toLocaleString("en-US")} ${n === 1 ? unit.one : unit.many}`;
 }
 
-/** Whole dollars with a leading "about": these are never exact. */
+/** Whole dollars. Only ever used for numbers the visitor typed, or sums of them. */
 export function formatMoney(n: number): string {
-  return `$${Math.round(n).toLocaleString("en-US")}`;
-}
-
-/**
- * For totals and per-line costs: rounded so it does not look exact.
- * Under $10 to the dollar, under $100 to $5, under $1,000 to $10, then $50.
- */
-export function roundEstimate(n: number): number {
-  const v = Math.max(0, n);
-  const step = v < 10 ? 1 : v < 100 ? 5 : v < 1000 ? 10 : 50;
-  return Math.round(v / step) * step;
-}
-
-export function formatEstimate(n: number): string {
-  return formatMoney(roundEstimate(n));
+  const cents = Math.round(Math.max(0, n) * 100) / 100;
+  return `$${cents.toLocaleString("en-US", Number.isInteger(cents) ? undefined : { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
