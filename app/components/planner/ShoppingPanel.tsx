@@ -57,18 +57,18 @@ export default function ShoppingPanel({ p, resolved, heading, shop, setShop }: {
   };
 
   const modes: { value: ShopMode; text: string; note: string }[] = [
-    { value: "plan", text: "Full list", note: "Every lane together." },
-    { value: "bucket", text: "One lane", note: "Water, food, light and power, and so on." },
+    { value: "plan", text: "Full list", note: "Review every lane together." },
+    { value: "bucket", text: "One lane", note: "Review one lane, such as water or food." },
     { value: "picks", text: "My picks", note: `Products you ticked (${p.state.picks.length}).` },
   ];
 
   return (
-    <Section id="shopping" step={5} title="Shopping"
-      intro="Pick what to shop for. Nothing leaves this page until you press an Amazon button, and each button opens one product page.">
+    <Section id="shopping" step={5} title="Review and shop"
+      intro="Review the items first. Nothing leaves this page until you press an Amazon button. Each product opens separately on Amazon, and you add each one to your Amazon cart yourself.">
       <div className={`${card} p-5 sm:p-6`}>
         <fieldset>
-          <legend className={label}>What to shop for</legend>
-          <div className="mt-2 grid gap-2 sm:grid-cols-3" role="radiogroup" aria-label="What to shop for">
+          <legend className={label}>What to review</legend>
+          <div className="mt-2 grid gap-2 sm:grid-cols-3" role="radiogroup" aria-label="What to review">
             {modes.map((m) => {
               const on = mode === m.value;
               return (
@@ -109,14 +109,15 @@ export default function ShoppingPanel({ p, resolved, heading, shop, setShop }: {
 
         {/* What will happen, before anything is sent. */}
         <div className={`${inset} mt-5 p-4`} role="region" aria-label="What the shopping buttons do" aria-live="polite">
-          <h3 className="text-base font-black">{scopeName}: what happens when you shop</h3>
+          <h3 className="text-base font-black">{scopeName}: what happens when you press an Amazon button</h3>
           <ul className="mt-2 list-disc pl-5 text-sm font-semibold leading-6 pbr-body">
             <li>
               {productLines.length === 0
                 ? "There are no example products for this list."
                 : `This list has ${productLines.length} example ${productLines.length === 1 ? "product" : "products"} on Amazon${otherLines.length > 0 ? `, and ${otherLines.length} more ${otherLines.length === 1 ? "item" : "items"} you can buy anywhere` : ""}.`}
             </li>
-            <li>Each Amazon button opens one product page in a new tab. We cannot add a whole list to your Amazon cart from here, so nothing is added automatically.</li>
+            <li>Reviewing a list only shows it here. It does not buy anything, open Amazon, or add anything to a cart.</li>
+            <li>Each Amazon button opens one product page in a new tab. Every product opens separately, and you add each one to your Amazon cart yourself. We cannot add a whole list to your Amazon cart from here, so nothing is added automatically.</li>
             <li>On Amazon you choose the size and see the current price. The price at Amazon&apos;s checkout may differ from any price you entered here.</li>
             <li>You check out on Amazon, never on PleaseBeReady.</li>
           </ul>
@@ -137,7 +138,7 @@ export default function ShoppingPanel({ p, resolved, heading, shop, setShop }: {
             {productLines.length > 0 && (
               <div className="mt-3 print:hidden">
                 <p className="text-sm font-bold" role="status">
-                  Shopping run: {openedCount} of {productLines.length} product pages opened
+                  Opening products one at a time: {openedCount} of {productLines.length} product pages opened. Nothing is in a cart until you add it on Amazon.
                 </p>
                 <div className="mt-2 flex flex-wrap gap-2">
                   {next ? (
@@ -145,7 +146,7 @@ export default function ShoppingPanel({ p, resolved, heading, shop, setShop }: {
                       data-measure="gear" data-measure-label={next.product.asin}
                       onClick={() => markOpened(next.itemId)}
                       className={`${buttonBase} pbr-accent`}>
-                      Open the next product on Amazon ↗
+                      Open the next product page on Amazon ↗
                     </a>
                   ) : (
                     <span className="inline-flex min-h-11 items-center text-sm font-black pbr-accent">All {productLines.length} opened</span>
@@ -184,9 +185,9 @@ export default function ShoppingPanel({ p, resolved, heading, shop, setShop }: {
                       </a>
                       <p className="mt-1 text-xs font-semibold leading-5 text-[#94a3b8]">
                         {opened.has(l.itemId) ? "Opened. " : ""}
-                        Opens this one product in a new tab; nothing is added to a cart.{" "}
+                        Opens this one product in a new tab; add it to your Amazon cart there if you want it.{" "}
                         {l.product.exactCount
-                          ? `The product name states its pack size, so about ${l.product.units.toLocaleString("en-US")} of it covers this line. Check the listing.`
+                          ? `The product name states its pack size, so you would open about ${l.product.units.toLocaleString("en-US")} ${l.product.units === 1 ? "listing's worth" : "listings' worth"} for this line. Check the listing.`
                           : "We do not know how much one package holds, so check the listing before counting it toward this line."}
                       </p>
                     </div>
@@ -233,7 +234,7 @@ export default function ShoppingPanel({ p, resolved, heading, shop, setShop }: {
           <p className="px-3 pb-3 text-xs font-semibold leading-6 text-[#94a3b8]">
             Amazon has an add-to-cart link format for several products at once, but its documentation for it has been moved, it sends
             signed-out shoppers to a sign-in page first, and we have not been able to confirm that our account may use it. Until we can,
-            we use plain product links, a shopping run that opens one page at a time, and a list you can copy or print. Prices, stock and
+            we use plain product links, a review list that opens one product page at a time, and a list you can copy or print. Prices, stock and
             sizes on Amazon change, so we never show them here.
           </p>
         </details>

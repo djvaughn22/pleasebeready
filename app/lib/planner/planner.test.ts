@@ -752,20 +752,30 @@ describe("planner page honesty and privacy", () => {
 
   test("shopping explains what each action does before anything is sent", () => {
     const shop = src("ShoppingPanel.tsx");
-    expect(shop).toContain("what happens when you shop");
+    expect(shop).toContain("what happens when you press an Amazon button");
     expect(shop).toContain("nothing is added automatically");
-    expect(shop).toContain("Opens this one product in a new tab; nothing is added to a cart.");
+    expect(shop).toContain("Opens this one product in a new tab; add it to your Amazon cart there if you want it.");
     expect(shop).toContain("You check out on Amazon, never on PleaseBeReady.");
-    expect(shop).toContain("Open the next product on Amazon");
+    expect(shop).toContain("Open the next product page on Amazon");
     // The staged run only ever opens one product page per click.
     expect(shop).not.toMatch(/window\.open\(|forEach\([^)]*open/);
   });
 
   test("the checklist offers one-lane and full-list shopping", () => {
     const list = src("Checklist.tsx");
-    expect(list).toContain("Shop this lane");
-    expect(list).toContain("Shop the full list");
+    expect(list).toContain("Review lane items");
+    expect(list).toContain("Review the full list");
     expect(src("Planner.tsx")).toContain("onShop={onShop}");
+  });
+
+  test("review controls never sound like they buy or add everything", () => {
+    const shop = src("ShoppingPanel.tsx");
+    const list = src("Checklist.tsx");
+    expect(shop).toContain("Every product opens separately, and you add each one to your Amazon cart yourself");
+    expect(shop).toContain("Reviewing a list only shows it here");
+    for (const f of [shop, list, src("Planner.tsx")]) {
+      expect(f).not.toMatch(/>\s*(Shop (this lane|the full list|everything)|Buy (all|everything)|Add (all|everything) to cart|Order (all|everything))/i);
+    }
   });
 
   test("bulk cart stays off in this build", () => {

@@ -125,7 +125,7 @@ function ItemRow({ r, p }: { r: ResolvedItem; p: Planner }) {
             <span>{gear.name}</span><span className="pbr-accent" aria-hidden>↗</span>
           </a>
           <p className="mt-1 text-xs font-semibold leading-5 text-[#94a3b8]">
-            One click opens this product on Amazon in a new tab. Nothing is added to a cart.{" "}
+            One click opens this product on Amazon in a new tab. Add it to your Amazon cart there if you want it; nothing is added for you.{" "}
             {r.product?.covers && r.product.covers > 1
               ? `The product name states a ${r.product.covers}-pack. `
               : "Check the size and what is in the package. "}
@@ -242,7 +242,7 @@ export default function Checklist({ p, resolved, summary, onShop }: {
 
       <div className="mb-4 print:hidden">
         <button type="button" onClick={() => onShop("plan")} className={buttonBase}>
-          Shop the full list ({shoppingLines(resolved, p.state, { mode: "plan", onlyNeeded: true }).filter((l) => l.product).length} example products)
+          Review the full list ({shoppingLines(resolved, p.state, { mode: "plan", onlyNeeded: true }).filter((l) => l.product).length} example products)
         </button>
       </div>
 
@@ -264,7 +264,7 @@ export default function Checklist({ p, resolved, summary, onShop }: {
               <p className="mt-1 text-xs font-semibold leading-5 text-[#94a3b8]">{b.blurb}</p>
               <button type="button" disabled={laneProducts === 0} onClick={() => onShop(b.id)}
                 className={`${buttonBase} mt-3 w-full disabled:opacity-50 sm:w-auto print:hidden`}>
-                Shop this lane ({laneProducts} example {laneProducts === 1 ? "product" : "products"})
+                Review lane items ({laneProducts} example {laneProducts === 1 ? "product" : "products"})
               </button>
               {shown.length === 0 ? (
                 <p className="mt-3 text-sm font-semibold text-[#94a3b8]">Nothing here matches this filter.</p>
