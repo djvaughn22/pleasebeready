@@ -9,11 +9,12 @@ import {
   formatMoney, formatQuantity, planQuantity, remainingQuantity, stateFor, unitCost, type Summary,
 } from "../../lib/planner/calc";
 import { buckets, gearFor } from "../../lib/planner/catalog";
-import { reportItemUrl } from "../../lib/planner/shopping";
+import { reportItemUrl, shoppingLines } from "../../lib/planner/shopping";
 import { formatDate, sources } from "../../lib/planner/sources";
-import type { Basis, ItemStatus, Priority, ResolvedItem, ScenarioId } from "../../lib/planner/types";
+import type { Basis, BucketId, ItemStatus, Priority, ResolvedItem, ScenarioId } from "../../lib/planner/types";
 import { amazonUrl } from "../../lib/gear";
 import type { Planner } from "./usePlanner";
+import { buttonBase } from "./ui";
 import { A, card, inset, input, label, Money, Section } from "./ui";
 
 const PRIORITY: Record<Priority, { text: string; style: string }> = {
@@ -124,8 +125,9 @@ function ItemRow({ r, p }: { r: ResolvedItem; p: Planner }) {
             <span>{gear.name}</span><span className="pbr-accent" aria-hidden>↗</span>
           </a>
           <p className="mt-1 text-xs font-semibold leading-5 text-[#94a3b8]">
+            One click opens this product on Amazon in a new tab. Nothing is added to a cart.{" "}
             {r.product?.covers && r.product.covers > 1
-              ? `One covers ${r.product.covers}. `
+              ? `The product name states a ${r.product.covers}-pack. `
               : "Check the size and what is in the package. "}
             The Amazon page shows the current price.
           </p>
@@ -209,7 +211,9 @@ function ItemRow({ r, p }: { r: ResolvedItem; p: Planner }) {
   );
 }
 
-export default function Checklist({ p, resolved, summary }: { p: Planner; resolved: ResolvedItem[]; summary: Summary }) {
+export default function Checklist({ p, resolved, summary, onShop }: {
+  p: Planner; resolved: ResolvedItem[]; summary: Summary; onShop: (target: "plan" | BucketId) => void;
+}) {
   const [filter, setFilter] = useState<Filter>("all");
 
   const visible = (r: ResolvedItem) => {
@@ -236,12 +240,19 @@ export default function Checklist({ p, resolved, summary }: { p: Planner; resolv
         </p>
       </div>
 
+      <div className="mb-4 print:hidden">
+        <button type="button" onClick={() => onShop("plan")} className={buttonBase}>
+          Shop the full list ({shoppingLines(resolved, p.state, { mode: "plan", onlyNeeded: true }).filter((l) => l.product).length} example products)
+        </button>
+      </div>
+
       <div className="flex flex-col gap-5">
         {buckets.map((b) => {
           const items = resolved.filter((r) => r.bucket === b.id);
           const shown = items.filter(visible);
           const bt = summary.buckets.find((x) => x.bucket === b.id)!;
           if (items.length === 0) return null;
+          const laneProducts = shoppingLines(resolved, p.state, { mode: "bucket", bucket: b.id, onlyNeeded: true }).filter((l) => l.product).length;
           return (
             <div key={b.id} id={`bucket-${b.id}`} className={`${card} scroll-mt-20 p-4 sm:p-5`}>
               <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
@@ -251,6 +262,10 @@ export default function Checklist({ p, resolved, summary }: { p: Planner; resolv
                 </p>
               </div>
               <p className="mt-1 text-xs font-semibold leading-5 text-[#94a3b8]">{b.blurb}</p>
+              <button type="button" disabled={laneProducts === 0} onClick={() => onShop(b.id)}
+                className={`${buttonBase} mt-3 w-full disabled:opacity-50 sm:w-auto print:hidden`}>
+                Shop this lane ({laneProducts} example {laneProducts === 1 ? "product" : "products"})
+              </button>
               {shown.length === 0 ? (
                 <p className="mt-3 text-sm font-semibold text-[#94a3b8]">Nothing here matches this filter.</p>
               ) : (

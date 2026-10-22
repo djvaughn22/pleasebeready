@@ -33,7 +33,7 @@ export default function PlannerPage() {
           <p className="mb-3 max-w-2xl text-sm font-semibold leading-6 text-[#94a3b8]">
             Only a few amounts come straight from the sources: 1 gallon of water per person per day, a 3-day supply to take with you and a
             2-week supply for home (Red Cross), and a 7-day supply of medicines (Red Cross). For everything else the sources list the
-            item without a number, so the amount is our suggestion, and we say so on the item. Ready.gov mostly says “several days”.
+            item without a number, so the amount is our suggestion, and we say so on the item. Ready.gov mostly says “several days”. We last read these pages on Oct 17, 2026, so they may have changed since; check them for the latest.
           </p>
           <ul className="flex flex-col gap-2">
             {sourceList.map((s) => (

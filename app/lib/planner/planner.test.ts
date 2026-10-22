@@ -746,8 +746,32 @@ describe("planner page honesty and privacy", () => {
 
   test("the cart is never simulated or implied", () => {
     const shop = src("ShoppingPanel.tsx");
-    expect(shop).toContain("cannot put a whole list into your Amazon cart");
+    expect(shop).toContain("We cannot add a whole list to your Amazon cart");
     expect(shop).not.toMatch(/>\s*(Add all to cart|Checkout|Buy now|Place order)/i);
+  });
+
+  test("shopping explains what each action does before anything is sent", () => {
+    const shop = src("ShoppingPanel.tsx");
+    expect(shop).toContain("what happens when you shop");
+    expect(shop).toContain("nothing is added automatically");
+    expect(shop).toContain("Opens this one product in a new tab; nothing is added to a cart.");
+    expect(shop).toContain("You check out on Amazon, never on PleaseBeReady.");
+    expect(shop).toContain("Open the next product on Amazon");
+    // The staged run only ever opens one product page per click.
+    expect(shop).not.toMatch(/window\.open\(|forEach\([^)]*open/);
+  });
+
+  test("the checklist offers one-lane and full-list shopping", () => {
+    const list = src("Checklist.tsx");
+    expect(list).toContain("Shop this lane");
+    expect(list).toContain("Shop the full list");
+    expect(src("Planner.tsx")).toContain("onShop={onShop}");
+  });
+
+  test("bulk cart stays off in this build", () => {
+    expect(process.env.NEXT_PUBLIC_AMAZON_CART_FORM).toBeUndefined();
+    const shopLib = readFileSync(join(__dirname, "shopping.ts"), "utf8");
+    expect(shopLib).toContain('process.env.NEXT_PUBLIC_AMAZON_CART_FORM === "1"');
   });
 
   test("the saved plan is stored only in this browser", () => {
