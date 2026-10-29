@@ -20,7 +20,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           accent="#34D399"
           links={[
             { emoji: "🧰", name: "Get Ready", href: "/" },
-            { emoji: "📋", name: "Household Planner", href: "/planner" },
+            { emoji: "📋", name: "Stock-up Planner", href: "/planner" },
             { emoji: "🌅", name: "Daily Readiness Check", href: "/today" },
             { emoji: "📚", name: "Preparedness Bookshelf", href: "/books" },
             { emoji: "ℹ️", name: "About PleaseBeReady", href: "/about" },

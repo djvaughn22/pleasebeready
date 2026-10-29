@@ -10,7 +10,7 @@ const A = "#34D399";
 // Two kinds of help, labelled once near the top so nothing on the page is
 // mistaken for something else. (2026-10-17, owner: no free/paid framing.)
 const lanes = [
-  { title: "Checklists and tools", text: "Step-by-step checklists, official guide links, and a household supply calculator. No account needed." },
+  { title: "Checklists and tools", text: "A stock-up planner for any occasion, emergency checklists with official guide links, and a supply calculator. No account needed." },
   { title: "Gear picks 🛒", text: "Optional Amazon links, folded under each section. They may earn us a commission." },
 ];
 
@@ -25,11 +25,16 @@ export default function PleaseBeReady() {
         </div>
 
         <section className="mb-8">
-          <h1 className="mb-3 text-4xl font-black leading-tight sm:text-5xl">Get your household ready, one step at a time</h1>
+          <h1 className="mb-3 text-4xl font-black leading-tight sm:text-5xl">Be ready for whatever is coming</h1>
           <p className="max-w-2xl text-base font-semibold leading-7 text-[#94a3b8]">
-            Checklists for water, food, power, medicine, documents, and a go-bag, each linked to an official guide
-            (Ready.gov, FEMA, Red Cross, CDC).
+            A weekend camping, a sleepover, a party, a road trip, a full pantry or an emergency kit. Plan for your people,
+            build the list, shop it.
           </p>
+          <a href="/planner"
+            className="mt-5 inline-flex min-h-12 items-center gap-2 rounded-xl border border-[#34D399] bg-[#34D399] px-5 py-3 text-base font-black text-[#0b1220] transition hover:brightness-110">
+            📋 Start a stock-up plan <span aria-hidden>→</span>
+          </a>
+          <p className="mt-3 text-xs font-semibold leading-5 text-[#94a3b8]">Any group size. Saved on your device. No account needed.</p>
         </section>
 
         <ClickMeasure />
@@ -45,7 +50,7 @@ export default function PleaseBeReady() {
 
         <a href="/planner"
           className="pbr-accent mb-6 flex items-center justify-between gap-2 rounded-xl border border-[#26324c] bg-[#141d2e] px-4 py-3 text-sm font-black transition hover:border-[#34D399]">
-          <span>📋 Household planner — a checklist, budget and shopping list sized to your household</span><span aria-hidden>→</span>
+          <span>📋 Stock-up planner — any occasion, any group size, one list to shop</span><span aria-hidden>→</span>
         </a>
 
         <SupplyMath />

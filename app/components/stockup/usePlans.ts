@@ -1,0 +1,82 @@
+"use client";
+
+// Every saved plan, kept in this browser. Starts empty (so server and first
+// client render match), then loads what this device saved and any plan
+// shared in the link (#plan=…), and saves each change back.
+
+import { useCallback, useEffect, useRef, useState } from "react";
+import { clampPlan } from "../../lib/stockup/calc";
+import { decodePlan, emptyStore, loadStore, newId, newPlan, saveStore, type Store } from "../../lib/stockup/storage";
+import type { Line, OccasionId, Plan } from "../../lib/stockup/types";
+
+export function usePlans() {
+  const [store, setStore] = useState<Store>(emptyStore);
+  const [ready, setReady] = useState(false);
+  const [saved, setSaved] = useState<"idle" | "saved" | "failed">("idle");
+  const [imported, setImported] = useState<string | null>(null);
+  const loaded = useRef(false);
+
+  useEffect(() => {
+    const t = setTimeout(() => {
+      let s = loadStore();
+      const m = window.location.hash.match(/^#plan=([A-Za-z0-9_-]+)$/);
+      if (m) {
+        const p = decodePlan(m[1]);
+        if (p) {
+          s = { plans: [p, ...s.plans], activeId: p.id };
+          setImported(p.name);
+        }
+        history.replaceState(null, "", window.location.pathname + window.location.search);
+      }
+      loaded.current = true;
+      setStore(s);
+      setReady(true);
+    }, 0);
+    return () => clearTimeout(t);
+  }, []);
+
+  useEffect(() => {
+    if (!loaded.current) return;
+    setSaved(saveStore(store) ? "saved" : "failed");
+  }, [store]);
+
+  const active = store.plans.find((p) => p.id === store.activeId) ?? null;
+
+  const open = useCallback((id: string | null) => {
+    setStore((s) => ({ ...s, activeId: id }));
+    window.scrollTo({ top: 0 });
+  }, []);
+
+  const create = useCallback((occasion: OccasionId) => {
+    const p = newPlan(occasion);
+    setStore((s) => ({ plans: [p, ...s.plans], activeId: p.id }));
+    window.scrollTo({ top: 0 });
+  }, []);
+
+  const update = useCallback((id: string, fn: (p: Plan) => Plan) => {
+    setStore((s) => ({
+      ...s,
+      plans: s.plans.map((p) => (p.id === id ? { ...clampPlan(fn(p)), updated: Date.now() } : p)),
+    }));
+  }, []);
+
+  const duplicate = useCallback((id: string) => {
+    setStore((s) => {
+      const src = s.plans.find((p) => p.id === id);
+      if (!src) return s;
+      const list: Record<string, Line> = {};
+      for (const [k, l] of Object.entries(src.list)) list[k] = { ...l, got: false };
+      const copy: Plan = { ...src, id: newId(), name: `${src.name} (copy)`.slice(0, 80), created: Date.now(), updated: Date.now(), list };
+      return { plans: [copy, ...s.plans], activeId: copy.id };
+    });
+    window.scrollTo({ top: 0 });
+  }, []);
+
+  const remove = useCallback((id: string) => {
+    setStore((s) => ({ plans: s.plans.filter((p) => p.id !== id), activeId: s.activeId === id ? null : s.activeId }));
+  }, []);
+
+  return { store, ready, saved, imported, active, open, create, update, duplicate, remove };
+}
+
+export type PlansApi = ReturnType<typeof usePlans>;

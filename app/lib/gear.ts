@@ -10,3 +10,7 @@ export const amazonUrl = (asin: string) =>
   `https://www.amazon.com/dp/${asin}${AMAZON_TAG ? `?tag=${AMAZON_TAG}` : ""}`;
 
 export type GearItem = { name: string; asin: string };
+
+/** A tagged Amazon search, for items with no title-verified product yet. */
+export const amazonSearchUrl = (query: string) =>
+  `https://www.amazon.com/s?k=${encodeURIComponent(query).replace(/%20/g, "+")}${AMAZON_TAG ? `&tag=${AMAZON_TAG}` : ""}`;

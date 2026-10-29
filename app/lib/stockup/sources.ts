@@ -1,4 +1,4 @@
-// Sources the planner cites. Each page was read on the `checked` date below;
+// Sources the stock-up planner cites for official amounts. Each page was read on the `checked` date below;
 // `pageUpdated` is the date the page itself showed. Re-read a page before
 // changing any advice that cites it, and bump `checked`.
 
