@@ -8,7 +8,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { measure } from "../../lib/measure";
 import { clampPlan } from "../../lib/stockup/calc";
 import { occasions } from "../../lib/stockup/catalog";
-import { decodePlan, emptyStore, loadStore, newId, newPlan, saveStore, type Store } from "../../lib/stockup/storage";
+import { STORAGE_KEY, decodePlan, emptyStore, loadStore, newId, newPlan, parseStore, saveStore, type Store } from "../../lib/stockup/storage";
 import type { Line, OccasionId, Plan } from "../../lib/stockup/types";
 
 export function usePlans() {
@@ -44,6 +44,17 @@ export function usePlans() {
       setReady(true);
     }, 0);
     return () => clearTimeout(t);
+  }, []);
+
+  // Another tab changed the plans: take its copy, so tabs never overwrite each other.
+  useEffect(() => {
+    const onStorage = (e: StorageEvent) => {
+      if (e.key !== STORAGE_KEY || !loaded.current) return;
+      const next = parseStore(e.newValue);
+      setStore((cur) => ({ plans: next.plans, activeId: next.plans.some((p) => p.id === cur.activeId) ? cur.activeId : null }));
+    };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
   }, []);
 
   useEffect(() => {
