@@ -3,18 +3,20 @@
 // Saved plans (open, reuse, delete) and the occasions to start a new one.
 
 import { useState } from "react";
-import { planSummary } from "../../lib/stockup/calc";
+import { DURATIONS, MAX_PEOPLE, durationLabel, planSummary } from "../../lib/stockup/calc";
 import { occasions } from "../../lib/stockup/catalog";
-import type { OccasionId } from "../../lib/stockup/types";
+import type { OccasionId, Plan } from "../../lib/stockup/types";
 import { countLeft } from "./resolve";
 import type { Tab } from "./StockUp";
 import type { PlansApi } from "./usePlans";
-import { btnSmall, card, inset, label, muted } from "./ui";
+import { Stepper, btnPrimary, btnSmall, card, inset, label, muted } from "./ui";
 
 export default function PlanHome({ api, onOpen, onCreate }: {
-  api: PlansApi; onOpen: (id: string, tab: Tab) => void; onCreate: (o: OccasionId) => void;
+  api: PlansApi; onOpen: (id: string, tab: Tab) => void; onCreate: (o: OccasionId, patch?: Partial<Plan>) => void;
 }) {
   const [confirm, setConfirm] = useState<string | null>(null);
+  const [people, setPeople] = useState(4);
+  const [days, setDays] = useState(14);
   const plans = api.store.plans;
 
   return (
@@ -35,7 +37,7 @@ export default function PlanHome({ api, onOpen, onCreate }: {
                     <span className="block text-lg font-black leading-snug text-[#e8edf5] hover:underline">{p.name}</span>
                     <span className={`mt-1 block ${muted}`}>{planSummary(p)}</span>
                     <span className="mt-2 block text-sm font-bold text-[#e8edf5]">
-                      {items === 0 ? "No items yet" : `${items} on the list · ${left === 0 ? "nothing left to buy" : `${left} left to buy`}`}
+                      {items === 0 ? "Nothing saved yet" : `${items} saved · ${left === 0 ? "all bought" : `${left} to buy`}`}
                     </span>
                   </button>
                   <div className="flex flex-wrap gap-2">
@@ -57,10 +59,33 @@ export default function PlanHome({ api, onOpen, onCreate }: {
         </section>
       )}
 
+      <section aria-labelledby="quick-title" className={`${card} mb-10 flex flex-col gap-4 p-5`}>
+        <div>
+          <h2 id="quick-title" className="text-xl font-black">Stock up for emergencies</h2>
+          <p className={`mt-1 ${muted}`}>Water, food, light, power, first aid and more, sized to your household. Pick how many and how long, then shop.</p>
+        </div>
+        <Stepper id="quick-people" text="People" value={people} min={1} max={MAX_PEOPLE} onChange={setPeople} />
+        <fieldset>
+          <legend className={label}>For how long</legend>
+          <div className="mt-2 flex flex-wrap gap-2">
+            {DURATIONS.map((d) => (
+              <button key={d.days} type="button" aria-pressed={d.days === days} onClick={() => setDays(d.days)}
+                className={`min-h-10 rounded-full border px-3 text-sm font-black transition ${d.days === days ? "border-[#34D399] bg-[#34D399] text-[#0b1220]" : "border-[#26324c] bg-[#1c2740] text-[#e8edf5] hover:border-[#34D399]"}`}>
+                {d.days === days && <span aria-hidden>✓ </span>}{d.label}
+              </button>
+            ))}
+          </div>
+        </fieldset>
+        <button type="button" className={`${btnPrimary} self-start`}
+          onClick={() => onCreate("emergency", { people, days, nights: days, name: `Emergency supplies: ${durationLabel(days)}` })}>
+          Shop emergency supplies →
+        </button>
+      </section>
+
       <section aria-labelledby="start-title">
-        <h2 id="start-title" className="mb-1 text-xl font-black">{plans.length ? "Start another plan" : "Start a plan"}</h2>
+        <h2 id="start-title" className="mb-1 text-xl font-black">Or plan for something else</h2>
         <p className={`mb-4 ${muted}`}>Pick what you are getting ready for. You can rename it and change everything after.</p>
-        {(["Everyday", "Events and trips", "Weather and emergencies", "Life changes"] as const).map((g) => (
+        {(["Weather and emergencies", "Everyday", "Events and trips", "Life changes"] as const).map((g) => (
           <div key={g} className="mb-5">
             <h3 className={`mb-2 ${label}`}>{g}</h3>
             <ul className="grid grid-cols-1 gap-2 min-[420px]:grid-cols-2 sm:grid-cols-3">

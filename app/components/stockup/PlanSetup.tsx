@@ -2,7 +2,7 @@
 
 // Name, occasion, who is coming and for how long. Every number is editable.
 
-import { CLIMATE_IDS, MAX_DAYS, MAX_PEOPLE, NEED_IDS, adults } from "../../lib/stockup/calc";
+import { CLIMATE_IDS, durationLabel, MAX_DAYS, MAX_PEOPLE, NEED_IDS, adults } from "../../lib/stockup/calc";
 import { occasionById, occasions } from "../../lib/stockup/catalog";
 import type { Climate, Need, OccasionId, Plan } from "../../lib/stockup/types";
 import type { PlansApi } from "./usePlans";
@@ -65,7 +65,7 @@ export default function PlanSetup({ plan, api, onNext }: { plan: Plan; api: Plan
         <h3 className="text-base font-black">How long</h3>
         <p className={`mb-4 ${muted}`}>Amounts that depend on time (water, food, paper goods) scale with these.</p>
         <div className="grid gap-5 sm:grid-cols-3">
-          <Stepper id="days" text="Days" value={plan.days} min={1} max={MAX_DAYS} onChange={(n) => set({ days: n })} />
+          <Stepper id="days" text="Days" hint={durationLabel(plan.days)} value={plan.days} min={1} max={MAX_DAYS} onChange={(n) => set({ days: n })} />
           <Stepper id="nights" text="Nights away or hosting" value={plan.nights} min={0} max={MAX_DAYS} onChange={(n) => set({ nights: n })} />
           <Stepper id="meals" text="Meals a day you provide" value={plan.meals} min={0} max={6} onChange={(n) => set({ meals: n })} hint="Used for plates, cups and napkins." />
         </div>
@@ -81,7 +81,7 @@ export default function PlanSetup({ plan, api, onNext }: { plan: Plan; api: Plan
         </fieldset>
       </div>
 
-      <button type="button" className={`${btnPrimary} self-start`} onClick={onNext}>See suggestions →</button>
+      <button type="button" className={`${btnPrimary} self-start`} onClick={onNext}>Go shopping →</button>
     </div>
   );
 }

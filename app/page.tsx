@@ -32,9 +32,9 @@ export default function PleaseBeReady() {
           </p>
           <a href="/planner"
             className="mt-5 inline-flex min-h-12 items-center gap-2 rounded-xl border border-[#34D399] bg-[#34D399] px-5 py-3 text-base font-black text-[#0b1220] transition hover:brightness-110">
-            📋 Start a stock-up plan <span aria-hidden>→</span>
+            🛒 Stock up and shop <span aria-hidden>→</span>
           </a>
-          <p className="mt-3 text-xs font-semibold leading-5 text-[#94a3b8]">Any group size. Saved on your device. No account needed.</p>
+          <p className="mt-3 text-xs font-semibold leading-5 text-[#94a3b8]">Any number of people, from 3 days to a year. Saved on your device. No account needed.</p>
         </section>
 
         <ClickMeasure />

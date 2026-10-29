@@ -69,8 +69,8 @@ export function usePlans() {
     window.scrollTo({ top: 0 });
   }, []);
 
-  const create = useCallback((occasion: OccasionId) => {
-    const p = newPlan(occasion);
+  const create = useCallback((occasion: OccasionId, patch: Partial<Plan> = {}) => {
+    const p = clampPlan({ ...newPlan(occasion), ...patch });
     measure("plan_start", `picker-${occasion}`);
     setStore((s) => ({ plans: [p, ...s.plans], activeId: p.id }));
     window.scrollTo({ top: 0 });

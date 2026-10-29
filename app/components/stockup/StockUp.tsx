@@ -10,12 +10,11 @@ import ListView from "./ListView";
 import PlanHome from "./PlanHome";
 import PlanSetup from "./PlanSetup";
 import { countLeft } from "./resolve";
-import ShopView from "./ShopView";
 import Suggestions from "./Suggestions";
 import { usePlans } from "./usePlans";
 import { btnSmall, muted } from "./ui";
 
-export type Tab = "plan" | "ideas" | "list" | "shop";
+export type Tab = "plan" | "ideas" | "list";
 
 export default function StockUp() {
   const api = usePlans();
@@ -25,7 +24,7 @@ export default function StockUp() {
     return <p className={muted} aria-live="polite">Loading your plans…</p>;
   }
   if (!api.active) {
-    return <PlanHome api={api} onOpen={(id, t) => { setTab(t); api.open(id); }} onCreate={(o) => { setTab("plan"); api.create(o); }} />;
+    return <PlanHome api={api} onOpen={(id, t) => { setTab(t); api.open(id); }} onCreate={(o, patch) => { setTab("ideas"); api.create(o, patch); }} />;
   }
   return <PlanScreen key={api.active.id} plan={api.active} api={api} tab={tab} setTab={setTab} />;
 }
@@ -37,10 +36,9 @@ function PlanScreen({ plan, api, tab, setTab }: {
   const onList = Object.keys(plan.list).length;
   const left = useMemo(() => countLeft(plan), [plan]);
   const tabs: { id: Tab; text: string }[] = [
-    { id: "plan", text: "Plan" },
-    { id: "ideas", text: `Suggestions (${suggestions.length})` },
-    { id: "list", text: `My list (${onList})` },
-    { id: "shop", text: `Shop (${left})` },
+    { id: "ideas", text: "🛒 Shop" },
+    { id: "list", text: `My list (${left ? `${left} to buy` : onList})` },
+    { id: "plan", text: "⚙️ Plan details" },
   ];
   const go = (t: Tab) => { setTab(t); document.getElementById("plan-top")?.scrollIntoView({ block: "start" }); };
 
@@ -70,8 +68,7 @@ function PlanScreen({ plan, api, tab, setTab }: {
       <div role="tabpanel" id={`panel-${tab}`} aria-labelledby={`tab-${tab}`} className="mt-6">
         {tab === "plan" && <PlanSetup plan={plan} api={api} onNext={() => go("ideas")} />}
         {tab === "ideas" && <Suggestions plan={plan} api={api} suggestions={suggestions} onList={() => go("list")} onSetup={() => go("plan")} />}
-        {tab === "list" && <ListView plan={plan} api={api} onIdeas={() => go("ideas")} onShop={() => go("shop")} />}
-        {tab === "shop" && <ShopView plan={plan} api={api} onList={() => go("list")} />}
+        {tab === "list" && <ListView plan={plan} api={api} onIdeas={() => go("ideas")} />}
       </div>
     </div>
   );

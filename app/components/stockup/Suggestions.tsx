@@ -1,51 +1,52 @@
 "use client";
 
-// Suggestions for the plan, by category, with filters that scale to the whole
-// catalog. Categories start short (essentials first) and expand on request, so
-// a phone never renders a thousand rows at once. Adding twice never duplicates.
+// The shop: everything this plan needs as product cards, each with the amount
+// to buy and a buy button. Search and filters reach the whole catalog.
+// Categories open a few cards at a time so phones stay fast.
 
 import { memo, useMemo, useState } from "react";
-import { everything, matches, planSummary, unitWord } from "../../lib/stockup/calc";
+import { measure } from "../../lib/measure";
+import { everything, matches, unitWord } from "../../lib/stockup/calc";
 import { categories, occasionById, occasions } from "../../lib/stockup/catalog";
 import type { CategoryId, Need, OccasionId, Plan, Priority, Suggestion } from "../../lib/stockup/types";
-import { measure } from "../../lib/measure";
+import QuickBar from "./QuickBar";
 import ShopButton from "./ShopButton";
 import type { PlansApi } from "./usePlans";
-import { GoodToKnow, PriorityTag, btn, btnPrimary, btnSmall, input, inset, label, muted } from "./ui";
+import { GoodToKnow, btnPrimary, btnSmall, input, inset, label, muted } from "./ui";
 
 type Level = "essential" | "useful" | "all";
-type Kind = "all" | "product" | "task";
 type Who = "all" | Need;
-const levelText: Record<Level, string> = { essential: "Essentials", useful: "Essentials + useful", all: "Everything" };
+const levelText: Record<Level, string> = { essential: "Must-haves", useful: "Must-haves + good to have", all: "Everything" };
 const whoText: Record<Who, string> = {
   all: "Everyone", kids: "Kids", babies: "Babies", pets: "Pets", older: "Older adults", mobility: "Mobility needs", medical: "Medical needs",
 };
 const allowed = (pri: Priority, level: Level) =>
   level === "all" || pri === "essential" || (level === "useful" && pri === "useful");
 const rank: Record<Priority, number> = { essential: 0, useful: 1, extra: 2 };
-const FIRST = 5;
+const FIRST = 4;
 
-export default function Suggestions({ plan, api, suggestions, onList, onSetup }: {
+export default function Suggestions({ plan, api, suggestions, onList }: {
   plan: Plan; api: PlansApi; suggestions: Suggestion[]; onList: () => void; onSetup: () => void;
 }) {
   const [query, setQuery] = useState("");
   const [situation, setSituation] = useState<"plan" | "any" | OccasionId>("plan");
   const [cat, setCat] = useState<CategoryId | "all">("all");
   const [level, setLevel] = useState<Level>("all");
-  const [kind, setKind] = useState<Kind>("all");
   const [who, setWho] = useState<Who>("all");
   const [open, setOpen] = useState<Set<CategoryId>>(() => new Set());
-  const [picked, setPicked] = useState<Set<string>>(() => new Set());
   const [note, setNote] = useState("");
 
   const all = useMemo(() => everything(plan), [plan]);
-  const pool = situation === "plan" ? suggestions : situation === "any" ? all : all.filter((s) => s.item.occ.includes(situation));
+  const searching = query.trim() !== "";
+  // A search looks through the whole catalog; browsing shows this plan's picks.
+  const pool = situation === "any" || (searching && situation === "plan") ? all
+    : situation === "plan" ? suggestions : all.filter((s) => s.item.occ.includes(situation));
   const shown = useMemo(
-    () => pool.filter((s) =>
-      (cat === "all" || s.item.cat === cat) && allowed(s.item.pri, level) && (kind === "all" || s.item.kind === kind)
-      && (who === "all" || s.item.needs === who) && matches(s.item, query)),
-    [pool, cat, level, kind, who, query],
+    () => pool.filter((s) => s.item.kind === "product" && (cat === "all" || s.item.cat === cat)
+      && allowed(s.item.pri, level) && (who === "all" || s.item.needs === who) && matches(s.item, query)),
+    [pool, cat, level, who, query],
   );
+  const tasks = useMemo(() => (situation === "plan" && !searching ? suggestions.filter((s) => s.item.kind === "task") : []), [situation, searching, suggestions]);
   const groups = useMemo(() => {
     const m = new Map<CategoryId, Suggestion[]>();
     for (const s of shown) m.set(s.item.cat, [...(m.get(s.item.cat) ?? []), s]);
@@ -54,7 +55,8 @@ export default function Suggestions({ plan, api, suggestions, onList, onSetup }:
   }, [shown]);
 
   const onListIds = plan.list;
-  const add = (ids: string[], scope: "one" | "ticked" | "category" | "all") => {
+  const listCount = Object.keys(onListIds).length;
+  const add = (ids: string[], scope: "one" | "category" | "all") => {
     const fresh = ids.filter((id) => !onListIds[id]);
     if (fresh.length) {
       measure("plan_add", `${scope}-${plan.occasion}`);
@@ -64,11 +66,7 @@ export default function Suggestions({ plan, api, suggestions, onList, onSetup }:
         return { ...p, list };
       });
     }
-    const dupes = ids.length - fresh.length;
-    setNote(fresh.length
-      ? `Added ${fresh.length} ${fresh.length === 1 ? "item" : "items"} to your list.${dupes ? ` ${dupes} ${dupes === 1 ? "was" : "were"} already on it.` : ""}`
-      : "Those are already on your list.");
-    setPicked(new Set());
+    setNote(fresh.length ? `Saved ${fresh.length} to your list.` : "Already on your list.");
   };
   const removeOne = (id: string) => {
     api.update(plan.id, (p) => {
@@ -78,95 +76,82 @@ export default function Suggestions({ plan, api, suggestions, onList, onSetup }:
     });
     setNote("Removed from your list.");
   };
-  const togglePick = (id: string) => setPicked((s) => {
-    const n = new Set(s);
-    if (n.has(id)) n.delete(id); else n.add(id);
-    return n;
-  });
   const toggleOpen = (id: CategoryId) => setOpen((s) => {
     const n = new Set(s);
     if (n.has(id)) n.delete(id); else n.add(id);
     return n;
   });
-  const filtered = query.trim() !== "" || cat !== "all" || level !== "all" || kind !== "all" || who !== "all" || situation !== "plan";
-  const reset = () => { setQuery(""); setSituation("plan"); setCat("all"); setLevel("all"); setKind("all"); setWho("all"); };
-
+  const filtered = cat !== "all" || level !== "all" || who !== "all" || situation !== "plan";
+  const reset = () => { setQuery(""); setSituation("plan"); setCat("all"); setLevel("all"); setWho("all"); };
   const shownNotOn = shown.filter((s) => !onListIds[s.item.id]).map((s) => s.item.id);
-  const plain = occasionById(plan.occasion);
 
   return (
     <div>
-      <div className={`${inset} mb-4 flex flex-wrap items-center justify-between gap-2 px-4 py-3`}>
-        <p className="text-sm font-bold text-[#e8edf5]">{planSummary(plan)}</p>
-        <button type="button" className={btnSmall} onClick={onSetup}>Change</button>
-      </div>
+      <QuickBar plan={plan} api={api} />
 
-      <div className="mb-3 flex flex-col gap-1.5">
-        <label htmlFor="sugg-search" className={label}>Search {situation === "any" ? "all items" : ""}</label>
-        <input id="sugg-search" type="search" className={input} placeholder="Try “cups”, “batteries”, “smoke” or “dorm”"
+      <div className="mt-4 flex flex-col gap-1.5">
+        <label htmlFor="sugg-search" className="sr-only">Search every item</label>
+        <input id="sugg-search" type="search" className={`${input} h-12`} placeholder="🔎 Search 950+ items: water, batteries, diapers…"
           value={query} onChange={(e) => setQuery(e.target.value)} />
       </div>
-      <details className={`${inset} mb-4 px-4 py-3`} open={filtered || undefined}>
-        <summary className="cursor-pointer text-sm font-black">Filters{filtered ? " (on)" : ""}</summary>
-        <div className="mt-3 grid gap-3 sm:grid-cols-2">
-          <Select id="f-situation" text="Situation" value={situation} onChange={(v) => setSituation(v as typeof situation)}>
-            <option value="plan">This plan: {plain.label} ({suggestions.length})</option>
-            <option value="any">Every situation ({all.length})</option>
+
+      <div className="-mx-4 mt-3 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:px-0" role="group" aria-label="Jump to a category">
+        <Chip on={cat === "all"} onClick={() => setCat("all")}>All</Chip>
+        {categories.filter((c) => c.id !== "tasks" && suggestions.some((s) => s.item.cat === c.id)).map((c) => (
+          <Chip key={c.id} on={cat === c.id} onClick={() => setCat(cat === c.id ? "all" : c.id)}>{c.emoji} {c.title}</Chip>
+        ))}
+      </div>
+
+      <details className="mt-3" open={filtered || undefined}>
+        <summary className="cursor-pointer text-sm font-black text-[#94a3b8]">More filters{filtered ? " (on)" : ""}</summary>
+        <div className={`${inset} mt-2 grid gap-3 p-4 sm:grid-cols-3`}>
+          <Select id="f-situation" text="For" value={situation} onChange={(v) => setSituation(v as typeof situation)}>
+            <option value="plan">This plan: {occasionById(plan.occasion).label}</option>
+            <option value="any">Every situation</option>
             {occasions.filter((o) => o.id !== plan.occasion).map((o) => <option key={o.id} value={o.id}>{o.emoji} {o.label}</option>)}
           </Select>
-          <Select id="f-cat" text="Category" value={cat} onChange={(v) => setCat(v as CategoryId | "all")}>
-            <option value="all">All categories</option>
-            {categories.map((c) => <option key={c.id} value={c.id}>{c.emoji} {c.title}</option>)}
+          <Select id="f-who" text="Who" value={who} onChange={(v) => setWho(v as Who)}>
+            {(Object.keys(whoText) as Who[]).map((w) => <option key={w} value={w}>{whoText[w]}</option>)}
           </Select>
-          <Select id="f-who" text="Person or need" value={who} onChange={(v) => setWho(v as Who)}>
-            {(Object.keys(whoText) as Who[]).map((w) => <option key={w} value={w}>{w === "all" ? "Everyone (no filter)" : whoText[w]}</option>)}
-          </Select>
-          <Select id="f-level" text="Priority" value={level} onChange={(v) => setLevel(v as Level)}>
+          <Select id="f-level" text="Show" value={level} onChange={(v) => setLevel(v as Level)}>
             {(Object.keys(levelText) as Level[]).map((l) => <option key={l} value={l}>{levelText[l]}</option>)}
           </Select>
-          <Select id="f-kind" text="Type" value={kind} onChange={(v) => setKind(v as Kind)}>
-            <option value="all">Things to buy and things to do</option>
-            <option value="product">Things to buy</option>
-            <option value="task">Things to do</option>
-          </Select>
-          {filtered && <button type="button" className={`${btnSmall} self-end`} onClick={reset}>Clear filters</button>}
+          {(filtered || searching) && <button type="button" className={`${btnSmall} sm:col-span-3`} onClick={reset}>Clear search and filters</button>}
         </div>
       </details>
 
-      <p className={`mb-4 ${muted}`}>
-        {shown.length} {shown.length === 1 ? "match" : "matches"}. Amounts are planning rules worked out from your numbers, not exact needs; each item shows its math.
-        Items marked “Ask a professional” need a doctor’s, vet’s or official advice.
+      <p className={`mb-5 mt-3 ${muted}`}>
+        {shown.length} {shown.length === 1 ? "item" : "items"}{searching ? " match" : ""}. Amounts are worked out for {plan.people} {plan.people === 1 ? "person" : "people"}; change any of them on your list.
       </p>
 
       {groups.length === 0 && (
         <div className={`${inset} p-5 text-center`}>
           <p className="text-sm font-bold">Nothing matches.</p>
-          <p className={muted}>{situation === "plan" ? "Try another word, or set Situation to “Every situation”." : "Try a shorter word or clear the filters."}</p>
+          <p className={muted}>Try a shorter word, or clear the filters.</p>
         </div>
       )}
 
       <div className="flex flex-col gap-8">
         {groups.map(({ c, items }) => {
           const missing = items.filter((s) => !onListIds[s.item.id]).map((s) => s.item.id);
-          const expanded = open.has(c.id) || query.trim() !== "" || items.length <= FIRST + 2;
+          const expanded = open.has(c.id) || searching || cat !== "all" || items.length <= FIRST + 2;
           const visible = expanded ? items : items.slice(0, FIRST);
           return (
             <section key={c.id} aria-labelledby={`cat-${c.id}`}>
-              <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+              <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
                 <h3 id={`cat-${c.id}`} className="text-lg font-black"><span aria-hidden>{c.emoji} </span>{c.title} <span className="text-sm text-[#94a3b8]">({items.length})</span></h3>
                 <button type="button" className={btnSmall} disabled={missing.length === 0} onClick={() => add(missing, "category")}>
-                  {missing.length === 0 ? "✓ All on list" : `Add ${missing.length === items.length ? "all" : "the other"} ${missing.length}`}
+                  {missing.length === 0 ? "✓ All saved" : `Save all ${missing.length} to list`}
                 </button>
               </div>
-              <ul className="flex flex-col gap-2">
+              <ul className="grid gap-3 sm:grid-cols-2">
                 {visible.map((s) => (
-                  <SuggestionRow key={s.item.id} s={s} on={!!onListIds[s.item.id]} picked={picked.has(s.item.id)}
-                    onPick={togglePick} onAdd={(ids) => add(ids, "one")} onRemove={removeOne} />
+                  <Card key={s.item.id} s={s} on={!!onListIds[s.item.id]} onAdd={(id) => add([id], "one")} onRemove={removeOne} />
                 ))}
               </ul>
-              {items.length > FIRST + 2 && !query.trim() ? (
-                <button type="button" className={`${btnSmall} mt-2 w-full`} aria-expanded={expanded} onClick={() => toggleOpen(c.id)}>
-                  {expanded ? "Show fewer" : `Show all ${items.length} in ${c.title}`}
+              {items.length > FIRST + 2 && !searching && cat === "all" ? (
+                <button type="button" className={`${btnSmall} mt-3 w-full`} aria-expanded={expanded} onClick={() => toggleOpen(c.id)}>
+                  {expanded ? "Show fewer" : `See all ${items.length} ${c.title.toLowerCase()}`}
                 </button>
               ) : null}
             </section>
@@ -174,24 +159,50 @@ export default function Suggestions({ plan, api, suggestions, onList, onSetup }:
         })}
       </div>
 
-      <div className="mt-8"><GoodToKnow> “Shop” opens a product page we have checked; “Search” opens Amazon search results, not one chosen product. There is no multi-item cart.</GoodToKnow></div>
+      {tasks.length > 0 && (
+        <details className={`${inset} mt-8 p-4`}>
+          <summary className="cursor-pointer text-sm font-black">✅ Also worth doing ({tasks.length}), no shopping needed</summary>
+          <ul className="mt-3 flex flex-col gap-2">
+            {tasks.map((s) => {
+              const on = !!onListIds[s.item.id];
+              return (
+                <li key={s.item.id} className="flex items-start justify-between gap-3 border-t border-[#26324c] pt-2">
+                  <span className="min-w-0">
+                    <span className="block text-sm font-black">{s.item.name}</span>
+                    {s.item.note && <span className={`block ${muted}`}>{s.item.note}</span>}
+                  </span>
+                  <button type="button" className={btnSmall} onClick={() => (on ? removeOne(s.item.id) : add([s.item.id], "one"))}
+                    aria-label={on ? `Remove ${s.item.name} from list` : `Add ${s.item.name} to list`}>{on ? "✓ On list" : "+ List"}</button>
+                </li>
+              );
+            })}
+          </ul>
+        </details>
+      )}
+
+      <div className="mt-8"><GoodToKnow> “Buy on Amazon” opens a product we checked; “Find on Amazon” opens search results. Each opens one item; there is no combined cart.</GoodToKnow></div>
 
       <div className="sticky bottom-0 z-30 -mx-4 mt-6 border-t border-[#26324c] bg-[#0b1220] px-4 py-3 sm:mx-0 sm:rounded-t-xl sm:border-x print:hidden">
-        <div className="flex flex-col gap-2">
-          <p className="min-h-5 text-xs font-bold text-[#e8edf5]" role="status" aria-live="polite">
-            {note}{note && Object.keys(onListIds).length > 0 && (<> <button type="button" onClick={onList} className="underline pbr-accent">See list</button></>)}
-          </p>
-          <div className="flex gap-2">
-            <button type="button" className={`${btn} flex-1`} disabled={picked.size === 0} onClick={() => add([...picked], "ticked")}>
-              Add ticked ({picked.size})
-            </button>
-            <button type="button" className={`${btnPrimary} flex-1`} disabled={shownNotOn.length === 0} onClick={() => add(shownNotOn, "all")}>
-              {shownNotOn.length === 0 ? "All matches on list" : `Add all matches (${shownNotOn.length})`}
-            </button>
-          </div>
+        <p className="mb-2 min-h-4 text-xs font-bold text-[#e8edf5]" role="status" aria-live="polite">{note}</p>
+        <div className="flex gap-2">
+          <button type="button" className={`${btnSmall} flex-1`} disabled={shownNotOn.length === 0} onClick={() => add(shownNotOn, "all")}>
+            {shownNotOn.length === 0 ? "All saved" : `Save all ${shownNotOn.length}`}
+          </button>
+          <button type="button" className={`${btnPrimary} flex-[2]`} onClick={onList} disabled={listCount === 0}>
+            My list ({listCount}) · Buy →
+          </button>
         </div>
       </div>
     </div>
+  );
+}
+
+function Chip({ on, onClick, children }: { on: boolean; onClick: () => void; children: React.ReactNode }) {
+  return (
+    <button type="button" aria-pressed={on} onClick={onClick}
+      className={`min-h-10 shrink-0 whitespace-nowrap rounded-full border px-3 text-sm font-black transition ${on ? "border-[#34D399] bg-[#1c2740] pbr-accent" : "border-[#26324c] text-[#94a3b8] hover:text-[#e8edf5]"}`}>
+      {children}
+    </button>
   );
 }
 
@@ -206,48 +217,31 @@ function Select({ id, text, value, onChange, children }: {
   );
 }
 
-const SuggestionRow = memo(function SuggestionRow({ s, on, picked, onPick, onAdd, onRemove }: {
-  s: Suggestion; on: boolean; picked: boolean;
-  onPick: (id: string) => void; onAdd: (ids: string[]) => void; onRemove: (id: string) => void;
+const Card = memo(function Card({ s, on, onAdd, onRemove }: {
+  s: Suggestion; on: boolean; onAdd: (id: string) => void; onRemove: (id: string) => void;
 }) {
-  const id = `pick-${s.item.id}`;
-  const task = s.item.kind === "task";
+  const varies = s.item.rule.per === "varies";
   return (
-    <li className={`${inset} flex flex-col gap-2 p-3 ${on ? "border-[#34D399]" : ""}`}>
-      <div className="flex items-start gap-3">
-        {on ? (
-          <span aria-hidden className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded bg-[#34D399] text-xs font-black text-[#0b1220]">✓</span>
-        ) : (
-          <input id={id} type="checkbox" checked={picked} onChange={() => onPick(s.item.id)} className="mt-1 h-5 w-5 shrink-0" style={{ accentColor: "#34D399" }}
-            aria-label={`Tick ${s.item.name}`} />
-        )}
-        <div className="min-w-0 flex-1">
-          <label htmlFor={on ? undefined : id} className="flex flex-wrap items-center gap-2">
-            <span className="text-sm font-black text-[#e8edf5]">{s.item.name}</span>
-            {task ? <span className="rounded-md border border-[#26324c] px-1.5 py-0.5 text-[0.65rem] font-black uppercase tracking-wider pbr-blue">To do</span> : <PriorityTag pri={s.item.pri} />}
-            {s.item.pro && <span className="rounded-md border border-[#26324c] px-1.5 py-0.5 text-[0.65rem] font-black uppercase tracking-wider pbr-amber">Ask a professional</span>}
-            {on && <span className="text-xs font-black pbr-accent">On your list</span>}
-          </label>
-          {task ? (
-            <p className={`mt-1 ${muted}`}>{s.item.pri === "essential" ? "Worth doing first." : "When you have time."}</p>
-          ) : (
-            <>
-              <p className="mt-1 text-sm font-bold tabular-nums text-[#e8edf5]">
-                {s.item.rule.per === "varies" ? "Amount varies" : <>About {s.qty.toLocaleString("en-US")} {unitWord(s.item, s.qty)}</>}
-                {s.packs !== null && s.item.pack! > 1 && <span className="text-[#94a3b8]"> · {s.packs} {s.packs === 1 ? "pack" : "packs"} of {s.item.pack}</span>}
-              </p>
-              <p className={muted}>{s.how}{s.item.source ? " · source amount" : s.item.rule.per === "varies" ? "" : " · our planning rule"}</p>
-            </>
-          )}
-          {s.item.note && <p className={`mt-0.5 ${muted}`}>{s.item.note}</p>}
+    <li className={`flex flex-col gap-3 rounded-2xl border bg-[#141d2e] p-4 ${on ? "border-[#34D399]" : "border-[#26324c]"}`}>
+      <div className="min-w-0 flex-1">
+        <div className="flex flex-wrap items-center gap-2">
+          {s.item.pri === "essential" && <span className="rounded-md border border-[#34D399] px-1.5 py-0.5 text-[0.65rem] font-black uppercase tracking-wider pbr-accent">Must-have</span>}
+          {s.item.pro && <span className="rounded-md border border-[#26324c] px-1.5 py-0.5 text-[0.65rem] font-black uppercase tracking-wider pbr-amber">Check with a pro</span>}
         </div>
+        <h4 className="mt-1 text-base font-black leading-snug text-[#e8edf5]">{s.item.name}</h4>
+        <p className="mt-1 text-sm font-bold tabular-nums text-[#e8edf5]">
+          {varies ? "Amount varies" : <>Get about {s.qty.toLocaleString("en-US")} {unitWord(s.item, s.qty)}</>}
+          {s.packs !== null && s.item.pack! > 1 && <span className="text-[#94a3b8]"> ({s.packs} × {s.item.pack}-pack)</span>}
+        </p>
+        <p className={muted}>{s.how}{s.item.source ? " · official amount" : ""}</p>
+        {s.item.note && <p className={`mt-1 ${muted}`}>{s.item.note}</p>}
       </div>
-      <div className="flex flex-wrap justify-end gap-2">
-        <ShopButton item={s.item} />
+      <div className="flex gap-2">
+        <ShopButton item={s.item} big />
         {on ? (
-          <button type="button" className={btnSmall} onClick={() => onRemove(s.item.id)} aria-label={`Remove ${s.item.name} from list`}>Remove</button>
+          <button type="button" className={`${btnSmall} min-h-11 pbr-accent`} onClick={() => onRemove(s.item.id)} aria-label={`Remove ${s.item.name} from list`}>✓ Saved</button>
         ) : (
-          <button type="button" className={`${btnSmall} border-[#34D399]`} onClick={() => onAdd([s.item.id])} aria-label={`Add ${s.item.name} to list`}>+ Add</button>
+          <button type="button" className={`${btnSmall} min-h-11`} onClick={() => onAdd(s.item.id)} aria-label={`Save ${s.item.name} to list`}>+ List</button>
         )}
       </div>
     </li>

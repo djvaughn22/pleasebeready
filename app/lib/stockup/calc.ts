@@ -134,6 +134,27 @@ export function matches(item: CatalogItem, query: string): boolean {
   return q.split(/\s+/).every((w) => hay.includes(w));
 }
 
+/** Quick lengths for stocking up. */
+export const DURATIONS: { days: number; label: string }[] = [
+  { days: 3, label: "3 days" }, { days: 7, label: "1 week" }, { days: 14, label: "2 weeks" },
+  { days: 30, label: "1 month" }, { days: 90, label: "3 months" }, { days: 180, label: "6 months" }, { days: 365, label: "1 year" },
+];
+
+/** Change the length and keep nights in step (a 3-day trip has 2 nights; a stock-up at home counts every night). */
+export function withDays(plan: Plan, days: number): Plan {
+  const o = occasionById(plan.occasion);
+  const nights = o.nights === 0 ? 0 : Math.max(1, days - (o.days - o.nights));
+  return clampPlan({ ...plan, days, nights });
+}
+
+/** "2 weeks", "3 months", "10 days" — months and weeks only when exact. */
+export function durationLabel(days: number): string {
+  if (days === 365) return "1 year";
+  if (days >= 30 && days % 30 === 0) return plural(days / 30, "month", "months");
+  if (days >= 7 && days % 7 === 0) return plural(days / 7, "week", "weeks");
+  return plural(days, "day", "days");
+}
+
 /** "8 people · 3 days, 2 nights" */
 export function planSummary(plan: Plan): string {
   const o = occasionById(plan.occasion);
@@ -141,6 +162,6 @@ export function planSummary(plan: Plan): string {
   if (plan.kids) parts.push(plural(plan.kids, "kid", "kids"));
   if (plan.babies) parts.push(plural(plan.babies, "baby", "babies"));
   if (plan.pets) parts.push(plural(plan.pets, "pet", "pets"));
-  const time = plan.nights > 0 ? `${plural(plan.days, "day", "days")}, ${plural(plan.nights, "night", "nights")}` : plural(plan.days, "day", "days");
+  const time = durationLabel(plan.days);
   return `${o.emoji} ${o.label} · ${parts.join(", ")} · ${time}`;
 }

@@ -17,10 +17,9 @@ export default function PlannerPage() {
     <main className="min-h-screen bg-[#0b1220] text-[#e8edf5]">
       <div className="mx-auto max-w-3xl px-4 py-8 sm:px-5 sm:py-12">
         <div className="print:hidden">
-          <h1 className="text-3xl font-black leading-tight sm:text-4xl">Stock-up planner</h1>
-          <p className="mt-2 max-w-2xl text-base font-semibold leading-7 text-[#94a3b8]">
-            Plan for your people, build the list, shop it. Camping, sleepovers, parties, trips, the pantry or an emergency kit.
-            Plans stay on this device. No account needed.
+          <h1 className="text-2xl font-black leading-tight sm:text-4xl">Stock-up planner</h1>
+          <p className="mt-1 max-w-2xl text-sm font-semibold leading-6 text-[#94a3b8] sm:text-base">
+            How many people, how long. Get the amounts and a buy button for each item. No account needed.
           </p>
         </div>
 
