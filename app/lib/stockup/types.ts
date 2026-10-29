@@ -3,12 +3,23 @@
 
 export type OccasionId =
   | "home" | "emergency" | "camping" | "sleepover" | "party" | "roadtrip"
-  | "vacation" | "beach" | "tailgate" | "hosting" | "picnic";
+  | "vacation" | "beach" | "tailgate" | "hosting" | "picnic"
+  | "outage" | "winter" | "hurricane" | "heat" | "wildfire" | "flood" | "vehicle"
+  | "school" | "college" | "work" | "moving" | "sick" | "newbaby" | "caregiving"
+  | "petprep" | "hiking" | "sports";
 
 export type CategoryId =
   | "water" | "food" | "drinks" | "dining" | "cooking" | "paper" | "cleaning"
   | "toiletries" | "health" | "power" | "sleep" | "outdoors" | "fun" | "baby"
-  | "pets" | "party" | "travel" | "safety";
+  | "pets" | "party" | "travel" | "safety" | "weather" | "tools" | "car"
+  | "school" | "access" | "moving" | "tasks";
+
+/** Who an item serves; items with one only show when the plan has that need. */
+export type Need = "kids" | "babies" | "pets" | "older" | "mobility" | "medical";
+
+export type Climate = "cold" | "hot" | "wet";
+
+export type Season = "year-round" | "seasonal" | "event";
 
 /** essential: most plans of this kind need it. useful: often worth having. extra: nice if it fits. */
 export type Priority = "essential" | "useful" | "extra";
@@ -20,7 +31,9 @@ export type Per =
   | "person" | "adult" | "kid" | "baby" | "pet"
   | "personDay" | "kidDay" | "babyDay" | "petDay"
   | "personNight"
-  | "personMeal";  // people × days × meals a day
+  | "personMeal"   // people × days × meals a day
+  | "varies"       // depends on things we cannot count; `note` explains
+  | "task";        // something to do, not to buy
 
 export type Rule = { per: Per; n: number };
 
@@ -51,8 +64,16 @@ export type CatalogItem = {
   rule: Rule;
   unit: Unit;
   pri: Priority;
-  /** Only shown when the plan has kids, babies or pets. */
-  needs?: "kids" | "babies" | "pets";
+  /** product: something to buy. task: something to do, never shown with a Shop link. */
+  kind: "product" | "task";
+  /** Only shown when the plan has this need. */
+  needs?: Need;
+  /** Only suggested when the plan's weather includes this (or the situation implies it). */
+  climate?: Climate;
+  /** year-round, seasonal, or tied to one event. */
+  season: Season;
+  /** Follow a doctor's, vet's or official guidance for this one. */
+  pro?: boolean;
   /** Sold in packs of this many units; the list shows the pack count too. */
   pack?: number;
   /** One short line on the planning rule or a practical tip. */
@@ -76,6 +97,10 @@ export type Occasion = {
   meals: number;
   /** Suggested plan name. */
   name: string;
+  /** Weather this situation brings with it. */
+  implies?: Climate[];
+  /** Group in the occasion picker. */
+  group: "Everyday" | "Events and trips" | "Weather and emergencies" | "Life changes";
 };
 
 export type Line = {
@@ -95,6 +120,10 @@ export type Plan = {
   kids: number;
   babies: number;
   pets: number;
+  /** Extra needs in the group (older adults, mobility, medical). */
+  needs: Need[];
+  /** Expected weather. */
+  climate: Climate[];
   days: number;
   nights: number;
   meals: number;
@@ -108,7 +137,7 @@ export type Plan = {
 
 export type Suggestion = {
   item: CatalogItem;
-  /** Suggested amount for this plan. */
+  /** Suggested amount for this plan; 0 for tasks. */
   qty: number;
   /** The arithmetic behind qty, in words. */
   how: string;

@@ -1,7 +1,7 @@
 // A plan's list lines, resolved against the whole catalog (not only this
 // occasion's suggestions), so items added through "search every item" still
 // get an amount. Rows come back in category order.
-import { suggest, toBuy } from "../../lib/stockup/calc";
+import { isDone, suggest } from "../../lib/stockup/calc";
 import { catalog, categories } from "../../lib/stockup/catalog";
 import type { Line, Plan, Suggestion } from "../../lib/stockup/types";
 
@@ -17,5 +17,5 @@ export function listRows(plan: Plan): Row[] {
 }
 
 export function countLeft(plan: Plan): number {
-  return listRows(plan).filter((r) => !r.line.got && toBuy(r.line, r.s) > 0).length;
+  return listRows(plan).filter((r) => r.s.item.kind === "product" && !isDone(r.line, r.s)).length;
 }

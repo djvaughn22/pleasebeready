@@ -14,20 +14,38 @@
 
 import { areas, levels } from "../readiness";
 import type { GearItem } from "../gear";
+import { extra } from "./data/index";
 import type { CatalogItem, CategoryId, Occasion, OccasionId, Per, Priority, Unit } from "./types";
 
 export const occasions: Occasion[] = [
-  { id: "home", emoji: "🏠", label: "Household stock-up", hint: "Everyday supplies for a month or more at home.", days: 30, nights: 30, meals: 3, name: "Household stock-up" },
-  { id: "emergency", emoji: "🔦", label: "Emergency kit", hint: "Storms, outages, water problems or leaving in a hurry.", days: 14, nights: 14, meals: 3, name: "Emergency supplies" },
-  { id: "camping", emoji: "⛺", label: "Camping", hint: "Tents, campfire meals and nights outside.", days: 3, nights: 2, meals: 3, name: "Weekend camping" },
-  { id: "sleepover", emoji: "🛌", label: "Sleepover", hint: "Snacks, breakfast and somewhere for everyone to sleep.", days: 2, nights: 1, meals: 2, name: "Sleepover" },
-  { id: "party", emoji: "🎉", label: "Party or celebration", hint: "Food, drinks, plates and decorations.", days: 1, nights: 0, meals: 1, name: "Birthday party" },
-  { id: "roadtrip", emoji: "🚗", label: "Road trip", hint: "Car snacks, comfort and roadside basics.", days: 4, nights: 3, meals: 3, name: "Road trip" },
-  { id: "vacation", emoji: "🧳", label: "Trip away", hint: "Packing for hotels, flights and rentals.", days: 7, nights: 6, meals: 3, name: "Vacation" },
-  { id: "beach", emoji: "🏖️", label: "Beach or pool day", hint: "Sun, water, shade and snacks.", days: 1, nights: 0, meals: 1, name: "Beach day" },
-  { id: "tailgate", emoji: "🏈", label: "Game day or tailgate", hint: "Grill, cooler, chairs and team gear.", days: 1, nights: 0, meals: 1, name: "Game day" },
-  { id: "hosting", emoji: "🍽️", label: "Hosting guests", hint: "Holidays and family staying over.", days: 4, nights: 3, meals: 3, name: "Holiday guests" },
-  { id: "picnic", emoji: "🧺", label: "Picnic or outing", hint: "A day at the park, a game or a trail.", days: 1, nights: 0, meals: 1, name: "Picnic" },
+  { id: "home", emoji: "🏠", label: "Household stock-up", hint: "Everyday supplies for a month or more at home.", days: 30, nights: 30, meals: 3, name: "Household stock-up", group: "Everyday" },
+  { id: "emergency", emoji: "🔦", label: "Emergency kit", hint: "Storms, outages, water problems or leaving in a hurry.", days: 14, nights: 14, meals: 3, name: "Emergency supplies", group: "Weather and emergencies" },
+  { id: "camping", emoji: "⛺", label: "Camping", hint: "Tents, campfire meals and nights outside.", days: 3, nights: 2, meals: 3, name: "Weekend camping", group: "Events and trips" },
+  { id: "sleepover", emoji: "🛌", label: "Sleepover", hint: "Snacks, breakfast and somewhere for everyone to sleep.", days: 2, nights: 1, meals: 2, name: "Sleepover", group: "Events and trips" },
+  { id: "party", emoji: "🎉", label: "Party or celebration", hint: "Food, drinks, plates and decorations.", days: 1, nights: 0, meals: 1, name: "Birthday party", group: "Events and trips" },
+  { id: "roadtrip", emoji: "🚗", label: "Road trip", hint: "Car snacks, comfort and roadside basics.", days: 4, nights: 3, meals: 3, name: "Road trip", group: "Events and trips" },
+  { id: "vacation", emoji: "🧳", label: "Trip away", hint: "Packing for hotels, flights and rentals.", days: 7, nights: 6, meals: 3, name: "Vacation", group: "Events and trips" },
+  { id: "beach", emoji: "🏖️", label: "Beach or pool day", hint: "Sun, water, shade and snacks.", days: 1, nights: 0, meals: 1, name: "Beach day", group: "Events and trips" },
+  { id: "tailgate", emoji: "🏈", label: "Game day or tailgate", hint: "Grill, cooler, chairs and team gear.", days: 1, nights: 0, meals: 1, name: "Game day", group: "Events and trips" },
+  { id: "hosting", emoji: "🍽️", label: "Hosting guests", hint: "Holidays and family staying over.", days: 4, nights: 3, meals: 3, name: "Holiday guests", group: "Events and trips" },
+  { id: "picnic", emoji: "🧺", label: "Picnic or outing", hint: "A day at the park, a game or a trail.", days: 1, nights: 0, meals: 1, name: "Picnic", group: "Events and trips" },
+  { id: "outage", emoji: "🔌", label: "Power outage", hint: "Light, charging and keeping food cold.", days: 3, nights: 3, meals: 3, name: "Power outage kit", group: "Weather and emergencies" },
+  { id: "winter", emoji: "❄️", label: "Winter storm", hint: "Snow, ice and cold at home or on the road.", days: 3, nights: 3, meals: 3, name: "Winter storm", implies: ["cold"], group: "Weather and emergencies" },
+  { id: "hurricane", emoji: "🌀", label: "Hurricane season", hint: "Wind, rain, outages and maybe leaving.", days: 7, nights: 7, meals: 3, name: "Hurricane season", implies: ["wet"], group: "Weather and emergencies" },
+  { id: "heat", emoji: "🌡️", label: "Heat wave", hint: "Staying cool and drinking enough.", days: 5, nights: 5, meals: 3, name: "Heat wave", implies: ["hot"], group: "Weather and emergencies" },
+  { id: "wildfire", emoji: "🔥", label: "Wildfire and smoke", hint: "Cleaner indoor air and a bag ready to go.", days: 5, nights: 5, meals: 3, name: "Wildfire season", group: "Weather and emergencies" },
+  { id: "flood", emoji: "🌊", label: "Flooding", hint: "Keeping things dry and cleaning up after.", days: 5, nights: 5, meals: 3, name: "Flood prep", implies: ["wet"], group: "Weather and emergencies" },
+  { id: "vehicle", emoji: "🚙", label: "Car kit", hint: "What lives in the car all year.", days: 2, nights: 1, meals: 2, name: "Car kit", group: "Everyday" },
+  { id: "school", emoji: "🎒", label: "Back to school", hint: "Supplies, lunches and a few spares.", days: 30, nights: 0, meals: 1, name: "Back to school", group: "Everyday" },
+  { id: "college", emoji: "🎓", label: "College move-in", hint: "A dorm room or first apartment.", days: 30, nights: 30, meals: 2, name: "College move-in", group: "Life changes" },
+  { id: "work", emoji: "💼", label: "Work and commute", hint: "A desk drawer and bag kit.", days: 5, nights: 0, meals: 1, name: "Work kit", group: "Everyday" },
+  { id: "moving", emoji: "📦", label: "Moving house", hint: "Packing, moving day and the first night.", days: 3, nights: 2, meals: 3, name: "Moving day", group: "Life changes" },
+  { id: "sick", emoji: "🤒", label: "Sick days", hint: "Cold and flu season at home.", days: 7, nights: 7, meals: 3, name: "Sick-day shelf", group: "Everyday" },
+  { id: "newbaby", emoji: "👶", label: "New baby", hint: "The first weeks home.", days: 30, nights: 30, meals: 3, name: "New baby", group: "Life changes" },
+  { id: "caregiving", emoji: "🤝", label: "Caring for someone", hint: "An older parent or someone recovering at home.", days: 14, nights: 14, meals: 3, name: "Caregiving", group: "Life changes" },
+  { id: "petprep", emoji: "🐾", label: "Pet supplies", hint: "Everyday and emergency supplies for pets.", days: 30, nights: 30, meals: 2, name: "Pet supplies", group: "Everyday" },
+  { id: "hiking", emoji: "🥾", label: "Day hike", hint: "Water, layers and the basics on the trail.", days: 1, nights: 0, meals: 1, name: "Day hike", group: "Events and trips" },
+  { id: "sports", emoji: "⚽", label: "Sports day or tournament", hint: "Sideline gear and snacks for the team.", days: 1, nights: 0, meals: 1, name: "Tournament weekend", group: "Events and trips" },
 ];
 
 export const categories: { id: CategoryId; emoji: string; title: string }[] = [
@@ -49,6 +67,13 @@ export const categories: { id: CategoryId; emoji: string; title: string }[] = [
   { id: "party", emoji: "🎈", title: "Party and decorations" },
   { id: "travel", emoji: "🎒", title: "Bags and travel" },
   { id: "safety", emoji: "🧯", title: "Safety and documents" },
+  { id: "weather", emoji: "🌦️", title: "Heat, cold and rain" },
+  { id: "tools", emoji: "🧰", title: "Tools and home repair" },
+  { id: "car", emoji: "🚙", title: "Car and roadside" },
+  { id: "school", emoji: "✏️", title: "School and work" },
+  { id: "access", emoji: "🦯", title: "Older adults and accessibility" },
+  { id: "moving", emoji: "📦", title: "Packing and moving" },
+  { id: "tasks", emoji: "✅", title: "Things to do (not to buy)" },
 ];
 
 const u = (one: string, many: string = `${one}s`): Unit => ({ one, many });
@@ -61,20 +86,20 @@ const EAT: OccasionId[] = ["party", "picnic", "tailgate", "hosting", "sleepover"
 const GATHER: OccasionId[] = ["party", "tailgate", "hosting", "picnic"];
 const AWAY: OccasionId[] = ["camping", "roadtrip", "vacation"];
 
-type Opts = Partial<Pick<CatalogItem, "needs" | "pack" | "note" | "source" | "asin" | "q" | "id">>;
+type Opts = Partial<Pick<CatalogItem, "needs" | "pack" | "note" | "source" | "asin" | "q" | "id" | "season" | "pro" | "climate">>;
 
-const slug = (s: string) => s.toLowerCase().replace(/&/g, "and").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+export const slug = (s: string) => s.toLowerCase().replace(/&/g, "and").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 
 function it(name: string, cat: CategoryId, occ: OccasionId[], per: Per, n: number, unit: Unit, pri: Priority, o: Opts = {}): CatalogItem {
-  return { id: o.id ?? slug(name), name, cat, occ, rule: { per, n }, unit, pri, ...o };
+  return { id: o.id ?? slug(name), name, cat, occ, rule: { per, n }, unit, pri, kind: "product", season: "year-round", ...o };
 }
 
-export const catalog: CatalogItem[] = [
+const base: CatalogItem[] = [
   // ── Water ────────────────────────────────────────────────────────────────
   it("Drinking and cleaning water", "water", PREP, "personDay", 1, u("gallon"), "essential", {
     id: "water", source: "rg-water", q: "gallon drinking water",
     note: "1 gallon per person per day is the Red Cross and Ready.gov amount. Hot weather, nursing and illness can need more." }),
-  it("Bottled water", "water", [...OUT, "party", "roadtrip", "sleepover", "hosting", "vacation"], "personDay", 3, u("bottle"), "essential", {
+  it("Bottled water", "water", [...OUT, "party", "roadtrip", "sleepover", "hosting", "vacation", "heat"], "personDay", 3, u("bottle"), "essential", {
     pack: 24, q: "bottled water 16.9 oz 24 pack", note: "Our rule: about three 16.9 oz bottles per person per day out and about." }),
   it("Camp water jug", "water", ["camping", "tailgate"], "group", 1, u("jug"), "useful", {
     q: "camping water jug with spigot", note: "One refillable jug for washing and cooking." }),
@@ -149,14 +174,14 @@ export const catalog: CatalogItem[] = [
 
   // ── Drinks ───────────────────────────────────────────────────────────────
   it("Soda or sparkling water", "drinks", [...GATHER, "sleepover", "beach"], "person", 2, u("can"), "useful", { pack: 12, q: "sparkling water variety pack", note: "Our rule: two cans each for a few hours." }),
-  it("Sports drinks", "drinks", ["tailgate", "beach", "camping", "picnic"], "personDay", 1, u("bottle"), "extra", { pack: 12 }),
+  it("Sports drinks", "drinks", ["tailgate", "beach", "camping", "picnic", "heat"], "personDay", 1, u("bottle"), "extra", { pack: 12 }),
   it("Lemonade or iced tea", "drinks", ["picnic", "party", "beach"], "person", 0.15, u("gallon"), "extra"),
   it("Coffee", "drinks", ["home", "camping", "hosting", "vacation"], "adult", 0.25, u("bag"), "useful", { q: "ground coffee", note: "Our rule: about a quarter bag per adult for a short stay." }),
   it("Instant coffee or tea", "drinks", ["emergency", "camping"], "adult", 1, u("pack"), "extra"),
   it("Hot cocoa", "drinks", ["sleepover", "camping", "hosting"], "person", 1, u("packet"), "extra", { pack: 12 }),
   it("Milk", "drinks", ["sleepover", "hosting", "home"], "personDay", 0.15, u("gallon"), "useful", { q: "shelf stable milk" }),
   it("Shelf-stable milk", "drinks", ["emergency"], "personDay", 0.25, u("carton"), "extra", { q: "shelf stable milk boxes" }),
-  it("Ice", "drinks", [...OUT, "party", "roadtrip", "hosting"], "personDay", 1, u("pound"), "useful", { q: "bagged ice", note: "Our rule: about a pound per person per day for drinks; more if the cooler holds food." }),
+  it("Ice", "drinks", [...OUT, "party", "roadtrip", "hosting", "heat"], "personDay", 1, u("pound"), "useful", { q: "bagged ice", note: "Our rule: about a pound per person per day for drinks; more if the cooler holds food." }),
 
   // ── Plates, cups and serving ─────────────────────────────────────────────
   it("Paper plates", "dining", [...EAT, "emergency"], "personMeal", 1.5, u("plate"), "essential", { pack: 100, note: "Our rule: one and a half per person per meal; people grab seconds." }),
@@ -174,7 +199,7 @@ export const catalog: CatalogItem[] = [
   it("Picnic blanket", "dining", ["picnic", "beach"], "person", 0.25, u("blanket"), "useful", { q: "waterproof picnic blanket", note: "Our rule: one blanket seats about four." }),
 
   // ── Cooking and coolers ──────────────────────────────────────────────────
-  it("Cooler", "cooking", [...OUT, "roadtrip", "party"], "person", 0.2, u("cooler"), "essential", { q: "large cooler", note: "Our rule: one large cooler per five people for a day." }),
+  it("Cooler", "cooking", [...OUT, "roadtrip", "party", "heat"], "person", 0.2, u("cooler"), "essential", { q: "large cooler", note: "Our rule: one large cooler per five people for a day." }),
   it("Ice packs", "cooking", [...OUT, "roadtrip"], "group", 4, u("pack"), "useful", { q: "reusable ice packs for cooler" }),
   it("Manual can opener", "cooking", [...PREP, "camping"], "group", 1, u("can opener"), "essential", { asin: "B09HKDZ3CV", note: "Ready.gov puts one in the basic kit." }),
   it("Camp stove", "cooking", ["camping", "emergency"], "group", 1, u("stove"), "useful", { q: "camping stove propane", note: "Use outdoors only. Never cook with fuel indoors." }),
@@ -223,7 +248,7 @@ export const catalog: CatalogItem[] = [
   it("Toothbrushes", "toiletries", ["sleepover", "hosting", "vacation", "camping", "emergency"], "person", 1, u("toothbrush", "toothbrushes"), "useful", { note: "Spares for guests who forget theirs." }),
   it("Toothpaste", "toiletries", ["home", "emergency", "vacation", "camping"], "personDay", 0.02, u("tube"), "useful", { note: "Our rule: a tube lasts one person about 7 weeks." }),
   it("Hand soap", "toiletries", ["home", "emergency", "hosting"], "personDay", 0.02, u("bottle"), "useful"),
-  it("Hand sanitizer", "toiletries", [...OUT, "emergency", "roadtrip", "vacation", "party"], "group", 2, u("bottle"), "essential"),
+  it("Hand sanitizer", "toiletries", [...OUT, "emergency", "roadtrip", "vacation", "party", "heat"], "group", 2, u("bottle"), "essential"),
   it("Shampoo and body wash", "toiletries", ["home", "vacation", "camping", "hosting"], "personDay", 0.03, u("bottle"), "useful", { q: "travel size shampoo body wash" }),
   it("Deodorant", "toiletries", ["home", "vacation", "camping"], "adult", 1, u("stick"), "useful"),
   it("Feminine hygiene supplies", "toiletries", PREP.concat(["vacation", "camping"]), "adult", 1, u("box", "boxes"), "useful", { q: "pads tampons", note: "Ready.gov lists feminine supplies." }),
@@ -240,7 +265,7 @@ export const catalog: CatalogItem[] = [
   it("Children's pain and fever reliever", "health", ["home", "emergency", "vacation", "sleepover"], "group", 1, u("bottle"), "useful", { needs: "kids", q: "children's fever reducer" }),
   it("Allergy medicine", "health", ["home", "vacation", "camping", "picnic", "emergency"], "group", 1, u("box", "boxes"), "useful"),
   it("Adhesive bandages", "health", [...OUT, "home", "sleepover", "vacation"], "group", 1, u("box", "boxes"), "useful", { q: "assorted bandages" }),
-  it("Sunscreen", "health", ["beach", "camping", "picnic", "tailgate", "vacation"], "personDay", 0.25, u("bottle"), "essential", { note: "Our rule: an 8 oz bottle lasts about four person-days with reapplying." }),
+  it("Sunscreen", "health", ["beach", "camping", "picnic", "tailgate", "vacation", "heat"], "personDay", 0.25, u("bottle"), "essential", { note: "Our rule: an 8 oz bottle lasts about four person-days with reapplying." }),
   it("Aloe after-sun gel", "health", ["beach", "vacation"], "group", 1, u("bottle"), "extra"),
   it("Bug spray", "health", ["camping", "picnic", "tailgate", "beach"], "person", 0.25, u("can"), "useful", { q: "insect repellent", note: "Our rule: one can for about four people." }),
   it("Anti-itch cream", "health", ["camping", "picnic"], "group", 1, u("tube"), "extra"),
@@ -248,7 +273,7 @@ export const catalog: CatalogItem[] = [
   it("Tweezers and tick remover", "health", ["camping", "picnic"], "group", 1, u("set"), "useful", { q: "tick remover tool" }),
   it("Motion sickness relief", "health", ["roadtrip", "vacation"], "group", 1, u("box", "boxes"), "extra", { q: "motion sickness bands" }),
   it("Antacids", "health", ["vacation", "hosting", "roadtrip"], "group", 1, u("bottle"), "extra"),
-  it("Masks", "health", ["emergency"], "person", 2, u("mask"), "useful", { q: "n95 masks", note: "Ready.gov lists masks to filter contaminated air." }),
+  it("Masks", "health", ["emergency", "wildfire", "sick"], "person", 2, u("mask"), "useful", { q: "n95 masks", note: "Ready.gov lists masks to filter contaminated air. EPA says a well-fitted N95 can reduce wildfire smoke; kids need their own sizes.", pro: true }),
   it("Instant cold packs", "health", ["tailgate", "camping", "beach"], "group", 2, u("pack"), "extra"),
   it("First aid manual", "health", ["emergency"], "group", 1, u("book"), "extra", { asin: "173674478X" }),
   it("Pill organizer", "health", ["vacation", "roadtrip"], "group", 1, u("organizer"), "extra", { q: "weekly pill organizer travel" }),
@@ -258,7 +283,7 @@ export const catalog: CatalogItem[] = [
   it("Headlamps", "power", ["camping", "emergency", "sleepover"], "person", 1, u("headlamp"), "useful", { asin: "B092RHC2FY", pack: 2 }),
   it("Lantern", "power", ["camping", "emergency", "home"], "group", 2, u("lantern"), "useful", { q: "led camping lantern" }),
   it("Batteries", "power", [...PREP, "camping"], "person", 4, u("battery", "batteries"), "essential", { q: "aa batteries", note: "Check sizes for your lights and radio." }),
-  it("Power bank", "power", ["emergency", "camping", "roadtrip", "vacation", "tailgate", "beach"], "adult", 1, u("power bank"), "useful", { asin: "B0D5CLSMFB" }),
+  it("Power bank", "power", ["emergency", "camping", "roadtrip", "vacation", "tailgate", "beach", "heat"], "adult", 1, u("power bank"), "useful", { asin: "B0D5CLSMFB" }),
   it("Car phone charger", "power", ["roadtrip", "emergency"], "group", 2, u("charger"), "useful", { q: "usb c car charger" }),
   it("Charging cables", "power", ["vacation", "roadtrip", "camping", "sleepover"], "group", 2, u("cable"), "useful", { q: "usb c charging cable" }),
   it("Power strip", "power", ["vacation", "hosting", "sleepover"], "group", 1, u("strip"), "extra", { q: "travel power strip" }),
@@ -303,7 +328,7 @@ export const catalog: CatalogItem[] = [
   it("Wagon", "outdoors", ["beach", "tailgate", "picnic", "camping"], "group", 1, u("wagon"), "extra", { q: "collapsible wagon" }),
   it("Beach towels", "outdoors", ["beach", "camping", "vacation"], "person", 1, u("towel"), "essential"),
   it("Sunglasses", "outdoors", ["beach", "vacation", "roadtrip"], "person", 1, u("pair"), "extra"),
-  it("Hats", "outdoors", ["beach", "camping", "tailgate", "picnic"], "person", 1, u("hat"), "useful", { q: "sun hat" }),
+  it("Hats", "outdoors", ["beach", "camping", "tailgate", "picnic", "heat"], "person", 1, u("hat"), "useful", { q: "sun hat" }),
   it("Water shoes", "outdoors", ["beach", "camping"], "person", 1, u("pair"), "extra"),
   it("Swim goggles", "outdoors", ["beach", "vacation"], "kid", 1, u("pair"), "extra", { needs: "kids" }),
   it("Life jackets", "outdoors", ["beach", "camping"], "kid", 1, u("life jacket"), "useful", { needs: "kids", q: "kids life jacket coast guard approved", note: "Pick a Coast Guard–approved jacket that fits each child's weight." }),
@@ -393,6 +418,9 @@ export const catalog: CatalogItem[] = [
   it("Glow tags or reflective bands", "safety", ["camping", "tailgate"], "kid", 1, u("band"), "extra", { needs: "kids", q: "reflective bands kids" }),
   it("Outlet covers and door locks", "safety", ["hosting"], "group", 1, u("pack"), "extra", { needs: "babies", q: "baby proofing kit" }),
 ];
+
+/** Every entry: the hand-written base above plus the line-format data files. */
+export const catalog: CatalogItem[] = [...base, ...extra];
 
 const gearByAsin = new Map<string, GearItem>(
   [...areas.flatMap((a) => a.gear), ...levels.flatMap((l) => l.gear)].map((g) => [g.asin, g]),

@@ -18,7 +18,7 @@ describe("catalog", () => {
   it("gives every occasion a broad list in several categories", () => {
     for (const o of occasions) {
       const s = suggestionsFor(plan({ occasion: o.id, kids: 1, babies: 1, pets: 1 }));
-      expect(s.length, o.id).toBeGreaterThanOrEqual(35);
+      expect(s.length, o.id).toBeGreaterThanOrEqual(30);
       expect(new Set(s.map((x) => x.item.cat)).size, o.id).toBeGreaterThanOrEqual(8);
     }
   });

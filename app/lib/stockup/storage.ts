@@ -19,7 +19,7 @@ export function newId(): string {
 export function newPlan(occasion: OccasionId, now = Date.now()): Plan {
   const o = occasionById(occasion);
   return {
-    id: newId(), name: o.name, occasion, people: 4, kids: 0, babies: 0, pets: 0,
+    id: newId(), name: o.name, occasion, people: 4, kids: 0, babies: 0, pets: 0, needs: [], climate: [],
     days: o.days, nights: o.nights, meals: o.meals, start: "",
     created: now, updated: now, list: {},
   };
@@ -47,6 +47,8 @@ export function parsePlan(v: unknown): Plan | null {
     name: typeof p.name === "string" && p.name.trim() ? p.name.slice(0, 80) : o.name,
     occasion: p.occasion,
     people: n(p.people, 4), kids: n(p.kids, 0), babies: n(p.babies, 0), pets: n(p.pets, 0),
+    needs: Array.isArray(p.needs) ? p.needs : [],
+    climate: Array.isArray(p.climate) ? p.climate : [],
     days: n(p.days, o.days), nights: n(p.nights, o.nights), meals: n(p.meals, o.meals),
     start: typeof p.start === "string" && /^\d{4}-\d{2}-\d{2}$/.test(p.start) ? p.start : "",
     created: n(p.created, Date.now()), updated: n(p.updated, Date.now()),

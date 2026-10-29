@@ -20,6 +20,10 @@ export function shopLink(item: CatalogItem): ShopLink {
 export function listText(plan: Plan, rows: { s: Suggestion; qty: number; have: number; got: boolean }[]): string {
   const lines = [`${plan.name} — PleaseBeReady stock-up list`, ""];
   for (const r of rows) {
+    if (r.s.item.kind === "task") {
+      lines.push(`${r.got ? "[x]" : "[ ]"} To do: ${r.s.item.name}`);
+      continue;
+    }
     const need = Math.max(0, r.qty - r.have);
     const mark = r.got || need === 0 ? "[x]" : "[ ]";
     const packs = r.s.item.pack && need > 0 ? ` (${Math.ceil(need / r.s.item.pack)} × ${r.s.item.pack}-pack)` : "";

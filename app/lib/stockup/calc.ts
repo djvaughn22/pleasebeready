@@ -2,10 +2,14 @@
 // people and length; `how` spells out the arithmetic so nothing looks exact.
 
 import { catalog, categories, occasionById } from "./catalog";
-import type { CatalogItem, Line, Per, Plan, Suggestion } from "./types";
+import type { CatalogItem, Climate, Line, Need, Per, Plan, Suggestion } from "./types";
 
 export const MAX_PEOPLE = 500;
 export const MAX_DAYS = 365;
+
+/** Needs a plan can switch on. Kids, babies and pets come from their counts. */
+export const NEED_IDS: Need[] = ["older", "mobility", "medical"];
+export const CLIMATE_IDS: Climate[] = ["cold", "hot", "wet"];
 
 const plural = (n: number, one: string, many: string) => `${n.toLocaleString("en-US")} ${n === 1 ? one : many}`;
 
@@ -22,6 +26,8 @@ export function clampPlan(plan: Plan): Plan {
   return {
     ...plan, people, kids, babies,
     pets: int(plan.pets, 0, 50),
+    needs: [...new Set(plan.needs ?? [])].filter((n) => NEED_IDS.includes(n)),
+    climate: [...new Set(plan.climate ?? [])].filter((c) => CLIMATE_IDS.includes(c)),
     days: int(plan.days, 1, MAX_DAYS),
     nights: int(plan.nights, 0, MAX_DAYS),
     meals: int(plan.meals, 0, 6),
@@ -47,6 +53,7 @@ function base(per: Per, plan: Plan): { count: number; words: string } {
       const nights = Math.max(1, plan.nights);
       return { count: plan.people * nights, words: `${p} × ${plural(nights, "night", "nights")}` };
     }
+    case "varies": case "task": return { count: 1, words: "" };
     case "personMeal": {
       const meals = Math.max(1, plan.days * plan.meals);
       return { count: plan.people * meals, words: `${p} × ${plural(meals, "meal", "meals")}` };
@@ -60,6 +67,8 @@ export function unitWord(item: CatalogItem, n: number): string {
 
 /** Suggested amount for one item; always at least 1 when the item applies. */
 export function suggest(item: CatalogItem, plan: Plan): Suggestion {
+  if (item.rule.per === "task") return { item, qty: 0, how: "A task, not something to buy", packs: null };
+  if (item.rule.per === "varies") return { item, qty: 1, how: "Amount varies; start with 1 and adjust", packs: null };
   const { count, words } = base(item.rule.per, plan);
   const raw = count * item.rule.n;
   const qty = Math.max(1, Math.ceil(raw - 1e-9));
@@ -75,21 +84,27 @@ export function fitsPeople(item: CatalogItem, plan: Plan): boolean {
   if (item.needs === "kids") return plan.kids > 0;
   if (item.needs === "babies") return plan.babies > 0;
   if (item.needs === "pets") return plan.pets > 0;
+  if (item.needs) return plan.needs.includes(item.needs);
   return true;
+}
+
+/** Weather-only items show when the plan's weather (or its situation) includes it. */
+export function fitsClimate(item: CatalogItem, plan: Plan): boolean {
+  if (!item.climate) return true;
+  return plan.climate.includes(item.climate) || !!occasionById(plan.occasion).implies?.includes(item.climate);
 }
 
 /** Suggestions for the plan's occasion, in category order. */
 export function suggestionsFor(plan: Plan): Suggestion[] {
   return catalog
-    .filter((c) => c.occ.includes(plan.occasion) && fitsPeople(c, plan))
+    .filter((c) => c.occ.includes(plan.occasion) && fitsPeople(c, plan) && fitsClimate(c, plan))
     .map((c) => suggest(c, plan))
     .sort((a, b) => catIndex(a.item) - catIndex(b.item));
 }
 
-/** Every catalog item that fits the plan's people, for "search every item". */
+/** Every catalog item, for browsing and "search every item". Nothing is hidden here. */
 export function everything(plan: Plan): Suggestion[] {
   return catalog
-    .filter((c) => fitsPeople(c, plan))
     .map((c) => suggest(c, plan))
     .sort((a, b) => catIndex(a.item) - catIndex(b.item));
 }
@@ -101,15 +116,21 @@ export function lineQty(line: Line, s: Suggestion): number {
   return line.qty ?? s.qty;
 }
 
-/** What is left to buy after what the visitor already has. */
+/** What is left to buy after what the visitor already has. Tasks are never bought. */
 export function toBuy(line: Line, s: Suggestion): number {
+  if (s.item.kind === "task") return 0;
   return Math.max(0, lineQty(line, s) - line.have);
+}
+
+/** Done: a task ticked off, or a product bought or already covered. */
+export function isDone(line: Line, s: Suggestion): boolean {
+  return line.got || (s.item.kind === "product" && toBuy(line, s) === 0);
 }
 
 export function matches(item: CatalogItem, query: string): boolean {
   const q = query.trim().toLowerCase();
   if (!q) return true;
-  const hay = `${item.name} ${item.q ?? ""} ${categories.find((k) => k.id === item.cat)?.title ?? ""}`.toLowerCase();
+  const hay = `${item.name} ${item.q ?? ""} ${item.note ?? ""} ${categories.find((k) => k.id === item.cat)?.title ?? ""}`.toLowerCase();
   return q.split(/\s+/).every((w) => hay.includes(w));
 }
 

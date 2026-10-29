@@ -4,7 +4,7 @@
 // what you bought. Suggested amounts stay visible next to your own.
 
 import { useMemo } from "react";
-import { lineQty, toBuy, unitWord } from "../../lib/stockup/calc";
+import { isDone, lineQty, toBuy, unitWord } from "../../lib/stockup/calc";
 import { categories } from "../../lib/stockup/catalog";
 import type { Line, Plan } from "../../lib/stockup/types";
 import { listRows, type Row } from "./resolve";
@@ -34,15 +34,16 @@ export default function ListView({ plan, api, onIdeas, onShop }: {
     );
   }
 
-  const left = rows.filter((r) => !r.line.got && toBuy(r.line, r.s) > 0).length;
-  const done = rows.length - left;
+  const left = rows.filter((r) => r.s.item.kind === "product" && !isDone(r.line, r.s)).length;
+  const todo = rows.filter((r) => r.s.item.kind === "task" && !r.line.got).length;
+  const done = rows.filter((r) => isDone(r.line, r.s)).length;
   const groups = categories.map((c) => ({ c, rows: rows.filter((r) => r.s.item.cat === c.id) })).filter((g) => g.rows.length);
 
   return (
     <div className="flex flex-col gap-6">
       <div className={`${card} flex flex-wrap items-center justify-between gap-3 p-4`} aria-live="polite">
         <p className="text-sm font-black">
-          {rows.length} {rows.length === 1 ? "item" : "items"} · {left} left to buy · {done} covered
+          {rows.length} {rows.length === 1 ? "item" : "items"} · {left} left to buy{todo ? ` · ${todo} to do` : ""} · {done} done
         </p>
         <div className="flex flex-wrap gap-2">
           <button type="button" className={btnSmall} onClick={onIdeas}>+ Add more</button>
@@ -70,7 +71,22 @@ function ListRow({ r, setLine, remove }: {
   const qty = lineQty(line, s);
   const need = toBuy(line, s);
   const own = line.qty !== null && line.qty !== s.qty;
-  const covered = line.got || need === 0;
+  const covered = isDone(line, s);
+
+  if (s.item.kind === "task") {
+    return (
+      <li className={`${inset} flex items-start justify-between gap-3 p-3 ${covered ? "opacity-75" : ""}`}>
+        <label className="flex min-h-10 min-w-0 cursor-pointer items-start gap-3">
+          <input type="checkbox" className="mt-0.5 h-5 w-5 shrink-0" style={{ accentColor: "#34D399" }} checked={line.got} onChange={(e) => setLine(id, { got: e.target.checked })} />
+          <span className="min-w-0">
+            <span className={`block text-sm font-black ${covered ? "line-through decoration-2" : ""}`}>{s.item.name}<span className="sr-only">{line.got ? ", done" : ", to do"}</span></span>
+            {s.item.note && <span className={`block ${muted}`}>{s.item.note}</span>}
+          </span>
+        </label>
+        <button type="button" className={btnSmall} onClick={() => remove(id)} aria-label={`Remove ${s.item.name}`}>Remove</button>
+      </li>
+    );
+  }
 
   return (
     <li className={`${inset} flex flex-col gap-3 p-3 ${covered ? "opacity-75" : ""}`}>

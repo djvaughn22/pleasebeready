@@ -4,11 +4,11 @@
 // you go. There is no multi-item cart; this page says so plainly.
 
 import { useMemo, useState } from "react";
-import { toBuy, unitWord } from "../../lib/stockup/calc";
+import { isDone, toBuy, unitWord } from "../../lib/stockup/calc";
 import { categories } from "../../lib/stockup/catalog";
 import { encodePlan } from "../../lib/stockup/storage";
 import { listText } from "../../lib/stockup/shop";
-import type { Plan } from "../../lib/stockup/types";
+import type { Plan, Suggestion } from "../../lib/stockup/types";
 import { listRows } from "./resolve";
 import ShopButton from "./ShopButton";
 import type { PlansApi } from "./usePlans";
@@ -18,8 +18,9 @@ export default function ShopView({ plan, api, onList }: { plan: Plan; api: Plans
   const rows = useMemo(() => listRows(plan), [plan]);
   const [msg, setMsg] = useState("");
   const [showDone, setShowDone] = useState(false);
-  const left = rows.filter((r) => !r.line.got && toBuy(r.line, r.s) > 0);
-  const done = rows.filter((r) => r.line.got || toBuy(r.line, r.s) === 0);
+  const products = rows.filter((r) => r.s.item.kind === "product");
+  const left = products.filter((r) => !isDone(r.line, r.s));
+  const done = products.filter((r) => isDone(r.line, r.s));
   const textRows = rows.map((r) => ({ s: r.s, qty: r.line.qty ?? r.s.qty, have: r.line.have, got: r.line.got }));
 
   const setGot = (id: string, got: boolean) =>
@@ -50,11 +51,11 @@ export default function ShopView({ plan, api, onList }: { plan: Plan; api: Plans
     setMsg("Downloaded.");
   };
 
-  if (rows.length === 0) {
+  if (products.length === 0) {
     return (
       <div className={`${card} p-6 text-center`}>
         <p className="text-base font-black">Nothing to shop for yet</p>
-        <p className={`mt-1 ${muted}`}>Add items to your list first.</p>
+        <p className={`mt-1 ${muted}`}>Add things to buy to your list first. Tasks stay on My list.</p>
         <button type="button" className={`${btnPrimary} mt-4`} onClick={onList}>Go to my list</button>
       </div>
     );
@@ -132,13 +133,14 @@ export default function ShopView({ plan, api, onList }: { plan: Plan; api: Plans
 }
 
 /** Black-on-white list for printing; hidden on screen. */
-function PrintList({ plan, rows }: { plan: Plan; rows: { s: { item: { id: string; name: string; unit: { one: string; many: string } } }; qty: number; have: number; got: boolean }[] }) {
+function PrintList({ plan, rows }: { plan: Plan; rows: { s: Suggestion; qty: number; have: number; got: boolean }[] }) {
   return (
     <div className="hidden print:block">
       <h2 className="text-xl font-black">{plan.name}</h2>
       <ul className="mt-2">
         {rows.map((r) => {
           const need = Math.max(0, r.qty - r.have);
+          if (r.s.item.kind === "task") return <li key={r.s.item.id} className="py-0.5 text-sm">{r.got ? "☑" : "☐"} To do: {r.s.item.name}</li>;
           return <li key={r.s.item.id} className="py-0.5 text-sm">☐ {r.s.item.name}: {need} {need === 1 ? r.s.item.unit.one : r.s.item.unit.many}{r.got ? " (bought)" : ""}</li>;
         })}
       </ul>

@@ -6,6 +6,7 @@ import type { CatalogItem } from "../../lib/stockup/types";
 import { btnSmall } from "./ui";
 
 export default function ShopButton({ item }: { item: CatalogItem }) {
+  if (item.kind === "task") return null;
   const link = shopLink(item);
   return (
     <a href={link.url} target="_blank" rel="noopener noreferrer sponsored"
@@ -13,7 +14,7 @@ export default function ShopButton({ item }: { item: CatalogItem }) {
       title={link.kind === "product" ? link.label : `${link.label}: results, not one chosen product`}
       aria-label={`Shop ${item.name} on Amazon (${link.kind === "product" ? "product page" : "search results"}, opens in a new tab)`}
       className={`${btnSmall} pbr-accent`}>
-      Shop<span aria-hidden>↗</span>
+      {link.kind === "product" ? "Shop" : "Search"}<span aria-hidden>↗</span>
     </a>
   );
 }

@@ -6,6 +6,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { clampPlan } from "../../lib/stockup/calc";
+import { occasions } from "../../lib/stockup/catalog";
 import { decodePlan, emptyStore, loadStore, newId, newPlan, saveStore, type Store } from "../../lib/stockup/storage";
 import type { Line, OccasionId, Plan } from "../../lib/stockup/types";
 
@@ -27,6 +28,13 @@ export function usePlans() {
           setImported(p.name);
         }
         history.replaceState(null, "", window.location.pathname + window.location.search);
+      }
+      // ?start=<situation> opens a new plan of that kind (links from posts land here).
+      const start = new URLSearchParams(window.location.search).get("start");
+      if (start && occasions.some((o) => o.id === start)) {
+        const p = newPlan(start as OccasionId);
+        s = { plans: [p, ...s.plans], activeId: p.id };
+        history.replaceState(null, "", window.location.pathname + window.location.hash);
       }
       loaded.current = true;
       setStore(s);

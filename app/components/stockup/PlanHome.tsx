@@ -9,7 +9,7 @@ import type { OccasionId } from "../../lib/stockup/types";
 import { countLeft } from "./resolve";
 import type { Tab } from "./StockUp";
 import type { PlansApi } from "./usePlans";
-import { btnSmall, card, inset, muted } from "./ui";
+import { btnSmall, card, inset, label, muted } from "./ui";
 
 export default function PlanHome({ api, onOpen, onCreate }: {
   api: PlansApi; onOpen: (id: string, tab: Tab) => void; onCreate: (o: OccasionId) => void;
@@ -60,20 +60,25 @@ export default function PlanHome({ api, onOpen, onCreate }: {
       <section aria-labelledby="start-title">
         <h2 id="start-title" className="mb-1 text-xl font-black">{plans.length ? "Start another plan" : "Start a plan"}</h2>
         <p className={`mb-4 ${muted}`}>Pick what you are getting ready for. You can rename it and change everything after.</p>
-        <ul className="grid grid-cols-1 gap-2 min-[420px]:grid-cols-2 sm:grid-cols-3">
-          {occasions.map((o) => (
-            <li key={o.id}>
-              <button type="button" onClick={() => onCreate(o.id)}
-                className={`${inset} flex h-full w-full items-start gap-3 p-3 text-left transition hover:border-[#34D399]`}>
-                <span aria-hidden className="text-2xl">{o.emoji}</span>
-                <span>
-                  <span className="block text-sm font-black text-[#e8edf5]">{o.label}</span>
-                  <span className={`block ${muted}`}>{o.hint}</span>
-                </span>
-              </button>
-            </li>
-          ))}
-        </ul>
+        {(["Everyday", "Events and trips", "Weather and emergencies", "Life changes"] as const).map((g) => (
+          <div key={g} className="mb-5">
+            <h3 className={`mb-2 ${label}`}>{g}</h3>
+            <ul className="grid grid-cols-1 gap-2 min-[420px]:grid-cols-2 sm:grid-cols-3">
+              {occasions.filter((o) => o.group === g).map((o) => (
+                <li key={o.id}>
+                  <button type="button" onClick={() => onCreate(o.id)}
+                    className={`${inset} flex h-full w-full items-start gap-3 p-3 text-left transition hover:border-[#34D399]`}>
+                    <span aria-hidden className="text-2xl">{o.emoji}</span>
+                    <span>
+                      <span className="block text-sm font-black text-[#e8edf5]">{o.label}</span>
+                      <span className={`block ${muted}`}>{o.hint}</span>
+                    </span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
       </section>
     </div>
   );

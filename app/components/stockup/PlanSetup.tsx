@@ -2,9 +2,9 @@
 
 // Name, occasion, who is coming and for how long. Every number is editable.
 
-import { MAX_DAYS, MAX_PEOPLE, adults } from "../../lib/stockup/calc";
+import { CLIMATE_IDS, MAX_DAYS, MAX_PEOPLE, NEED_IDS, adults } from "../../lib/stockup/calc";
 import { occasionById, occasions } from "../../lib/stockup/catalog";
-import type { OccasionId, Plan } from "../../lib/stockup/types";
+import type { Climate, Need, OccasionId, Plan } from "../../lib/stockup/types";
 import type { PlansApi } from "./usePlans";
 import { Stepper, btnPrimary, card, input, label, muted } from "./ui";
 
@@ -49,6 +49,16 @@ export default function PlanSetup({ plan, api, onNext }: { plan: Plan; api: Plan
           <Stepper id="pets" text="Pets" value={plan.pets} min={0} max={50} onChange={(n) => set({ pets: n })} />
         </div>
         <p className={`mt-4 ${muted}`}>That is {adults(plan)} {adults(plan) === 1 ? "adult or teen" : "adults and teens"}.</p>
+        <fieldset className="mt-5">
+          <legend className={label}>Anyone who needs extra planning?</legend>
+          <div className="mt-2 grid gap-2 sm:grid-cols-3">
+            {NEED_IDS.map((n) => (
+              <Check key={n} checked={plan.needs.includes(n)} text={needText[n]}
+                onChange={(on) => set({ needs: on ? [...plan.needs, n] : plan.needs.filter((x) => x !== n) })} />
+            ))}
+          </div>
+          <p className={`mt-2 ${muted}`}>Adds items like grab bars, backup power for devices, or a medicine plan. Follow a doctor’s advice on medical needs.</p>
+        </fieldset>
       </div>
 
       <div className={`${card} p-5`}>
@@ -59,9 +69,34 @@ export default function PlanSetup({ plan, api, onNext }: { plan: Plan; api: Plan
           <Stepper id="nights" text="Nights away or hosting" value={plan.nights} min={0} max={MAX_DAYS} onChange={(n) => set({ nights: n })} />
           <Stepper id="meals" text="Meals a day you provide" value={plan.meals} min={0} max={6} onChange={(n) => set({ meals: n })} hint="Used for plates, cups and napkins." />
         </div>
+        <fieldset className="mt-5">
+          <legend className={label}>Expected weather</legend>
+          <div className="mt-2 grid gap-2 sm:grid-cols-3">
+            {CLIMATE_IDS.map((c) => (
+              <Check key={c} checked={plan.climate.includes(c) || !!occasionById(plan.occasion).implies?.includes(c)}
+                disabled={!!occasionById(plan.occasion).implies?.includes(c)} text={climateText[c]}
+                onChange={(on) => set({ climate: on ? [...plan.climate, c] : plan.climate.filter((x) => x !== c) })} />
+            ))}
+          </div>
+        </fieldset>
       </div>
 
       <button type="button" className={`${btnPrimary} self-start`} onClick={onNext}>See suggestions →</button>
     </div>
+  );
+}
+
+const needText: Record<Need, string> = {
+  kids: "Kids", babies: "Babies", pets: "Pets",
+  older: "Older adults", mobility: "Walker, wheelchair or limited mobility", medical: "Medical devices, allergies or diabetes",
+};
+const climateText: Record<Climate, string> = { cold: "❄️ Cold or snow", hot: "☀️ Hot", wet: "🌧️ Rain or flooding" };
+
+function Check({ checked, text, onChange, disabled }: { checked: boolean; text: string; onChange: (v: boolean) => void; disabled?: boolean }) {
+  return (
+    <label className={`flex min-h-11 cursor-pointer items-center gap-3 rounded-xl border px-3 py-2 text-sm font-bold ${checked ? "border-[#34D399]" : "border-[#26324c]"} ${disabled ? "opacity-75" : ""}`}>
+      <input type="checkbox" className="h-5 w-5 shrink-0" style={{ accentColor: "#34D399" }} checked={checked} disabled={disabled} onChange={(e) => onChange(e.target.checked)} />
+      {text}
+    </label>
   );
 }
