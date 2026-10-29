@@ -10,7 +10,7 @@ export default function ShopButton({ item }: { item: CatalogItem }) {
   const link = shopLink(item);
   return (
     <a href={link.url} target="_blank" rel="noopener noreferrer sponsored"
-      data-measure="gear" data-measure-label={item.asin ?? item.id}
+      data-measure="shop" data-measure-label={`${item.cat}-${link.kind === "product" ? "p" : "s"}-${item.id}`}
       title={link.kind === "product" ? link.label : `${link.label}: results, not one chosen product`}
       aria-label={`Shop ${item.name} on Amazon (${link.kind === "product" ? "product page" : "search results"}, opens in a new tab)`}
       className={`${btnSmall} pbr-accent`}>

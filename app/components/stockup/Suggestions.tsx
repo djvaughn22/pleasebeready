@@ -8,6 +8,7 @@ import { memo, useMemo, useState } from "react";
 import { everything, matches, planSummary, unitWord } from "../../lib/stockup/calc";
 import { categories, occasionById, occasions } from "../../lib/stockup/catalog";
 import type { CategoryId, Need, OccasionId, Plan, Priority, Suggestion } from "../../lib/stockup/types";
+import { measure } from "../../lib/measure";
 import ShopButton from "./ShopButton";
 import type { PlansApi } from "./usePlans";
 import { GoodToKnow, PriorityTag, btn, btnPrimary, btnSmall, input, inset, label, muted } from "./ui";
@@ -53,9 +54,10 @@ export default function Suggestions({ plan, api, suggestions, onList, onSetup }:
   }, [shown]);
 
   const onListIds = plan.list;
-  const add = (ids: string[]) => {
+  const add = (ids: string[], scope: "one" | "ticked" | "category" | "all") => {
     const fresh = ids.filter((id) => !onListIds[id]);
     if (fresh.length) {
+      measure("plan_add", `${scope}-${plan.occasion}`);
       api.update(plan.id, (p) => {
         const list = { ...p.list };
         for (const id of fresh) if (!list[id]) list[id] = { qty: null, have: 0, got: false };
@@ -152,14 +154,14 @@ export default function Suggestions({ plan, api, suggestions, onList, onSetup }:
             <section key={c.id} aria-labelledby={`cat-${c.id}`}>
               <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
                 <h3 id={`cat-${c.id}`} className="text-lg font-black"><span aria-hidden>{c.emoji} </span>{c.title} <span className="text-sm text-[#94a3b8]">({items.length})</span></h3>
-                <button type="button" className={btnSmall} disabled={missing.length === 0} onClick={() => add(missing)}>
+                <button type="button" className={btnSmall} disabled={missing.length === 0} onClick={() => add(missing, "category")}>
                   {missing.length === 0 ? "✓ All on list" : `Add ${missing.length === items.length ? "all" : "the other"} ${missing.length}`}
                 </button>
               </div>
               <ul className="flex flex-col gap-2">
                 {visible.map((s) => (
                   <SuggestionRow key={s.item.id} s={s} on={!!onListIds[s.item.id]} picked={picked.has(s.item.id)}
-                    onPick={togglePick} onAdd={add} onRemove={removeOne} />
+                    onPick={togglePick} onAdd={(ids) => add(ids, "one")} onRemove={removeOne} />
                 ))}
               </ul>
               {items.length > FIRST + 2 && !query.trim() ? (
@@ -180,10 +182,10 @@ export default function Suggestions({ plan, api, suggestions, onList, onSetup }:
             {note}{note && Object.keys(onListIds).length > 0 && (<> <button type="button" onClick={onList} className="underline pbr-accent">See list</button></>)}
           </p>
           <div className="flex gap-2">
-            <button type="button" className={`${btn} flex-1`} disabled={picked.size === 0} onClick={() => add([...picked])}>
+            <button type="button" className={`${btn} flex-1`} disabled={picked.size === 0} onClick={() => add([...picked], "ticked")}>
               Add ticked ({picked.size})
             </button>
-            <button type="button" className={`${btnPrimary} flex-1`} disabled={shownNotOn.length === 0} onClick={() => add(shownNotOn)}>
+            <button type="button" className={`${btnPrimary} flex-1`} disabled={shownNotOn.length === 0} onClick={() => add(shownNotOn, "all")}>
               {shownNotOn.length === 0 ? "All matches on list" : `Add all matches (${shownNotOn.length})`}
             </button>
           </div>

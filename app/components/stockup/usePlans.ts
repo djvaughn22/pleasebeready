@@ -5,6 +5,7 @@
 // shared in the link (#plan=…), and saves each change back.
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { measure } from "../../lib/measure";
 import { clampPlan } from "../../lib/stockup/calc";
 import { occasions } from "../../lib/stockup/catalog";
 import { decodePlan, emptyStore, loadStore, newId, newPlan, saveStore, type Store } from "../../lib/stockup/storage";
@@ -26,6 +27,7 @@ export function usePlans() {
         if (p) {
           s = { plans: [p, ...s.plans], activeId: p.id };
           setImported(p.name);
+          measure("plan_start", `shared-${p.occasion}`);
         }
         history.replaceState(null, "", window.location.pathname + window.location.search);
       }
@@ -34,6 +36,7 @@ export function usePlans() {
       if (start && occasions.some((o) => o.id === start)) {
         const p = newPlan(start as OccasionId);
         s = { plans: [p, ...s.plans], activeId: p.id };
+        measure("plan_start", `link-${p.occasion}`);
         history.replaceState(null, "", window.location.pathname + window.location.hash);
       }
       loaded.current = true;
@@ -57,6 +60,7 @@ export function usePlans() {
 
   const create = useCallback((occasion: OccasionId) => {
     const p = newPlan(occasion);
+    measure("plan_start", `picker-${occasion}`);
     setStore((s) => ({ plans: [p, ...s.plans], activeId: p.id }));
     window.scrollTo({ top: 0 });
   }, []);

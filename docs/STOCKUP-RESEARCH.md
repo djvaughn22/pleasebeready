@@ -40,16 +40,31 @@ Accessed **Oct 28, 2026**. A record of what we looked at, what each signal can a
 - **Every other product** opens an Amazon search for its `q` words, via `amazonSearchUrl()` in `app/lib/gear.ts`. Both carry the `pleasebeready-20` tag. The button reads **Search**, not Shop, and says it opens results rather than one chosen product.
 - **No prices, ratings, stock or deals** are shown or stored. There is no multi-item cart.
 
-## Amazon Associates and disclosure rules checked
+## Evidence grades
 
-- [Amazon Associates Participation Requirements](https://affiliate-program.amazon.com/help/operating/participation) (page updated Apr 14, 2026):
-  - **§6(f):** no bidding on keywords, including "amazon". Paid or unpaid search results must send users to our site, not directly to Amazon.
-  - **Commission Income Statement §2(c) and §2(e):** no commission on purchases referred through an ad we bought, or through links that redirect to Amazon via an intermediate site.
-  - **§4:** no offline promotion, and no Special Links in printed material or ebooks. Links in email, SMS or social DMs are allowed only when the recipient opted in.
-  - **§2(b):** prices and availability may only be shown from the API or Amazon's own link data. We show none.
-  - **§3(e):** disclose accurately on the site.
-- [FTC Endorsement Guides: What People Are Asking](https://www.ftc.gov/business-guidance/resources/ftcs-endorsement-guides-what-people-are-asking): put the disclosure close to the recommendation and in plain words ("I get commissions for purchases made through links in this post"). "#ad" at the start of a post beats one buried among other hashtags.
-- **Needs manual confirmation on the account** (we cannot see it):
-  1. Every social profile that will carry links is listed as a Site in the Associates account.
-  2. The account is in good standing and search-style links are attributed in reports.
-  3. Current Meta, Pinterest and TikTok rules on affiliate links. We did not read their official pages; the search results found were third-party blogs.
+- **Measured, third-party:** the amazonseo.ai search-term ranks (no data date), The Portugal News blackout figures, Google's packing-cube note. These are directional and none is PleaseBeReady data.
+- **Estimates:** the accio.com camping seasonality summary.
+- **Judgment:** life-change situations (new baby, moving, caregiving, college), every priority level, and the order of tests in `PROMOTION-PLAN.md`.
+- **Our own data:** none yet. GA events `plan_start`, `plan_add` and `shop_click` were added Oct 28, 2026. Purchases appear only in Amazon Associates reports, never on our site.
+
+Nothing in the catalog or plan is described as a best seller or a proven earner.
+
+## Platform, Amazon and FTC rules (all accessed Oct 28, 2026)
+
+| Rule | Source | What it says (short) | Status |
+|---|---|---|---|
+| No paid traffic to Amazon; no bidding on "amazon" | [Amazon Associates Participation Requirements](https://affiliate-program.amazon.com/help/operating/participation) (updated Apr 14, 2026), §6(f); Commission Income Statement §2(c), §2(e) | Search results must send users to your site. No commission on purchases referred through ads you bought, or through redirect sites. | Read |
+| No cloaking; shorteners only if clearly Amazon | [Amazon Associates Program Policies](https://affiliate-program.amazon.com/help/operating/policies) §2(v)–(w) | Don't hide that a link goes to Amazon. | Read |
+| Offline and DMs | Participation Requirements §4 | No links in print or ebooks. Email, SMS and social DMs only to people who opted in. | Read |
+| Prices | Program Policies §2(b); IP License §2(i) | Prices only from Amazon's API or links, with timestamps. We show none. | Read |
+| Disclosure on site | Participation Requirements §3(b), §3(e) | Disclose accurately and follow FTC guides. | Read; the site shows "As an Amazon Associate, PleaseBeReady earns from qualifying purchases" |
+| FTC: material connections | [FTC Endorsement Guides: What People Are Asking](https://www.ftc.gov/business-guidance/resources/ftcs-endorsement-guides-what-people-are-asking) | Disclosure close to the link, in plain words. "#ad" at the start beats one buried among hashtags. "Affiliate link" alone may not be understood. | Read. The eCFR text of 16 CFR 255 redirected to a bot check and was not read. |
+| TikTok: commissions are branded content | [TikTok Branded Content Policy](https://www.tiktok.com/legal/page/global/bc-policy/en) (published Aug 4, 2026; effective Aug 31, 2026) | Includes "a product or service for which you will receive a commission"; "you must enable the commercial content disclosure toggle." | Read |
+| TikTok: how to disclose | [TikTok: Commercial Content Disclosure setting](https://ads.tiktok.com/resources/help/article/about-the-content-disclosure-setting-for-creators) | Toggle under "Content disclosure and ads"; undisclosed content may be limited. | Seen via search summary, not fetched in full |
+| Pinterest: affiliate Pins can't be promoted | [Pinterest Help: Idea ads with paid partnerships](https://help.pinterest.com/en/business/article/idea-ads-with-paid-partnerships) | "Pins that contain mentions and/or affiliate links are currently not eligible for promotion." | Read. The page shows no date; confirm in Ads Manager. |
+| Pinterest: affiliate transparency | [Pinterest Commercial and Branded Content Guidelines](https://policy.pinterest.com/en/commercial-and-branded-content-guidelines) (updated Apr 2025) | Be transparent about links; use affiliate links in moderation; affiliates also follow the paid-partnership rules. | Read |
+| Pinterest: spam and redirects | [Pinterest Community Guidelines](https://policy.pinterest.com/en/community-guidelines) (updated May 2026; changes effective Nov 12, 2026) | No misleading monetization; no deceptive redirects. | Read |
+| Pinterest: ad landing pages | [Pinterest Advertising Guidelines](https://policy.pinterest.com/en/advertising-guidelines) (no date; update effective Nov 12, 2026) | No forced sign-ups, pop-ups or made-for-ads pages. Says nothing on affiliate links. | Read. Re-check after Nov 12. |
+| Meta: branded content and Paid partnership label | [Meta Branded Content Policies](https://www.facebook.com/business/help/221149188908254); [enforcement](https://www.facebook.com/business/help/1396602470441939); [labels](https://www.facebook.com/business/help/213764212711862) | Search summaries: the label is required for content made for a business partner in exchange for value; legal disclosure remains the creator's job. | **Not read.** The pages returned no policy text to our fetch. Whether Associates-only posts need the label is **unconfirmed**; owner to check. |
+
+Re-read all of these before any paid campaign, and after Pinterest's Nov 12, 2026 guideline update.

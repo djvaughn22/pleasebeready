@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { AMAZON_TAG } from "../gear";
 import { catalog, categories, gearFor, itemById, occasions } from "./catalog";
@@ -104,5 +106,19 @@ describe("storage", () => {
     expect(parseStore("not json").plans).toEqual([]);
     expect(parseStore(JSON.stringify({ plans: [{ occasion: "nope" }, newPlan("party", 1)], activeId: "x" })).plans).toHaveLength(1);
     expect(decodePlan("%%%")).toBeNull();
+  });
+});
+
+describe("analytics wiring", () => {
+  const read = (p: string) => readFileSync(join(__dirname, "../..", p), "utf8");
+  it("planner shop links report shop_click, never the homepage gear event", () => {
+    expect(read("components/stockup/ShopButton.tsx")).toContain('data-measure="shop"');
+    expect(read("components/ClickMeasure.tsx")).toContain('measure("shop_click", label)');
+  });
+  it("counts plan starts and list additions with ids only", () => {
+    const plans = read("components/stockup/usePlans.ts");
+    expect(plans).toContain('measure("plan_start", `picker-${occasion}`)');
+    expect(plans).toContain('measure("plan_start", `link-${p.occasion}`)');
+    expect(read("components/stockup/Suggestions.tsx")).toContain('measure("plan_add", `${scope}-${plan.occasion}`)');
   });
 });

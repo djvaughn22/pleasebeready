@@ -1,6 +1,6 @@
 "use client";
 
-// One delegated listener for links marked data-measure="guide|gear" and
+// One delegated listener for links marked data-measure="guide|gear|shop" and
 // data-measure-label="<area id or ASIN>", so server-rendered links can be
 // counted without becoming client components.
 
@@ -16,6 +16,7 @@ export default function ClickMeasure() {
       const label = a.getAttribute("data-measure-label") ?? "";
       if (kind === "guide") measure("guide_click", label);
       else if (kind === "gear") measure("gear_click", label);
+      else if (kind === "shop") measure("shop_click", label);
     };
     document.addEventListener("click", onClick, true);
     return () => document.removeEventListener("click", onClick, true);
