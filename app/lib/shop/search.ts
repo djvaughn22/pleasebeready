@@ -91,14 +91,18 @@ export function queryWords(query: string): string[][] {
 }
 
 const catTitle = new Map(categories.map((c) => [c.id, c.title.toLowerCase()]));
-const hay = new Map<string, { name: string; brand: string; rest: string }>();
+const hay = new Map<string, { name: string; heads: string[]; brand: string; rest: string }>();
 function haystack(item: CatalogItem) {
   let h = hay.get(item.id);
   if (!h) {
     // Our exact products' names, so "midland" or "coleman" finds them. Matched as whole words and worth
     // less than the item's own name, so "PowerLock" or "wall power" doesn't make a tape measure a power item.
     const brand = normalize(picksFor(item.id).map((p) => p.name).join(" "));
-    h = { name: normalize(item.name), brand, rest: normalize(`${item.q ?? ""} ${item.note ?? ""} ${catTitle.get(item.cat) ?? ""}`) };
+    const name = normalize(item.name);
+    // What the item is: the last word of each "and"/"or" part before any "for" or "with"
+    // ("Pet food and water bowls" → food, bowls; "First aid kit for the car" → kit).
+    const heads = name.split(/ (?:for|with) /)[0].split(/ (?:and|or) /).map((p) => stem(p.slice(p.lastIndexOf(" ") + 1)));
+    h = { name, heads, brand, rest: normalize(`${item.q ?? ""} ${item.note ?? ""} ${catTitle.get(item.cat) ?? ""}`) };
     hay.set(item.id, h);
   }
   return h;
@@ -149,6 +153,9 @@ export function searchItems(query: string, limit = 40): CatalogItem[] {
     if (!matched && !kitBoost) continue;
     const all = matched === groups.length || kitBoost > 0;
     score += (all ? 4 : 0) + kitBoost;
+    // A typed word that is the thing itself ("water" → "Bottled water") beats one that only describes it
+    // ("Pet food and water bowls"), even when the second has an exact product.
+    if (groups.some((g) => g.slice(0, 2).some((w) => h.heads.includes(stem(w))))) score += 1;
     score += item.pri === "essential" ? 1.5 : item.pri === "useful" ? 0.5 : 0;
     if (hasPick(item.id)) score += 0.75;
     scored.push({ item, score, all });

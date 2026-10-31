@@ -76,9 +76,9 @@ describe("shopping links", () => {
     expect(l.url).toBe(`https://www.amazon.com/dp/B000069EYA?tag=${AMAZON_TAG}`);
   });
   it("otherwise opens a tagged Amazon search, labelled as a search", () => {
-    const l = shopLink(itemById("paper-plates")!);
+    const l = shopLink(itemById("hot-dog-buns")!);
     expect(l.kind).toBe("search");
-    expect(l.url).toBe(`https://www.amazon.com/s?k=Paper+plates&tag=${AMAZON_TAG}`);
+    expect(l.url).toBe(`https://www.amazon.com/s?k=Hot+dog+buns&tag=${AMAZON_TAG}`);
     expect(l.label).toMatch(/search/i);
   });
   it("writes a plain list with what is left", () => {

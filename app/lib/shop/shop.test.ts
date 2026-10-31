@@ -180,6 +180,11 @@ describe("search", () => {
     expect(ids("power outage", 30)).not.toContain("battery-powered-fan");
     expect(ids("hot dogs", 12)).not.toContain("dog-harness");
     expect(ids("new puppy")).toEqual(expect.arrayContaining(["puppy-pads", "pet-food"]));
+    // The thing itself before things it only describes, even when those have an exact product.
+    expect(ids("water", 2)).toEqual(expect.arrayContaining(["water", "bottled-water"]));
+    expect(ids("water for four people", 8)).not.toContain("pet-food-and-water-bowls");
+    expect(ids("ice")[0]).toBe("ice");
+    expect(ids("first aid")[0]).toBe("first-aid-kit");
     expect(searchKits("storm").map((k) => k.slug)).toEqual(expect.arrayContaining(["winter-storm", "tornado", "hurricane"]));
     expect(searchKits("generator")[0]?.slug).toBe("power-outage");
     expect(searchKits("diapers")[0]?.slug).toBe("new-baby");

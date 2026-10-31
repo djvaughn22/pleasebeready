@@ -7,8 +7,8 @@ How the shop's data fits together, how to add to it, and what is verified.
 | Thing | Count | Where |
 |---|---|---|
 | Catalog entries | 1,052 (957 products, 95 things to do) | `app/lib/stockup/catalog.ts` + `data/*.ts` |
-| Exact Amazon products | 109 ASINs (110 entries) for 99 catalog items: 97 "Our pick", 3 "Budget pick", 7 "Upgrade", 3 "Also good". Button: **Shop on Amazon** | `app/lib/shop/picks.ts`, the only place ASINs live |
-| Products that open a tagged Amazon search | the other 858, button **Search Amazon** (outlined), with the search words shown | `amazonSearchUrl()` in `app/lib/gear.ts` |
+| Exact Amazon products | 204 ASINs (205 entries) for 194 catalog items: 192 "Our pick", 3 "Budget pick", 7 "Upgrade", 3 "Also good". Button: **Shop on Amazon** | `app/lib/shop/picks.ts`, the only place ASINs live |
+| Products that open a tagged Amazon search | the other 763, button **Search Amazon** (outlined), with the search words shown | `amazonSearchUrl()` in `app/lib/gear.ts` |
 | Shopping lanes | 16 | `app/lib/shop/lanes.ts` |
 | Kits | 31 | `app/lib/shop/kits.ts` |
 | Guides | 7 | `app/lib/shop/guides.ts` |
@@ -38,7 +38,18 @@ There is no authorized product feed yet (see below), so exact products are revie
 
 **Re-checks:** `npm run picks -- due` lists entries checked more than 90 days ago, with their product links. Re-check each by ASIN, update `checked`, and replace or delete any whose listing is gone or now sells something else; a deleted entry falls back to a labelled search. Re-check a product before featuring it in a post.
 
-**Oct 30, 2026 batch:** 88 new entries, plus the 22 earlier ASINs re-checked, by `via: "search"` (2 by `via: "page"`). Three listings found unavailable were replaced (Mountain House 3-day kit, Augason Farms 30-day bucket, a 55-gallon barrel), and a gravity filter whose listing didn't say it removes germs was replaced by the LifeStraw Family purifier. Iodine tablets were left out: Ready.gov warns against relying on camping water treatments that aren't chlorine-based. At about 90 a session, 600 exact products is roughly six more batches.
+**Oct 30, 2026 batch:** 88 new entries, plus the 22 earlier ASINs re-checked, by `via: "search"` (2 by `via: "page"`). Three listings found unavailable were replaced (Mountain House 3-day kit, Augason Farms 30-day bucket, a 55-gallon barrel), and a gravity filter whose listing didn't say it removes germs was replaced by the LifeStraw Family purifier. Iodine tablets were left out: Ready.gov warns against relying on camping water treatments that aren't chlorine-based. 
+
+**Oct 31, 2026 batch:** 95 new entries, each the first exact product for its item, all by `via: "search"` and dated 2026-10-31. Chosen from kit must-haves still on searches, so the popular kits are now mostly exact: Five-day emergency 16 of 18 must-haves and Power outage 11 of 13 (the other two are water and shelf food), Teen driver and Roadside all 11, New puppy 10 of 11, First apartment 14 of 15, Birthday party 5 of 15 (the rest is food and party supplies). Left on searches on purpose, with the reason:
+
+- Groceries and perishables (water by the gallon, shelf food, juice boxes, chips, granola bars, pizza, buns, ice): the grocery listings checked (juice boxes, chips, granola bars) were resellers' bundles, unavailable, or mixed packs, and fresh food is a store trip anyway.
+- Medicines you take (pain relievers, cold medicine, prescriptions) and sized items (diapers, bodysuits, clothes, shoes, work gloves): the right one depends on the person.
+- Infant car seat, propane cylinders, grill tools: the listings found were marked unavailable. Calming aids for pets: a vet item, and the listings found were unavailable or discontinued.
+- Unscented bleach: listings mix Performance, Germicidal and HE bleaches, and CDC's water amounts depend on the label's strength.
+- Packing paper, mattress bags, dishes for one, safety glasses: the results showed no branded title to match, or the only match was a 20-pack sold for workplaces.
+- Water purification tablets: Ready.gov warns against relying on camping water treatments that aren't chlorine-based.
+
+At about 95 a session, 600 exact products is roughly four more batches.
 
 ## Amazon APIs and programs
 

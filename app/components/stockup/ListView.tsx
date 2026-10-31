@@ -216,7 +216,7 @@ function BuyRow({ r, setLine, remove }: { r: Row; setLine: SetLine; remove: (id:
       </div>
       <div className="flex flex-wrap items-end justify-between gap-3">
         <Stepper compact sr={s.item.name} id={`qty-${id}`} text={`Amount (${s.item.unit.many})`} value={qty} min={0} max={99999} onChange={(n) => setLine(id, { qty: n })} />
-        {s.item.pack && s.item.pack > 1 && need > 0 && <p className={`${muted} self-center`}>{Math.ceil(need / s.item.pack)} × {s.item.pack}-pack</p>}
+        {!pick && s.item.pack && s.item.pack > 1 && need > 0 && <p className={`${muted} self-center`}>{Math.ceil(need / s.item.pack)} × {s.item.pack}-pack</p>}
       </div>
       <div className="flex flex-wrap items-center gap-2">
         <ShopButton item={s.item} big />

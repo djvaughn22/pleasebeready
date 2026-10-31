@@ -70,7 +70,8 @@ function ItemCard({ item, s, compact }: { item: CatalogItem; s?: Suggestion; com
           {s && (
             <p className="mt-1.5 text-sm font-bold tabular-nums text-[#e8edf5]">
               {varies ? "Amount varies" : <>Get about {s.qty.toLocaleString("en-US")} {unitWord(item, s.qty)}</>}
-              {s.packs !== null && item.pack! > 1 && !varies && <span className="text-[#94a3b8]"> ({s.packs} × {item.pack}-pack)</span>}
+              {/* The catalog's pack size is a typical one; an exact product states its own count in its name. */}
+              {s.packs !== null && item.pack! > 1 && !varies && !main && <span className="text-[#94a3b8]"> ({s.packs} × {item.pack}-pack)</span>}
             </p>
           )}
           {s && !varies && !compact && <p className={muted}>{s.how}{item.source ? " · official amount" : ""}</p>}

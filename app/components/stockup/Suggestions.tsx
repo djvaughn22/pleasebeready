@@ -6,6 +6,7 @@
 
 import { memo, useMemo, useState } from "react";
 import { measure } from "../../lib/measure";
+import { hasPick } from "../../lib/shop/picks";
 import { everything, matches, unitWord } from "../../lib/stockup/calc";
 import { categories, occasionById, occasions } from "../../lib/stockup/catalog";
 import type { CategoryId, Need, OccasionId, Plan, Priority, Suggestion } from "../../lib/stockup/types";
@@ -231,7 +232,7 @@ const Card = memo(function Card({ s, on, onAdd, onRemove }: {
         <h4 className="mt-1 text-base font-black leading-snug text-[#e8edf5]">{s.item.name}</h4>
         <p className="mt-1 text-sm font-bold tabular-nums text-[#e8edf5]">
           {varies ? "Amount varies" : <>Get about {s.qty.toLocaleString("en-US")} {unitWord(s.item, s.qty)}</>}
-          {s.packs !== null && s.item.pack! > 1 && <span className="text-[#94a3b8]"> ({s.packs} × {s.item.pack}-pack)</span>}
+          {s.packs !== null && s.item.pack! > 1 && !hasPick(s.item.id) && <span className="text-[#94a3b8]"> ({s.packs} × {s.item.pack}-pack)</span>}
         </p>
         <p className={muted}>{s.how}{s.item.source ? " · official amount" : ""}</p>
         {s.item.note && <p className={`mt-1 ${muted}`}>{s.item.note}</p>}
