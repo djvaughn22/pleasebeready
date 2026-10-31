@@ -66,17 +66,20 @@ describe("supply math", () => {
 });
 
 describe("homepage honesty and privacy", () => {
+  // The checklist was the home page until Oct 30, 2026; both carry the same notices.
   const page = read("page.tsx");
+  const checklist = read("checklist/page.tsx");
+  const shopPages = [page, checklist, read("kits/[slug]/page.tsx"), read("shop/[lane]/page.tsx"), read("search/page.tsx")];
 
   test("keeps the safety disclaimer and the Amazon Associate disclosure", () => {
-    expect(page).toContain("not professional or medical advice");
-    expect(page).toContain("As an Amazon Associate, PleaseBeReady earns from qualifying purchases.");
+    for (const p of [page, checklist]) expect(p).toContain("not professional or medical advice");
+    for (const p of shopPages) expect(p).toContain("As an Amazon Associate, PleaseBeReady earns from qualifying purchases.");
   });
 
   // 2026-10-17 (owner): no free/paid/price framing on the site for now.
   test("talks about what is here, not about paid tools or prices", () => {
-    expect(page).toContain("Checklists and tools");
-    expect(page).not.toMatch(/Paid tools|its price|\bFree help\b/);
+    expect(checklist).toContain("Checklists and tools");
+    for (const p of shopPages) expect(p).not.toMatch(/Paid tools|its price|\bFree help\b|\$\d/);
   });
 
   test("gear links carry the commission note and rel=sponsored", () => {

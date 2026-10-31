@@ -106,7 +106,7 @@ export default function Suggestions({ plan, api, suggestions, onList }: {
         <summary className="cursor-pointer text-sm font-black text-[#94a3b8]">More filters{filtered ? " (on)" : ""}</summary>
         <div className={`${inset} mt-2 grid gap-3 p-4 sm:grid-cols-3`}>
           <Select id="f-situation" text="For" value={situation} onChange={(v) => setSituation(v as typeof situation)}>
-            <option value="plan">This plan: {occasionById(plan.occasion).label}</option>
+            <option value="plan">This list: {occasionById(plan.occasion).label}</option>
             <option value="any">Every situation</option>
             {occasions.filter((o) => o.id !== plan.occasion).map((o) => <option key={o.id} value={o.id}>{o.emoji} {o.label}</option>)}
           </Select>

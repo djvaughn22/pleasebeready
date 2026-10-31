@@ -21,7 +21,7 @@ export default function PlanSetup({ plan, api, onNext }: { plan: Plan; api: Plan
     <div className="flex flex-col gap-6">
       <div className={`${card} flex flex-col gap-5 p-5`}>
         <div className="flex flex-col gap-1.5">
-          <label htmlFor="plan-name" className={label}>Plan name</label>
+          <label htmlFor="plan-name" className={label}>List name</label>
           <input id="plan-name" className={input} value={plan.name} maxLength={80}
             onChange={(e) => set({ name: e.target.value })}
             onBlur={(e) => { if (!e.target.value.trim()) set({ name: occasionById(plan.occasion).name }); }} />

@@ -48,6 +48,7 @@ Work emergency plan ; wrk,eme ; t ; task ; u ; id=work-plan ; n=Know your workpl
 Moving boxes ; mov,col ; v ; box/boxes ; e ; q=moving boxes | n=Roughly 10 boxes per room is a common starting count; heavy rooms like kitchens need more.
 Packing tape ; mov ; g:4 ; roll ; e ; q=packing tape
 Tape gun ; mov ; g:1 ; tape gun ; u ; q=packing tape dispenser
+Bed sheets ; mov ; g:2 ; set ; u ; q=queen sheet set | n=Two sets: one on the bed, one in the wash.
 Bubble wrap ; mov ; g:1 ; roll ; u
 Packing paper ; mov ; g:1 ; pack ; u
 Moving blankets ; mov ; g:6 ; blanket ; u ; q=moving blankets
@@ -153,6 +154,11 @@ Current pet photo ; pet,eme ; t ; task ; u ; need=pets ; id=pet-photo ; n=Ready.
 Pet-friendly places to stay list ; eme,hur,wil,vac ; t ; task ; u ; need=pets ; id=pet-friendly-stays
 Fish tank battery air pump ; out,pet ; g:1 ; pump ; x ; need=pets ; q=battery air pump aquarium
 Bird or small pet carrier ; pet,eme ; pet:0.5 ; carrier ; x ; need=pets ; q=small animal carrier
+Pet food and water bowls ; pet ; pet:1 ; set ; e ; need=pets ; q=dog food and water bowls
+Puppy chew toys ; pet ; pet:3 ; toy ; u ; need=pets ; q=puppy teething chew toys | n=Puppies chew while their teeth come in; toys save the shoes.
+Dog harness ; pet,rdt ; pet:1 ; harness ; u ; need=pets ; q=dog harness
+First vet visit booked ; pet ; t ; task ; e ; need=pets ; id=first-vet-visit ; n=Book it for the first week. Bring any papers from the shelter or breeder.
+Puppy-proof one room ; pet ; t ; task ; u ; need=pets ; id=puppy-proof ; n=Cords, shoes and small things off the floor before the puppy comes home.
 
 ## party
 Party plates with a theme ; pty ; p:1.5 ; plate ; x ; s=event ; q=birthday party plates
@@ -236,4 +242,6 @@ Arrange pet care while away ; vac,hst ; t ; task ; u ; need=pets ; id=arrange-pe
 Hold the mail ; vac ; t ; task ; x ; id=hold-mail ; n=USPS has a free hold-mail service.
 Back up your phone ; vac,eme,mov ; t ; task ; u ; id=backup-phone
 Label the school supplies ; sch ; t ; task ; x ; need=kids ; id=label-supplies
+Pick your tornado shelter spot ; eme,hom ; t ; task ; e ; id=tornado-shelter ; n=Ready.gov: a small, interior, windowless room or basement on the lowest level. Walk everyone there once.
+Save roadside help numbers in the phone ; veh,rdt ; t ; task ; e ; id=roadside-numbers ; n=Insurance, roadside assistance and a parent or friend to call.
 `;

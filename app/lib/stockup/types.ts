@@ -110,6 +110,12 @@ export type Line = {
   have: number;
   /** Marked as bought. */
   got: boolean;
+  /** Bought and put where it belongs (the kit is packed, the shelf is stocked). */
+  ready?: boolean;
+  /** Used up or expired: needs buying again. */
+  restock?: boolean;
+  /** The visitor's own note, such as a size, a brand or who is buying it. */
+  note?: string;
 };
 
 export type Plan = {
@@ -133,6 +139,10 @@ export type Plan = {
   updated: number;
   /** Items on the stock-up list, by catalog id. */
   list: Record<string, Line>;
+  /** A note for the whole list. */
+  note?: string;
+  /** The kit this list was started from, if any (kits.ts slug). */
+  kit?: string;
 };
 
 export type Suggestion = {

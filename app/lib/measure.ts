@@ -13,7 +13,15 @@ export type MeasureEvent =
   /** Items went onto a list. Label: <one|ticked|category|all>-<situation>. */
   | "plan_add"
   /** A planner Shop/Search link was opened. Label: <category>-<p|s>-<item id> (p = product page, s = search). */
-  | "shop_click";
+  | "shop_click"
+  /** One item saved from a shop page. Label: the catalog id. */
+  | "save_item"
+  /** A whole kit saved. Label: the kit slug. */
+  | "save_kit"
+  /** A search ran. Label: kit-<slug> for the top kit, items-only, or none. Never the words typed. */
+  | "search"
+  /** A list's share link was sent or copied. Label: the list's situation. */
+  | "list_share";
 
 export function measure(event: MeasureEvent, label: string): void {
   if (typeof window === "undefined") return;

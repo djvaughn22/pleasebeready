@@ -7,9 +7,12 @@ export default function manifest(): MetadataRoute.Manifest {
     name: "PleaseBeReady",
     short_name: "PleaseBeReady",
     description:
-      "Plan for your people, build the list, shop it. Trips, parties, camping, the pantry and emergencies.",
+      "Shopping lists for whatever is coming: kits with amounts for your group, Amazon links, and lists saved on your device.",
     start_url: "/",
-    shortcuts: [{ name: "Stock-up Planner", short_name: "Planner", url: "/planner" }],
+    shortcuts: [
+      { name: "My Ready Lists", short_name: "Lists", url: "/lists" },
+      { name: "Kits", short_name: "Kits", url: "/kits" },
+    ],
     display: "standalone",
     orientation: "portrait",
     background_color: "#0b1220",

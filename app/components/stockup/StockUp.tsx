@@ -1,7 +1,7 @@
 "use client";
 
-// The stock-up planner: a shelf of saved plans, and one open plan with its
-// setup, suggestions, list and shopping run. Everything stays on this device.
+// My Ready Lists: a shelf of saved lists, and one open list with its setup,
+// suggestions, list and shopping run. Everything stays on this device.
 
 import { useMemo, useState } from "react";
 import { suggestionsFor } from "../../lib/stockup/calc";
@@ -11,17 +11,20 @@ import PlanHome from "./PlanHome";
 import PlanSetup from "./PlanSetup";
 import { countLeft } from "./resolve";
 import Suggestions from "./Suggestions";
-import { usePlans } from "./usePlans";
+import { useLists } from "../shop/ListsProvider";
+import type { PlansApi } from "./usePlans";
 import { btnSmall, muted } from "./ui";
 
 export type Tab = "plan" | "ideas" | "list";
 
 export default function StockUp() {
-  const api = usePlans();
-  const [tab, setTab] = useState<Tab>("ideas");
+  const api = useLists();
+  // Until the visitor picks a tab, a list with things on it opens on the list itself.
+  const [picked, setTab] = useState<Tab | null>(null);
+  const tab: Tab = picked ?? (api.active && Object.keys(api.active.list).length ? "list" : "ideas");
 
   if (!api.ready) {
-    return <p className={muted} aria-live="polite">Loading your plans…</p>;
+    return <p className={muted} aria-live="polite">Loading your lists…</p>;
   }
   if (!api.active) {
     return <PlanHome api={api} onOpen={(id, t) => { setTab(t); api.open(id); }} onCreate={(o, patch) => { setTab("ideas"); api.create(o, patch); }} />;
@@ -30,7 +33,7 @@ export default function StockUp() {
 }
 
 function PlanScreen({ plan, api, tab, setTab }: {
-  plan: Plan; api: ReturnType<typeof usePlans>; tab: Tab; setTab: (t: Tab) => void;
+  plan: Plan; api: PlansApi; tab: Tab; setTab: (t: Tab) => void;
 }) {
   const suggestions = useMemo(() => suggestionsFor(plan), [plan]);
   const onList = Object.keys(plan.list).length;
@@ -38,7 +41,7 @@ function PlanScreen({ plan, api, tab, setTab }: {
   const tabs: { id: Tab; text: string }[] = [
     { id: "ideas", text: "🛒 Shop" },
     { id: "list", text: `My list (${left ? `${left} to buy` : onList})` },
-    { id: "plan", text: "⚙️ Plan details" },
+    { id: "plan", text: "⚙️ List details" },
   ];
   const go = (t: Tab) => { setTab(t); document.getElementById("plan-top")?.scrollIntoView({ block: "start" }); };
 
@@ -46,7 +49,7 @@ function PlanScreen({ plan, api, tab, setTab }: {
     <div className="pbr-planner">
       <div id="plan-top" className="scroll-mt-20 print:hidden">
         <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-          <button type="button" className={btnSmall} onClick={() => api.open(null)}>← All plans</button>
+          <button type="button" className={btnSmall} onClick={() => api.open(null)}>← All lists</button>
           <p className={muted} aria-live="polite">
             {api.saved === "failed" ? "Could not save on this device. Your browser may block storage." : api.saved === "saved" ? "✓ Saved on this device" : ""}
           </p>

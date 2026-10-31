@@ -17,17 +17,26 @@ export function shopLink(item: CatalogItem): ShopLink {
 }
 
 /** Plain-text list for copying, texting or saving. */
-export function listText(plan: Plan, rows: { s: Suggestion; qty: number; have: number; got: boolean }[]): string {
-  const lines = [`${plan.name} — PleaseBeReady stock-up list`, ""];
+export type TextRow = { s: Suggestion; qty: number; have: number; got: boolean; ready?: boolean; restock?: boolean; note?: string };
+
+/** One line's status in words: ready beats bought; restock means buy it again. */
+export const statusText = (r: Pick<TextRow, "got" | "ready" | "restock">) =>
+  r.ready ? "ready" : r.got ? "bought" : r.restock ? "restock" : "";
+
+export function listText(plan: Plan, rows: TextRow[]): string {
+  const lines = [`${plan.name} — PleaseBeReady list`, ""];
+  if (plan.note) lines.push(plan.note, "");
   for (const r of rows) {
+    const note = r.note ? ` — ${r.note}` : "";
     if (r.s.item.kind === "task") {
-      lines.push(`${r.got ? "[x]" : "[ ]"} To do: ${r.s.item.name}`);
+      lines.push(`${r.got ? "[x]" : "[ ]"} To do: ${r.s.item.name}${note}`);
       continue;
     }
     const need = Math.max(0, r.qty - r.have);
-    const mark = r.got || need === 0 ? "[x]" : "[ ]";
+    const mark = r.got || r.ready || need === 0 ? "[x]" : "[ ]";
     const packs = r.s.item.pack && need > 0 ? ` (${Math.ceil(need / r.s.item.pack)} × ${r.s.item.pack}-pack)` : "";
-    lines.push(`${mark} ${r.s.item.name}: ${need} ${unitWord(r.s.item, need)}${packs}${r.have ? ` · have ${r.have}` : ""}`);
+    const status = statusText(r);
+    lines.push(`${mark} ${r.s.item.name}: ${need} ${unitWord(r.s.item, need)}${packs}${r.have ? ` · have ${r.have}` : ""}${status ? ` · ${status}` : ""}${note}`);
   }
   lines.push("", "Amounts are planning estimates. Adjust them for your group.");
   return lines.join("\n");

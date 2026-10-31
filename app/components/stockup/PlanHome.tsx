@@ -2,7 +2,9 @@
 
 // Saved plans (open, reuse, delete) and the occasions to start a new one.
 
+import Link from "next/link";
 import { useState } from "react";
+import { kits } from "../../lib/shop/kits";
 import { DURATIONS, MAX_PEOPLE, durationLabel, planSummary } from "../../lib/stockup/calc";
 import { occasions } from "../../lib/stockup/catalog";
 import type { OccasionId, Plan } from "../../lib/stockup/types";
@@ -22,11 +24,11 @@ export default function PlanHome({ api, onOpen, onCreate }: {
   return (
     <div className="pbr-planner">
       {api.saved === "failed" && (
-        <p className="mb-4 text-sm font-bold pbr-amber">This browser is not letting us save. Plans will be lost when you close the tab.</p>
+        <p className="mb-4 text-sm font-bold pbr-amber">This browser is not letting us save. Lists will be lost when you close the tab.</p>
       )}
       {plans.length > 0 && (
         <section aria-labelledby="plans-title" className="mb-10">
-          <h2 id="plans-title" className="mb-3 text-xl font-black">Your plans</h2>
+          <h2 id="plans-title" className="mb-3 text-xl font-black">Your lists</h2>
           <ul className="grid gap-3 sm:grid-cols-2">
             {plans.map((p) => {
               const items = Object.keys(p.list).length;
@@ -42,7 +44,7 @@ export default function PlanHome({ api, onOpen, onCreate }: {
                   </button>
                   <div className="flex flex-wrap gap-2">
                     <button type="button" className={btnSmall} onClick={() => onOpen(p.id, items ? "list" : "ideas")}>Open</button>
-                    <button type="button" className={btnSmall} onClick={() => api.duplicate(p.id)} aria-label={`Reuse ${p.name} as a new plan`}>Reuse as new</button>
+                    <button type="button" className={btnSmall} onClick={() => api.duplicate(p.id)} aria-label={`Copy ${p.name} as a new list`}>Duplicate</button>
                     {confirm === p.id ? (
                       <>
                         <button type="button" className={`${btnSmall} pbr-amber`} onClick={() => { api.remove(p.id); setConfirm(null); }}>Yes, delete</button>
@@ -85,6 +87,9 @@ export default function PlanHome({ api, onOpen, onCreate }: {
       <section aria-labelledby="start-title">
         <h2 id="start-title" className="mb-1 text-xl font-black">Or plan for something else</h2>
         <p className={`mb-4 ${muted}`}>Pick what you are getting ready for. You can rename it and change everything after.</p>
+        <Link href="/kits" className={`${inset} mb-5 flex items-center justify-between gap-3 p-3 text-sm font-black text-[#e8edf5] transition hover:border-[#34D399]`}>
+          <span>🧰 Or start from one of {kits.length} ready-made kits</span><span aria-hidden className="pbr-accent">→</span>
+        </Link>
         {(["Weather and emergencies", "Everyday", "Events and trips", "Life changes"] as const).map((g) => (
           <div key={g} className="mb-5">
             <h3 className={`mb-2 ${label}`}>{g}</h3>

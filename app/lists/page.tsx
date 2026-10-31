@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import ClickMeasure from "../components/ClickMeasure";
+import ListsProvider from "../components/shop/ListsProvider";
 import StockUp from "../components/stockup/StockUp";
 import { formatDate, sourceList } from "../lib/stockup/sources";
 
@@ -7,24 +7,25 @@ import { formatDate, sourceList } from "../lib/stockup/sources";
 const cited = new Set(["rc-kit", "rg-kit", "rg-water", "rg-food", "rg-pets", "rg-power", "cdc-water"]);
 
 export const metadata: Metadata = {
-  title: "Stock-up Planner",
+  title: "My Ready Lists",
   description:
-    "Plan for any number of people — camping, sleepovers, parties, trips, a household stock-up or an emergency kit. Pick suggestions, adjust amounts, and shop the list. Plans stay on your device.",
+    "Your saved shopping lists for any situation: amounts for your group, Amazon links, bought and ready marks, notes, sharing and printing. Lists stay on your device; no account needed.",
+  alternates: { canonical: "/lists" },
 };
 
-export default function PlannerPage() {
+// The saved lists (the stock-up planner, renamed Oct 30, 2026; /planner redirects here).
+export default function ListsPage() {
   return (
     <main className="min-h-screen bg-[#0b1220] text-[#e8edf5]">
       <div className="mx-auto max-w-3xl px-4 py-8 sm:px-5 sm:py-12">
         <div className="print:hidden">
-          <h1 className="text-2xl font-black leading-tight sm:text-4xl">Stock-up planner</h1>
+          <h1 className="text-2xl font-black leading-tight sm:text-4xl">My Ready Lists</h1>
           <p className="mt-1 max-w-2xl text-sm font-semibold leading-6 text-[#94a3b8] sm:text-base">
-            How many people, how long. Get the amounts and a buy button for each item. No account needed.
+            Saved on this device. Open a list to shop it, tick off what you bought and mark what’s ready. No account needed.
           </p>
         </div>
 
-        <ClickMeasure />
-        <div className="mt-8"><StockUp /></div>
+        <div className="mt-8"><ListsProvider importLinks><StockUp /></ListsProvider></div>
 
         <section aria-labelledby="how-title" className="mb-10 mt-14 print:hidden">
           <h2 id="how-title" className="mb-1 text-xl font-black">How the amounts work</h2>
