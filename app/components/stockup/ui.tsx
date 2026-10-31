@@ -1,11 +1,11 @@
 "use client";
 
 // Small shared controls for the stock-up planner. Same tokens as the rest of
-// the site (flat dark surfaces, #34D399 accent); state is never colour-only.
+// the site (flat dark surfaces, #F97316 accent); state is never colour-only.
 
 import type { ReactNode } from "react";
 
-export const A = "#34D399";
+export const A = "#F97316";
 
 export const card = "rounded-2xl border border-[#26324c] bg-[#141d2e]";
 export const inset = "rounded-xl border border-[#26324c] bg-[#0c1220]";
@@ -14,11 +14,11 @@ export const muted = "text-xs font-semibold leading-5 text-[#94a3b8]";
 export const input =
   "h-11 rounded-lg border border-[#26324c] bg-[#0c1220] px-3 text-base font-bold text-[#e8edf5]";
 export const btn =
-  "inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-[#26324c] bg-[#1c2740] px-4 py-2 text-sm font-black text-[#e8edf5] transition hover:border-[#34D399] disabled:cursor-not-allowed disabled:opacity-50";
+  "inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-[#26324c] bg-[#1c2740] px-4 py-2 text-sm font-black text-[#e8edf5] transition hover:border-[#F97316] disabled:cursor-not-allowed disabled:opacity-50";
 export const btnSmall =
-  "inline-flex min-h-10 items-center justify-center gap-1.5 rounded-lg border border-[#26324c] bg-[#1c2740] px-3 py-1.5 text-xs font-black text-[#e8edf5] transition hover:border-[#34D399] disabled:cursor-not-allowed disabled:opacity-50";
+  "inline-flex min-h-10 items-center justify-center gap-1.5 rounded-lg border border-[#26324c] bg-[#1c2740] px-3 py-1.5 text-xs font-black text-[#e8edf5] transition hover:border-[#F97316] disabled:cursor-not-allowed disabled:opacity-50";
 export const btnPrimary =
-  "inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-[#34D399] bg-[#34D399] px-4 py-2 text-sm font-black text-[#0b1220] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50";
+  "inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-[#F97316] bg-[#F97316] px-4 py-2 text-sm font-black text-[#0b1220] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50";
 
 /** Whole-number input with − and + buttons. Typing any number in range works. */
 export function Stepper({
@@ -50,7 +50,7 @@ export function Stepper({
 const priText = { essential: "Essential", useful: "Useful", extra: "Extra" } as const;
 
 export function PriorityTag({ pri }: { pri: keyof typeof priText }) {
-  const tone = pri === "essential" ? "pbr-accent border-[#34D399]" : pri === "useful" ? "pbr-blue border-[#26324c]" : "text-[#94a3b8] border-[#26324c]";
+  const tone = pri === "essential" ? "pbr-accent border-[#F97316]" : pri === "useful" ? "pbr-blue border-[#26324c]" : "text-[#94a3b8] border-[#26324c]";
   return <span className={`rounded-md border px-1.5 py-0.5 text-[0.65rem] font-black uppercase tracking-wider ${tone}`}>{priText[pri]}</span>;
 }
 

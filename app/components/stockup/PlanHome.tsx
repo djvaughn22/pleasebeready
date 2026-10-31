@@ -72,7 +72,7 @@ export default function PlanHome({ api, onOpen, onCreate }: {
           <div className="mt-2 flex flex-wrap gap-2">
             {DURATIONS.map((d) => (
               <button key={d.days} type="button" aria-pressed={d.days === days} onClick={() => setDays(d.days)}
-                className={`min-h-10 rounded-full border px-3 text-sm font-black transition ${d.days === days ? "border-[#34D399] bg-[#34D399] text-[#0b1220]" : "border-[#26324c] bg-[#1c2740] text-[#e8edf5] hover:border-[#34D399]"}`}>
+                className={`min-h-10 rounded-full border px-3 text-sm font-black transition ${d.days === days ? "border-[#F97316] bg-[#F97316] text-[#0b1220]" : "border-[#26324c] bg-[#1c2740] text-[#e8edf5] hover:border-[#F97316]"}`}>
                 {d.days === days && <span aria-hidden>✓ </span>}{d.label}
               </button>
             ))}
@@ -87,7 +87,7 @@ export default function PlanHome({ api, onOpen, onCreate }: {
       <section aria-labelledby="start-title">
         <h2 id="start-title" className="mb-1 text-xl font-black">Or plan for something else</h2>
         <p className={`mb-4 ${muted}`}>Pick what you are getting ready for. You can rename it and change everything after.</p>
-        <Link href="/kits" className={`${inset} mb-5 flex items-center justify-between gap-3 p-3 text-sm font-black text-[#e8edf5] transition hover:border-[#34D399]`}>
+        <Link href="/kits" className={`${inset} mb-5 flex items-center justify-between gap-3 p-3 text-sm font-black text-[#e8edf5] transition hover:border-[#F97316]`}>
           <span>🧰 Or start from one of {kits.length} ready-made kits</span><span aria-hidden className="pbr-accent">→</span>
         </Link>
         {(["Weather and emergencies", "Everyday", "Events and trips", "Life changes"] as const).map((g) => (
@@ -97,7 +97,7 @@ export default function PlanHome({ api, onOpen, onCreate }: {
               {occasions.filter((o) => o.group === g).map((o) => (
                 <li key={o.id}>
                   <button type="button" onClick={() => onCreate(o.id)}
-                    className={`${inset} flex h-full w-full items-start gap-3 p-3 text-left transition hover:border-[#34D399]`}>
+                    className={`${inset} flex h-full w-full items-start gap-3 p-3 text-left transition hover:border-[#F97316]`}>
                     <span aria-hidden className="text-2xl">{o.emoji}</span>
                     <span>
                       <span className="block text-sm font-black text-[#e8edf5]">{o.label}</span>

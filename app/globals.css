@@ -16,7 +16,7 @@ html { color-scheme: dark; background: #0b1220; }
   --om-border: #26324c;
   --om-text: #e8edf5;
   --om-sub: #94a3b8;
-  --om-accent: #34D399;
+  --om-accent: #F97316;
   --om-ink: #0b1220;
 }
 
@@ -129,7 +129,7 @@ a[href]:hover {
 /* OPEN MIRROR FAMILY STYLE OVERRIDE END */
 
 /* Household planner: visible focus. */
-.pbr-planner :focus-visible { outline: 2px solid #34D399; outline-offset: 2px; }
+.pbr-planner :focus-visible { outline: 2px solid #F97316; outline-offset: 2px; }
 /* Every page prints plain black on white, without the site header and footer or the
    Shop/Save buttons. The doubled :root raises specificity above the family and light-theme
    rules above, which use attribute selectors like [class*="bg-[#141d2e]"] with !important. */
@@ -143,19 +143,24 @@ a[href]:hover {
 }
 
 /* Planner colors that stay readable in both themes. */
-/* Green edge for buttons and link cards. A plain class, outside Tailwind's layers, so the family
+/* Brand-orange edge for buttons and link cards. A plain class, outside Tailwind's layers, so the family
    `a, button` border rule can't override it; an inline border-color would also trip the light
-   theme's rule that turns any inline "color: <green>" into green text. */
-.pbr-edge { border-color: #34D399; }
-.pbr-accent { color: #34D399; }
+   theme's rule that turns any inline "color: <orange>" into dark orange text. */
+.pbr-edge { border-color: #F97316; }
+.pbr-accent { color: #F97316; }
 .pbr-body { color: #cbd5e1; }
-html[data-om-theme="light"] .pbr-accent { color: #047857 !important; }
+html[data-om-theme="light"] .pbr-accent { color: #c2410c !important; }
 html[data-om-theme="light"] .pbr-body { color: #334155 !important; }
 /* Visually hidden radios: show focus on the label that wraps them. */
-.pbr-planner label:has(input:focus-visible) { outline: 2px solid #34D399; outline-offset: 2px; }
+.pbr-planner label:has(input:focus-visible) { outline: 2px solid #F97316; outline-offset: 2px; }
 html[data-om-theme="light"] .pbr-planner label:has(input:focus-visible),
-html[data-om-theme="light"] .pbr-planner :focus-visible { outline-color: #047857; }
+html[data-om-theme="light"] .pbr-planner :focus-visible { outline-color: #c2410c; }
 .pbr-blue { color: #60A5FA; }
 .pbr-amber { color: #FBBF24; }
 html[data-om-theme="light"] .pbr-blue { color: #1d4ed8 !important; }
 html[data-om-theme="light"] .pbr-amber { color: #92400e !important; }
+
+/* Display face: the wordmark and store headings. Archivo is loaded in layout.tsx. */
+.pbr-display { font-family: var(--font-display), system-ui, sans-serif; letter-spacing: -0.01em; }
+/* Row hover that follows the theme (a bg-[#1c2740] class would match the light theme's surface rule even without hover). */
+.pbr-row:hover { background: var(--om-surface-2); }

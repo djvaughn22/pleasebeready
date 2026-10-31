@@ -13,7 +13,7 @@ export const generateStaticParams = () => kits.map((k) => ({ slug: k.slug }));
 export default async function KitImage({ params }: { params: Promise<{ slug: string }> }) {
   const kit = kitBySlug((await params).slug)!;
   return new ImageResponse(
-    <OgCard kicker="PLEASEBEREADY.COM · KIT" title={kit.title} sub={kit.intro} color={laneById(kit.lane)?.color}
+    <OgCard kicker="KIT" title={kit.title} sub={kit.intro} color={laneById(kit.lane)?.color}
       foot={`${kit.essentials.length} must-haves · amounts for your group · save it as a list`} />,
     size,
   );

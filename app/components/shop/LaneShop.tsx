@@ -92,7 +92,7 @@ function LaneBody({ laneId }: { laneId: LaneId }) {
             </select>
           </div>
           <label className="flex min-h-11 cursor-pointer items-center gap-2 self-end text-sm font-black text-[#e8edf5]">
-            <input type="checkbox" className="h-5 w-5" style={{ accentColor: "#34D399" }} checked={picksOnly} onChange={(e) => setPicksOnly(e.target.checked)} />
+            <input type="checkbox" className="h-5 w-5" style={{ accentColor: "#F97316" }} checked={picksOnly} onChange={(e) => setPicksOnly(e.target.checked)} />
             Our checked products only
           </label>
           {filtered && <button type="button" className={`${btnSmall} sm:col-span-3`} onClick={reset}>Clear search and filters</button>}
@@ -136,7 +136,7 @@ function LaneBody({ laneId }: { laneId: LaneId }) {
 function Chip({ on, onClick, children }: { on: boolean; onClick: () => void; children: React.ReactNode }) {
   return (
     <button type="button" aria-pressed={on} onClick={onClick}
-      className={`min-h-10 shrink-0 whitespace-nowrap rounded-full border px-3 text-sm font-black transition ${on ? "border-[#34D399] bg-[#1c2740] pbr-accent" : "border-[#26324c] text-[#94a3b8] hover:text-[#e8edf5]"}`}>
+      className={`min-h-10 shrink-0 whitespace-nowrap rounded-full border px-3 text-sm font-black transition ${on ? "border-[#F97316] bg-[#1c2740] pbr-accent" : "border-[#26324c] text-[#94a3b8] hover:text-[#e8edf5]"}`}>
       {children}
     </button>
   );

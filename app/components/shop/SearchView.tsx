@@ -71,7 +71,7 @@ function SearchBody() {
         <input id="search-q" type="search" name="q" enterKeyHint="search" autoComplete="off" value={q} onChange={(e) => setQ(e.target.value)}
           placeholder="Try: winter storm, new puppy, party for 20"
           className="h-14 min-w-0 flex-1 rounded-xl border border-[#26324c] bg-[#0c1220] px-4 text-base font-bold text-[#e8edf5]" />
-        <button type="submit" className="h-14 shrink-0 rounded-xl border border-[#34D399] bg-[#34D399] px-5 text-base font-black text-[#0b1220]">Search</button>
+        <button type="submit" className="h-14 shrink-0 rounded-xl border border-[#F97316] bg-[#F97316] px-5 text-base font-black text-[#0b1220]">Search</button>
       </form>
 
       {!q.trim() && (
@@ -80,7 +80,7 @@ function SearchBody() {
           <ul className="flex flex-wrap gap-2">
             {EXAMPLES.map((e) => (
               <li key={e}><button type="button" onClick={() => { setQ(e); router.replace(`/search?q=${encodeURIComponent(e)}`, { scroll: false }); count(e); }}
-                className="min-h-10 rounded-full border border-[#26324c] bg-[#141d2e] px-3 text-sm font-bold text-[#e8edf5] hover:border-[#34D399]">{e}</button></li>
+                className="min-h-10 rounded-full border border-[#26324c] bg-[#141d2e] px-3 text-sm font-bold text-[#e8edf5] hover:border-[#F97316]">{e}</button></li>
             ))}
           </ul>
         </section>
@@ -110,7 +110,7 @@ function SearchBody() {
       {lanesFound.length > 0 && q.trim() && (
         <nav aria-label="Matching lanes" className="flex flex-wrap gap-2">
           {lanesFound.map((l) => (
-            <Link key={l.id} href={`/shop/${l.id}`} className="min-h-10 rounded-full border border-[#26324c] px-3 py-2 text-sm font-black text-[#e8edf5] hover:border-[#34D399]">
+            <Link key={l.id} href={`/shop/${l.id}`} className="min-h-10 rounded-full border border-[#26324c] px-3 py-2 text-sm font-black text-[#e8edf5] hover:border-[#F97316]">
               {l.emoji} {l.title} →
             </Link>
           ))}

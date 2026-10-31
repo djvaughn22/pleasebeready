@@ -56,13 +56,13 @@ export default async function AdminSocialPage({ searchParams }: PageProps) {
           {missing.length ? (
             <span className="text-yellow-200">missing {missing.join(", ")}</span>
           ) : (
-            <span style={{ color: "#34D399" }}>configured</span>
+            <span style={{ color: "#F97316" }}>configured</span>
           )}
         </p>
         <p>
           Automatic publishing:{" "}
           {config.autopublishEnabled ? (
-            <span style={{ color: "#34D399" }}>ENABLED</span>
+            <span style={{ color: "#F97316" }}>ENABLED</span>
           ) : (
             <span className="text-yellow-200">PAUSED (INSTAGRAM_AUTOPUBLISH_ENABLED)</span>
           )}
@@ -73,7 +73,7 @@ export default async function AdminSocialPage({ searchParams }: PageProps) {
         <span className="text-[#94a3b8]">Selection:</span>
         <a
           className={`rounded-full border border-[#26324c] px-4 py-1.5 ${offset === 0 ? "text-[#0b1220]" : "bg-[#141d2e]"}`}
-          style={offset === 0 ? { background: "#34D399" } : undefined}
+          style={offset === 0 ? { background: "#F97316" } : undefined}
           href={`?key=${encodeURIComponent(adminKey)}`}
         >
           Today&apos;s task
@@ -95,7 +95,7 @@ export default async function AdminSocialPage({ searchParams }: PageProps) {
             {data.task.emoji} {data.task.area} · {data.task.title}
             {data.task.gear ? ` · gear: ${data.task.gear.name}` : " · no gear link"}
             {" · "}
-            <a style={{ color: "#34D399" }} href="/today">
+            <a style={{ color: "#F97316" }} href="/today">
               /today
             </a>
           </p>

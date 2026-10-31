@@ -11,5 +11,5 @@ export const generateStaticParams = () => guides.map((g) => ({ slug: g.slug }));
 
 export default async function GuideImage({ params }: { params: Promise<{ slug: string }> }) {
   const g = guideBySlug((await params).slug)!;
-  return new ImageResponse(<OgCard kicker="PLEASEBEREADY.COM · GUIDE" title={g.title} sub={g.short} foot="Based on Ready.gov · ends in a shopping list" />, size);
+  return new ImageResponse(<OgCard kicker="GUIDE" title={g.title} sub={g.short} foot="Based on Ready.gov · ends in a shopping list" />, size);
 }

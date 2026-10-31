@@ -86,7 +86,7 @@ export default function ListView({ plan, api, onIdeas }: { plan: Plan; api: Plan
             </p>
             {products.length > 0 && (
               <div className="mt-2 h-2 overflow-hidden rounded-full bg-[#0c1220]" aria-hidden>
-                <div className="h-full bg-[#34D399]" style={{ width: `${doneShare}%` }} />
+                <div className="h-full bg-[#F97316]" style={{ width: `${doneShare}%` }} />
               </div>
             )}
           </div>
@@ -127,7 +127,7 @@ export default function ListView({ plan, api, onIdeas }: { plan: Plan; api: Plan
                 <li key={s.item.id} className={`${inset} flex flex-col gap-2 p-3`}>
                   <div className="flex items-start justify-between gap-3">
                     <label className="flex min-h-10 min-w-0 cursor-pointer items-start gap-3">
-                      <input type="checkbox" className="mt-0.5 h-5 w-5 shrink-0" style={{ accentColor: "#34D399" }} checked={line.got} onChange={(e) => setLine(s.item.id, { got: e.target.checked })} />
+                      <input type="checkbox" className="mt-0.5 h-5 w-5 shrink-0" style={{ accentColor: "#F97316" }} checked={line.got} onChange={(e) => setLine(s.item.id, { got: e.target.checked })} />
                       <span className={`text-sm font-black ${line.got ? "line-through decoration-2 opacity-75" : ""}`}>{s.item.name}</span>
                     </label>
                     <button type="button" className={btnSmall} onClick={() => remove(s.item.id)} aria-label={`Remove ${s.item.name}`}>✕</button>
@@ -221,7 +221,7 @@ function BuyRow({ r, setLine, remove }: { r: Row; setLine: SetLine; remove: (id:
       <div className="flex flex-wrap items-center gap-2">
         <ShopButton item={s.item} big />
         <label className="flex min-h-11 cursor-pointer items-center gap-2 rounded-xl border border-[#26324c] px-3 text-sm font-black">
-          <input type="checkbox" className="h-5 w-5" style={{ accentColor: "#34D399" }} checked={line.got} onChange={(e) => setLine(id, { got: e.target.checked, restock: undefined })} />
+          <input type="checkbox" className="h-5 w-5" style={{ accentColor: "#F97316" }} checked={line.got} onChange={(e) => setLine(id, { got: e.target.checked, restock: undefined })} />
           Bought<span className="sr-only">: {s.item.name}</span>
         </label>
       </div>

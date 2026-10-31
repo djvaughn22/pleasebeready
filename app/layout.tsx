@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Archivo } from "next/font/google";
 import "./globals.css";
 import OpenMirrorFooter from "./OpenMirrorFooter";
 import OpenMirrorNav from "./OpenMirrorNav";
@@ -13,13 +14,16 @@ export const metadata: Metadata = {
   openGraph: { siteName: "PleaseBeReady", type: "website", locale: "en_US" },
 };
 
+// The display face for the wordmark and section headings (.pbr-display in globals.css).
+const display = Archivo({ subsets: ["latin"], weight: ["700", "800", "900"], variable: "--font-display", display: "swap" });
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html suppressHydrationWarning lang="en" className="antialiased">
+    <html suppressHydrationWarning lang="en" className={`antialiased ${display.variable}`}>
       <body>
         <OpenMirrorNav
           site="PleaseBeReady.com"
-          accent="#34D399"
+          accent="#F97316"
           links={[
             { emoji: "🔎", name: "Shop", href: "/" },
             { emoji: "🧰", name: "Kits", href: "/kits" },

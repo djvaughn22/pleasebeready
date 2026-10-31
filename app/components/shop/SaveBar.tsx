@@ -37,7 +37,7 @@ export default function SaveBar() {
           </label>
         )}
         <Link href={href}
-          className="inline-flex min-h-11 shrink-0 items-center justify-center gap-1 rounded-xl border border-[#34D399] bg-[#34D399] px-4 text-sm font-black text-[#0b1220] transition hover:brightness-110">
+          className="inline-flex min-h-11 shrink-0 items-center justify-center gap-1 rounded-xl border border-[#F97316] bg-[#F97316] px-4 text-sm font-black text-[#0b1220] transition hover:brightness-110">
           Open list →
         </Link>
       </div>

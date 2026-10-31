@@ -201,7 +201,7 @@ export default function Suggestions({ plan, api, suggestions, onList }: {
 function Chip({ on, onClick, children }: { on: boolean; onClick: () => void; children: React.ReactNode }) {
   return (
     <button type="button" aria-pressed={on} onClick={onClick}
-      className={`min-h-10 shrink-0 whitespace-nowrap rounded-full border px-3 text-sm font-black transition ${on ? "border-[#34D399] bg-[#1c2740] pbr-accent" : "border-[#26324c] text-[#94a3b8] hover:text-[#e8edf5]"}`}>
+      className={`min-h-10 shrink-0 whitespace-nowrap rounded-full border px-3 text-sm font-black transition ${on ? "border-[#F97316] bg-[#1c2740] pbr-accent" : "border-[#26324c] text-[#94a3b8] hover:text-[#e8edf5]"}`}>
       {children}
     </button>
   );
@@ -223,10 +223,10 @@ const Card = memo(function Card({ s, on, onAdd, onRemove }: {
 }) {
   const varies = s.item.rule.per === "varies";
   return (
-    <li className={`flex flex-col gap-3 rounded-2xl border bg-[#141d2e] p-4 ${on ? "border-[#34D399]" : "border-[#26324c]"}`}>
+    <li className={`flex flex-col gap-3 rounded-2xl border bg-[#141d2e] p-4 ${on ? "border-[#F97316]" : "border-[#26324c]"}`}>
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-2">
-          {s.item.pri === "essential" && <span className="rounded-md border border-[#34D399] px-1.5 py-0.5 text-[0.65rem] font-black uppercase tracking-wider pbr-accent">Must-have</span>}
+          {s.item.pri === "essential" && <span className="rounded-md border border-[#F97316] px-1.5 py-0.5 text-[0.65rem] font-black uppercase tracking-wider pbr-accent">Must-have</span>}
           {s.item.pro && <span className="rounded-md border border-[#26324c] px-1.5 py-0.5 text-[0.65rem] font-black uppercase tracking-wider pbr-amber">Check with a pro</span>}
         </div>
         <h4 className="mt-1 text-base font-black leading-snug text-[#e8edf5]">{s.item.name}</h4>

@@ -1,30 +1,32 @@
 // The Amazon button for one item: our exact product when there is one
 // ("Shop on Amazon", solid), otherwise a tagged Amazon search ("Search Amazon",
 // outlined, so the two never look alike). Counted through the site's GA
-// listener as shop_click. The green border comes from .pbr-edge in globals.css
+// listener as shop_click. The orange border comes from .pbr-edge in globals.css
 // (see the note there on why not a Tailwind class or an inline style).
 
 import { shopLink } from "../../lib/stockup/shop";
 import type { CatalogItem } from "../../lib/stockup/types";
 import { btnSmall } from "./ui";
 
-export default function ShopButton({ item, big }: { item: CatalogItem; big?: boolean }) {
+export default function ShopButton({ item, big, tile }: { item: CatalogItem; big?: boolean; tile?: boolean }) {
   if (item.kind === "task") return null;
   const link = shopLink(item);
   const exact = link.kind === "product";
   const text = exact ? "Shop on Amazon" : "Search Amazon";
   const look = exact
-    ? "border-[#34D399] bg-[#34D399] text-[#0b1220]"
-    : "border-[#34D399] bg-transparent pbr-accent";
+    ? "border-[#F97316] bg-[#F97316] text-[#0b1220]"
+    : "border-[#F97316] bg-transparent pbr-accent";
   return (
     <a href={link.url} target="_blank" rel="noopener noreferrer sponsored"
       data-measure="shop" data-measure-label={`${item.cat}-${exact ? "p" : "s"}-${item.id}`}
       title={exact ? link.label : `${link.label}: search results, not one chosen product`}
       aria-label={`${text}: ${exact ? link.label : item.name} (${exact ? "product page" : "search results"}, opens in a new tab)`}
-      className={big
+      className={tile
+        ? `pbr-edge inline-flex min-h-10 w-full items-center justify-center gap-1 whitespace-nowrap rounded-lg border-2 px-2 text-[0.8rem] font-black transition hover:brightness-110 ${look}`
+        : big
         ? `pbr-edge inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xl border-2 px-4 py-2 text-sm font-black transition hover:brightness-110 ${look}`
         : `${btnSmall} pbr-accent`}>
-      {text}<span aria-hidden>↗</span>
+      {text}{!tile && <span aria-hidden>↗</span>}
     </a>
   );
 }

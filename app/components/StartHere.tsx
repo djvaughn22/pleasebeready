@@ -9,7 +9,7 @@ import { areaById, needs } from "../lib/readiness";
 import ChecklistLines from "./ChecklistLines";
 import GearList from "./GearList";
 
-const A = "#34D399";
+const A = "#F97316";
 
 export default function StartHere() {
   const [needId, setNeedId] = useState<string | null>(null);
@@ -26,7 +26,7 @@ export default function StartHere() {
             <button key={n.id} type="button" aria-pressed={on} aria-controls="start-panel"
               onClick={() => { if (!on) measure("need_select", n.id); setNeedId(on ? null : n.id); }}
               style={on ? { borderColor: A, boxShadow: `inset 0 0 0 1px ${A}` } : undefined}
-              className={`flex min-h-[3.25rem] items-center gap-2 rounded-xl border px-3 py-2.5 text-left text-sm font-black transition ${on ? "border-[#34D399] bg-[#1c2740]" : "border-[#26324c] bg-[#141d2e] hover:border-[#34D399]"}`}>
+              className={`flex min-h-[3.25rem] items-center gap-2 rounded-xl border px-3 py-2.5 text-left text-sm font-black transition ${on ? "border-[#F97316] bg-[#1c2740]" : "border-[#26324c] bg-[#141d2e] hover:border-[#F97316]"}`}>
               <span aria-hidden className="text-lg">{n.emoji}</span><span>{n.label}</span>
             </button>
           );
@@ -36,7 +36,7 @@ export default function StartHere() {
       <div id="start-panel" aria-live="polite">
         {need && (
           <div className="mt-5 flex flex-col gap-4">
-            <div className="rounded-2xl border-2 bg-[#141d2e] p-6" style={{ borderColor: A }}>
+            <div className="pbr-edge rounded-2xl border-2 bg-[#141d2e] p-6">
               <p className="text-xs font-black uppercase tracking-[0.14em]" style={{ color: A }}>
                 2. Do this today · about {need.step.minutes} minutes
               </p>

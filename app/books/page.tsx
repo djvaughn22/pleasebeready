@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   description: "A hand-picked reading list for emergency readiness, first aid, food storage, home resilience, finances, family prep, and traditional skills.",
 };
 
-const A = "#34D399";
+const A = "#F97316";
 const CATEGORIES: (ReadinessCategory | "all")[] = ["all", "emergency-readiness", "first-aid", "food-water", "home-resilience", "financial", "faith-emotional", "family", "traditional-skills"];
 
 function CategoryChip({ category, active }: { category: ReadinessCategory | "all"; active: boolean }) {
@@ -21,7 +21,7 @@ function CategoryChip({ category, active }: { category: ReadinessCategory | "all
   return (
     <Link
       href={href}
-      className={`rounded-full border px-3 py-1.5 text-xs font-bold transition ${active ? "pbr-edge bg-[#34D399] text-[#0b1220]" : "pbr-body"}`}
+      className={`rounded-full border px-3 py-1.5 text-xs font-bold transition ${active ? "pbr-edge bg-[#F97316] text-[#0b1220]" : "pbr-body"}`}
     >
       {label}
     </Link>
@@ -67,7 +67,7 @@ function BookCard({ book }: { book: PrepBook }) {
             href={openLibraryUrl(book)}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex min-h-11 items-center justify-between gap-2 rounded-xl bg-[#34D399] px-4 py-2.5 text-sm font-black text-[#0b1220]"
+            className="flex min-h-11 items-center justify-between gap-2 rounded-xl bg-[#F97316] px-4 py-2.5 text-sm font-black text-[#0b1220]"
           >
             <span>{book.freeToRead ? "📖 Read on Open Library" : "📚 Borrow on Open Library"}</span>
             <span>→</span>

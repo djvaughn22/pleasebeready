@@ -22,7 +22,7 @@ export default function QuickBar({ plan, api }: { plan: Plan; api: PlansApi }) {
             return (
               <button key={d.days} type="button" aria-pressed={on}
                 onClick={() => api.update(plan.id, (p) => withDays(p, d.days))}
-                className={`min-h-10 rounded-full border px-3 text-sm font-black transition ${on ? "border-[#34D399] bg-[#34D399] text-[#0b1220]" : "border-[#26324c] bg-[#1c2740] text-[#e8edf5] hover:border-[#34D399]"}`}>
+                className={`min-h-10 rounded-full border px-3 text-sm font-black transition ${on ? "border-[#F97316] bg-[#F97316] text-[#0b1220]" : "border-[#26324c] bg-[#1c2740] text-[#e8edf5] hover:border-[#F97316]"}`}>
                 {on && <span aria-hidden>✓ </span>}{d.label}
               </button>
             );

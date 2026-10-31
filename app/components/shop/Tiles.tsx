@@ -8,7 +8,7 @@ import { laneById, type Lane } from "../../lib/shop/lanes";
 const edge = (color: string) => ({ borderColor: "var(--om-border)", borderTopColor: color });
 
 export function KitCard({ kit }: { kit: Kit }) {
-  const color = laneById(kit.lane)?.color ?? "#34D399";
+  const color = laneById(kit.lane)?.color ?? "#F97316";
   return (
     <Link href={`/kits/${kit.slug}`} style={edge(color)}
       className="flex h-full flex-col gap-1.5 rounded-2xl border border-t-4 bg-[#141d2e] p-3.5 transition hover:brightness-110">

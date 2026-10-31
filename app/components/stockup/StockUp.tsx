@@ -61,7 +61,7 @@ function PlanScreen({ plan, api, tab, setTab }: {
           {tabs.map((t) => (
             <button key={t.id} type="button" role="tab" aria-selected={tab === t.id} aria-controls={`panel-${t.id}`} id={`tab-${t.id}`}
               onClick={() => go(t.id)}
-              className={`min-h-11 shrink-0 rounded-lg px-3 text-sm font-black transition ${tab === t.id ? "bg-[#1c2740] text-[#e8edf5] underline decoration-[#34D399] decoration-2 underline-offset-8" : "text-[#94a3b8] hover:text-[#e8edf5]"}`}>
+              className={`min-h-11 shrink-0 rounded-lg px-3 text-sm font-black transition ${tab === t.id ? "bg-[#1c2740] text-[#e8edf5] underline decoration-[#F97316] decoration-2 underline-offset-8" : "text-[#94a3b8] hover:text-[#e8edf5]"}`}>
               {t.text}
             </button>
           ))}

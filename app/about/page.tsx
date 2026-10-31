@@ -6,7 +6,7 @@ export const metadata: Metadata = {
     "Friendly emergency preparedness — calm, practical, one small step at a time. Checklists and a daily readiness habit.",
 };
 
-const A = "#34D399";
+const A = "#F97316";
 
 export default function AboutPage() {
   return (

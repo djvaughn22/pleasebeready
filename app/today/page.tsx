@@ -10,7 +10,7 @@ import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
-const A = "#34D399";
+const A = "#F97316";
 
 export async function generateMetadata(): Promise<Metadata> {
   const { task, post } = buildDailyReadiness(chicagoDateKey());

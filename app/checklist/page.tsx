@@ -6,7 +6,7 @@ import StartHere from "../components/StartHere";
 import SupplyMath from "../components/SupplyMath";
 import { areas, levels, resources } from "../lib/readiness";
 
-const A = "#34D399";
+const A = "#F97316";
 
 // The emergency checklist (the home page until Oct 30, 2026): a first step,
 // supply math, eleven areas with official guide links, and supply levels.
@@ -34,7 +34,7 @@ export default function ChecklistPage() {
             Start with one small step, work out how much water and food you need, then check off the eleven areas.
           </p>
           <Link href="/kits"
-            className="mt-5 inline-flex min-h-12 items-center gap-2 rounded-xl border border-[#34D399] bg-[#34D399] px-5 py-3 text-base font-black text-[#0b1220] transition hover:brightness-110">
+            className="mt-5 inline-flex min-h-12 items-center gap-2 rounded-xl border border-[#F97316] bg-[#F97316] px-5 py-3 text-base font-black text-[#0b1220] transition hover:brightness-110">
             🧰 Shop a ready-made kit <span aria-hidden>→</span>
           </Link>
         </section>
@@ -52,7 +52,7 @@ export default function ChecklistPage() {
         <SupplyMath />
 
         <a href="/today"
-          className="mb-12 flex items-center justify-between gap-2 rounded-xl border border-[#26324c] bg-[#141d2e] px-4 py-3 text-sm font-black transition hover:border-[#34D399]"
+          className="mb-12 flex items-center justify-between gap-2 rounded-xl border border-[#26324c] bg-[#141d2e] px-4 py-3 text-sm font-black transition hover:border-[#F97316]"
           style={{ color: A }}>
           <span>📅 Daily Readiness Check — one small task a day</span><span aria-hidden>→</span>
         </a>
@@ -70,7 +70,7 @@ export default function ChecklistPage() {
                 </h3>
                 <div className="flex-1"><ChecklistLines areaId={a.id} details={a.details} /></div>
                 <a href={a.href} target="_blank" rel="noopener noreferrer" data-measure="guide" data-measure-label={a.id}
-                  className="inline-flex items-center justify-between rounded-xl border border-[#26324c] bg-[#1c2740] px-4 py-2.5 text-xs font-black uppercase tracking-[0.1em] transition hover:border-[#34D399]"
+                  className="inline-flex items-center justify-between rounded-xl border border-[#26324c] bg-[#1c2740] px-4 py-2.5 text-xs font-black uppercase tracking-[0.1em] transition hover:border-[#F97316]"
                   style={{ color: A }}>
                   <span>Guide · {a.source}</span><span aria-hidden>→</span>
                 </a>
@@ -99,7 +99,7 @@ export default function ChecklistPage() {
           <div className="flex flex-col gap-2">
             {resources.map((r) => (
               <a key={r.href} href={r.href} target="_blank" rel="noopener noreferrer"
-                className="flex items-center justify-between rounded-xl border border-[#26324c] bg-[#1c2740] px-5 py-3.5 text-sm font-black text-[#e8edf5] transition hover:border-[#34D399]">
+                className="flex items-center justify-between rounded-xl border border-[#26324c] bg-[#1c2740] px-5 py-3.5 text-sm font-black text-[#e8edf5] transition hover:border-[#F97316]">
                 <span>{r.label}</span><span style={{ color: A }} aria-hidden>→</span>
               </a>
             ))}

@@ -31,7 +31,7 @@ export type Lane = {
 };
 
 export const lanes: Lane[] = [
-  { id: "emergency", emoji: "🔦", title: "Emergency preparedness", blurb: "Water, light, power, first aid and a go-bag for storms and outages.", color: "#34D399",
+  { id: "emergency", emoji: "🔦", title: "Emergency preparedness", blurb: "Water, light, power, first aid and a go-bag for storms and outages.", color: "#F97316",
     cats: ["safety", "power"], occs: ["emergency", "outage", "hurricane", "wildfire", "flood"] },
   { id: "food-and-water", emoji: "💧", title: "Food and water", blurb: "Drinking water, storage and a pantry that lasts.", color: "#38BDF8",
     cats: ["water", "food", "drinks"], occs: [] },
@@ -50,7 +50,7 @@ export const lanes: Lane[] = [
   { id: "travel", emoji: "🧳", title: "Travel and vacations", blurb: "Packing for flights, road trips and the beach.", color: "#38BDF8",
     cats: ["travel"], occs: ["roadtrip", "vacation", "beach"],
     exclude: ["hot-dogs", "hot-dog-buns", "portable-grill", "cutting-board-and-knife"] },
-  { id: "outdoors", emoji: "⛺", title: "Camping and outdoors", blurb: "Tents, camp kitchens, hikes and days outside.", color: "#34D399",
+  { id: "outdoors", emoji: "⛺", title: "Camping and outdoors", blurb: "Tents, camp kitchens, hikes and days outside.", color: "#7DD3FC",
     cats: ["outdoors", "sleep"], occs: ["camping", "hiking"], ids: ["charcoal", "coffee-maker-for-camp"] },
   { id: "parties", emoji: "🎉", title: "Parties and entertaining", blurb: "Birthdays, cookouts, game days and guests.", color: "#E879F9",
     cats: ["party", "dining", "fun"], occs: ["party", "hosting", "tailgate", "picnic"], ids: ["charcoal"],

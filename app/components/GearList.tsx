@@ -1,6 +1,6 @@
 import { amazonUrl, type GearItem } from "../lib/gear";
 
-const A = "#34D399";
+const A = "#F97316";
 
 // Optional gear stays folded away so the free checklist reads first.
 // The disclosure travels with the links, not only at the bottom of the page.
@@ -19,7 +19,7 @@ export default function GearList({ gear, label = "Optional gear" }: { gear: Gear
         {gear.map((g) => (
           <a key={g.asin} href={amazonUrl(g.asin)} target="_blank" rel="noopener noreferrer sponsored"
             data-measure="gear" data-measure-label={g.asin}
-            className="inline-flex items-center justify-between gap-3 rounded-lg border border-[#26324c] bg-[#141d2e] px-3 py-2 text-xs font-bold text-[#e8edf5] transition hover:border-[#34D399]">
+            className="inline-flex items-center justify-between gap-3 rounded-lg border border-[#26324c] bg-[#141d2e] px-3 py-2 text-xs font-bold text-[#e8edf5] transition hover:border-[#F97316]">
             <span>{g.name}</span><span style={{ color: A }} aria-hidden>↗</span>
           </a>
         ))}

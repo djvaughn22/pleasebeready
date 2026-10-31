@@ -48,16 +48,18 @@ Checked Oct 30, 2026 by opening each public profile address (nothing was reserve
 
 | File | Size | Use |
 |---|---|---|
-| `brand/avatar-check.png` | 1080×1080 | Profile picture, option A (recommended): green check, reads at thumbnail size |
-| `brand/avatar-wordmark.png` | 1080×1080 | Profile picture, option B: "Please Be Ready" |
+| `brand/avatar-check.png` | 1080×1080 | Profile picture, option A (recommended): the mark alone (navy bag with a check on orange), reads at thumbnail size |
+| `brand/avatar-wordmark.png` | 1080×1080 | Profile picture, option B: the mark over the wordmark |
 | `brand/cover-facebook.png` | 1640×624 | Facebook cover; content kept in the center for phone crops |
 | `brand/banner-youtube.png` | 2560×1440 | YouTube banner; content inside the 1546×423 safe area |
 | `brand/cover-pinterest.png` | 1920×1080 | Pinterest profile cover |
 | `brand/pin-power-outage.png` | 1000×1500 | Pin template, filled in for the power outage kit |
 | `brand/slide-winter-storm-1.png`, `-2.png` | 1080×1350 | Carousel template (Instagram, Facebook, Threads), winter storm |
 | `brand/reel-cover-new-puppy.png` | 1080×1920 | Reel, TikTok and Shorts cover template; text stays clear of the buttons |
+| `brand/email-header.png` | 1200×240 | Email header (shows at 600×120) |
+| `brand/email-signature.png`, `brand/email-signature.html` | 640×120 | Email signature: image at 320×60 plus the site link |
 
-Same colors as the site: dark page, PleaseBeReady green, one lane color per topic. Solid fills only. Instagram, TikTok and Threads have no cover image.
+Same look as the site (Oct 31, 2026): the mark (orange tile, navy shopping bag, orange check), the Archivo wordmark with "Ready" in orange, navy page, one lane color per topic. Covers carry the mark, the wordmark and department chips, no slogan. Solid fills only. Instagram, TikTok and Threads have no cover image. The same mark is the site's favicon and app icon (`app/icon.svg`, `public/icons/`) and leads every share card (`components/OgCard.tsx`).
 
 ## How posts link to the site
 

@@ -5,7 +5,7 @@
 import { useState } from "react";
 import { supplyMath } from "../lib/readiness";
 
-const A = "#34D399";
+const A = "#F97316";
 const DAY_CHOICES = [3, 14];
 
 export default function SupplyMath() {
@@ -41,7 +41,7 @@ export default function SupplyMath() {
             {DAY_CHOICES.map((d) => (
               <button key={d} type="button" aria-pressed={days === d} onClick={() => setDays(d)}
                 style={days === d ? { borderColor: A, boxShadow: `inset 0 0 0 1px ${A}` } : undefined}
-                className={`h-10 rounded-lg border px-4 text-sm font-black ${days === d ? "border-[#34D399] bg-[#1c2740] text-[#e8edf5]" : "border-[#26324c] bg-[#0c1220] text-[#94a3b8]"}`}>
+                className={`h-10 rounded-lg border px-4 text-sm font-black ${days === d ? "border-[#F97316] bg-[#1c2740] text-[#e8edf5]" : "border-[#26324c] bg-[#0c1220] text-[#94a3b8]"}`}>
                 {days === d ? "✓ " : ""}{d === 3 ? "3 days" : "2 weeks"}
               </button>
             ))}

@@ -43,13 +43,13 @@ function ItemCard({ item, s, compact }: { item: CatalogItem; s?: Suggestion; com
   const rule = s ? null : ruleText(item);
   const varies = item.rule.per === "varies";
   return (
-    <li className={`flex flex-col gap-3 rounded-2xl border bg-[#141d2e] ${compact ? "p-3.5" : "p-4"} ${saved ? "border-[#34D399]" : "border-[#26324c]"}`}>
+    <li className={`flex flex-col gap-3 rounded-2xl border bg-[#141d2e] ${compact ? "p-3.5" : "p-4"} ${saved ? "border-[#F97316]" : "border-[#26324c]"}`}>
       <div className="flex items-start gap-3">
         <span aria-hidden className="mt-0.5 text-2xl leading-none">{categoryById(item.cat).emoji}</span>
         <div className="min-w-0 flex-1">
           {(item.pri === "essential" || main || item.pro) && (
             <div className="mb-1 flex flex-wrap gap-1.5">
-              {item.pri === "essential" && <span className={`${tag} border-[#34D399] pbr-accent`}>Must-have</span>}
+              {item.pri === "essential" && <span className={`${tag} border-[#F97316] pbr-accent`}>Must-have</span>}
               {main && <span className={`${tag} border-[#26324c] pbr-blue`}>{roleText[main.role]}</span>}
               {item.pro && <span className={`${tag} border-[#26324c] pbr-amber`}>Check with a pro</span>}
             </div>
@@ -97,7 +97,7 @@ function ItemCard({ item, s, compact }: { item: CatalogItem; s?: Suggestion; com
               <a href={amazonUrl(o.asin)} target="_blank" rel="noopener noreferrer sponsored"
                 data-measure="shop" data-measure-label={`${item.cat}-${o.role}-${item.id}`}
                 aria-label={`${roleText[o.role]}: ${o.name} on Amazon (opens in a new tab)`}
-                className="font-black text-[#e8edf5] underline decoration-[#34D399] underline-offset-2 hover:brightness-110">
+                className="font-black text-[#e8edf5] underline decoration-[#F97316] underline-offset-2 hover:brightness-110">
                 <span className="pbr-blue">{roleText[o.role]}:</span> {o.name} ↗
               </a>
               <span className="block font-semibold text-[#94a3b8]">{o.why}</span>

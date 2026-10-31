@@ -20,7 +20,7 @@ export default function GuidesPage() {
         <ul className="mt-8 grid gap-3 sm:grid-cols-2">
           {guides.map((g) => (
             <li key={g.slug}>
-              <Link href={`/guides/${g.slug}`} className="flex h-full items-start gap-3 rounded-2xl border border-[#26324c] bg-[#141d2e] p-4 transition hover:border-[#34D399]">
+              <Link href={`/guides/${g.slug}`} className="flex h-full items-start gap-3 rounded-2xl border border-[#26324c] bg-[#141d2e] p-4 transition hover:border-[#F97316]">
                 <span aria-hidden className="text-2xl leading-none">{g.emoji}</span>
                 <span className="min-w-0">
                   <span className="block text-base font-black leading-snug text-[#e8edf5]">{g.title}</span>

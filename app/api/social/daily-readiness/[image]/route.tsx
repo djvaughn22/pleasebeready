@@ -14,7 +14,7 @@ const SURFACE = "#141d2e";
 const BORDER = "#26324c";
 const TEXT = "#e8edf5";
 const MUTED = "#94a3b8";
-const GREEN = "#34D399";
+const GREEN = "#F97316";
 
 export async function GET(
   request: Request,

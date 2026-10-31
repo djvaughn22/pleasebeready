@@ -1,138 +1,156 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Mark, Wordmark } from "./components/Brand";
 import JsonLd, { SITE } from "./components/JsonLd";
-import ItemCard from "./components/shop/ItemCard";
 import ListsProvider from "./components/shop/ListsProvider";
 import ListsTeaser from "./components/shop/ListsTeaser";
 import SaveBar from "./components/shop/SaveBar";
 import Saver from "./components/shop/Saver";
-import { KitCard, LaneTile } from "./components/shop/Tiles";
-import { GoodToKnow } from "./components/stockup/ui";
+import { CompareCard, ProductTile } from "./components/shop/Store";
+import { KitCard } from "./components/shop/Tiles";
+import { activeDeals } from "./lib/shop/deals";
+import { guides } from "./lib/shop/guides";
 import { POPULAR, kitBySlug, kits, kitsForMonth } from "./lib/shop/kits";
-import { picks } from "./lib/shop/picks";
 import { lanes } from "./lib/shop/lanes";
-import { EXAMPLES } from "./lib/shop/search";
-import { itemById } from "./lib/stockup/catalog";
+import { pickByAsin } from "./lib/shop/picks";
 
-// Home: one question and a search box, then the visitor's own list to pick up,
-// kits for this month, popular kits, everyday essentials as exact products,
-// family and pet kits, our product picks by lane, and the sixteen lanes.
-// Rebuilt daily so the seasonal kits follow the month.
+// Home is a storefront: wordmark and search, departments, then products.
+// No headline or pitch: the name says what the store is. Order: departments,
+// Ready Deals (only verified ones, see deals.ts), Ready Finds, Emergency
+// essentials, kits, budget-to-upgrade, the visitor's lists, this month.
+// Rebuilt daily so the seasonal kits and deals follow the date.
 export const revalidate = 86400;
 
 export const metadata: Metadata = {
-  title: { absolute: "PleaseBeReady: shopping lists for whatever is coming" },
+  title: { absolute: "PleaseBeReady" },
   description:
-    "Search what you need to be ready for, from a power outage or winter storm to a new puppy or a party for 20. Ready-made kits with amounts for your group, Amazon links, and lists saved on your device.",
+    "Emergency supplies and everyday essentials, picked product by product, with kits for outages, storms, pets, cars, trips and parties, and lists saved on your device.",
   alternates: { canonical: "/" },
 };
 
-const ESSENTIALS = ["batteries", "power-bank", "flashlights", "first-aid-kit", "smoke-and-co-alarm", "fire-extinguisher"];
-const FAMILY = ["new-baby", "family-emergency-kit", "kids-sleepover", "new-puppy", "dog-travel", "pet-emergency"];
-const COLLECTIONS = [
-  { lane: "emergency", text: "🔦 Power outages" }, { lane: "seasonal", text: "❄️ Winter" }, { lane: "car", text: "🚙 The car" },
-  { lane: "pets", text: "🐾 Pets" }, { lane: "outdoors", text: "⛺ Camping" }, { lane: "tools", text: "🧰 Tools" },
-];
-const chip = "inline-flex min-h-10 items-center rounded-full border border-[#26324c] bg-[#141d2e] px-3 text-sm font-bold text-[#e8edf5] transition hover:border-[#34D399]";
+// Short names for the department tiles; lanes.ts keeps the full titles.
+const SHORT: Record<string, string> = {
+  emergency: "Emergency", "food-and-water": "Food & water", home: "Home", family: "Kids & family",
+  "school-and-sports": "School & sports", pets: "Pets", car: "Car", travel: "Travel", outdoors: "Camping",
+  parties: "Parties", health: "Health", caregiving: "Caregiving", seasonal: "Seasonal", moving: "Moving",
+  tools: "Tools", everyday: "Everyday",
+};
+// Useful across a house, car and pets, each with an exact product.
+const FINDS = ["portable-jump-starter", "headlamps", "dash-camera", "rechargeable-lantern", "motion-sensor-night-lights", "cordless-drill", "reusable-water-bottles", "pet-first-aid-kit"];
+const EMERGENCY = ["flashlights", "batteries", "weather-radio", "power-bank", "first-aid-kit", "water-storage-container", "smoke-and-co-alarm", "fire-extinguisher"];
+const COMPARE = ["portable-power-station", "personal-water-filter", "weather-radio", "flashlights"];
+
+const grid = "grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4";
+const rail = "-mx-4 flex snap-x scroll-px-4 gap-3 overflow-x-auto px-4 pb-2 sm:mx-0 sm:px-0";
+
+function Head({ id, title, href, more }: { id: string; title: string; href?: string; more?: string }) {
+  return (
+    <div className="mb-3 flex items-baseline justify-between gap-3">
+      <h2 id={id} className="pbr-display text-xl font-black sm:text-2xl">{title}</h2>
+      {href && <Link href={href} className="shrink-0 text-sm font-black pbr-accent">{more ?? "See all"} →</Link>}
+    </div>
+  );
+}
 
 export default function Home() {
   const now = new Date();
-  const month = now.getUTCMonth() + 1;
+  const today = now.toISOString().slice(0, 10);
   const monthName = now.toLocaleString("en-US", { month: "long", timeZone: "UTC" });
-  const seasonal = kitsForMonth(month).sort((a, b) => (a.months?.length ?? 12) - (b.months?.length ?? 12)).slice(0, 6);
-  const popular = POPULAR.filter((s) => !seasonal.some((k) => k.slug === s)).map((s) => kitBySlug(s)!).slice(0, 4);
+  const seasonal = kitsForMonth(now.getUTCMonth() + 1).sort((a, b) => (a.months?.length ?? 12) - (b.months?.length ?? 12)).slice(0, 4);
+  const deals = activeDeals(today);
 
   return (
     <main className="min-h-screen bg-[#0b1220] text-[#e8edf5]">
-      <div className="mx-auto max-w-3xl px-4 py-8 sm:px-5 sm:py-12">
+      <div className="mx-auto max-w-6xl px-4 pb-10 pt-4 sm:px-6 sm:pt-6">
         <ListsProvider>
           <Saver>
-            <section className="mb-10">
-              <h1 className="text-3xl font-black leading-tight sm:text-5xl">What do you want to be ready for?</h1>
-              <form action="/search" method="get" role="search" className="mt-5 flex gap-2">
-                <label htmlFor="home-q" className="sr-only">What do you want to be ready for?</label>
-                <input id="home-q" name="q" type="search" enterKeyHint="search" autoComplete="off" placeholder="Winter storm, new puppy, party for 20…"
-                  className="h-14 min-w-0 flex-1 rounded-xl border border-[#26324c] bg-[#0c1220] px-4 text-base font-bold text-[#e8edf5]" />
-                <button type="submit" className="h-14 shrink-0 rounded-xl border border-[#34D399] bg-[#34D399] px-5 text-base font-black text-[#0b1220]">Search</button>
+            <header className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-6">
+              <h1 className="flex shrink-0 items-center gap-2.5">
+                <Mark size={40} />
+                <Wordmark className="text-[1.75rem] leading-none sm:text-3xl" />
+              </h1>
+              <form action="/search" method="get" role="search" className="flex flex-1 gap-2">
+                <label htmlFor="home-q" className="sr-only">Search products and kits</label>
+                <input id="home-q" name="q" type="search" enterKeyHint="search" autoComplete="off" placeholder="Search products and kits"
+                  className="h-12 min-w-0 flex-1 rounded-xl border-2 border-[#26324c] bg-[#141d2e] px-4 text-base font-bold text-[#e8edf5]" />
+                <button type="submit" aria-label="Search" className="pbr-edge h-12 shrink-0 rounded-xl border-2 bg-[#F97316] px-4 text-base font-black text-[#0b1220]">
+                  <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" strokeWidth="3" /><path d="M15.5 15.5L21 21" stroke="currentColor" strokeWidth="3" strokeLinecap="round" /></svg>
+                </button>
               </form>
-              <ul className="mt-3 flex flex-wrap gap-2" aria-label="Example searches">
-                {EXAMPLES.slice(0, 6).map((e) => (
-                  <li key={e}><Link href={`/search?q=${encodeURIComponent(e)}`} className={chip}>{e}</Link></li>
+            </header>
+
+            <nav aria-label="Departments" className="mb-8">
+              <ul className={`${rail} sm:grid sm:grid-cols-8 sm:overflow-visible sm:pb-0`}>
+                {lanes.map((l) => (
+                  <li key={l.id} className="shrink-0 snap-start">
+                    <Link href={`/shop/${l.id}`} style={{ background: `color-mix(in srgb, ${l.color} 20%, var(--om-surface))` }}
+                      className="flex h-[5.5rem] w-[5.5rem] flex-col items-center justify-center gap-1.5 rounded-2xl px-1 text-center sm:h-24 sm:w-full">
+                      <span aria-hidden className="text-3xl leading-none">{l.emoji}</span>
+                      <span className="text-[0.72rem] font-black leading-tight text-[#e8edf5]">{SHORT[l.id] ?? l.title}</span>
+                    </Link>
+                  </li>
                 ))}
               </ul>
-              <p className="mt-4 text-xs font-semibold leading-5 text-[#94a3b8]">
-                {kits.length} kits with amounts for your group · {new Set(picks.map((p) => p.asin)).size} exact products, each Amazon link checked · lists saved on your phone, no account
-              </p>
+            </nav>
+
+            {deals.length > 0 && (
+              <section aria-labelledby="deals-title" className="mb-10">
+                <Head id="deals-title" title="Ready Deals" />
+                <ul className={grid}>{deals.map((d) => <ProductTile key={d.asin} id={pickByAsin(d.asin)!.item} tag={d.off} />)}</ul>
+              </section>
+            )}
+
+            <section aria-labelledby="finds-title" className="mb-10">
+              <Head id="finds-title" title="Ready Finds" />
+              <ul className={grid}>{FINDS.map((id) => <ProductTile key={id} id={id} />)}</ul>
+            </section>
+
+            <section aria-labelledby="emergency-title" className="mb-10">
+              <Head id="emergency-title" title="Emergency essentials" href="/shop/emergency#lane-picks" />
+              <ul className={grid}>{EMERGENCY.map((id) => <ProductTile key={id} id={id} />)}</ul>
+            </section>
+
+            <section aria-labelledby="kits-title" className="mb-10">
+              <Head id="kits-title" title="Shop by situation" href="/kits" more={`All ${kits.length}`} />
+              <ul className={rail}>
+                {POPULAR.map((s) => kitBySlug(s)!).map((k) => <li key={k.slug} className="w-[11.5rem] shrink-0 snap-start"><KitCard kit={k} /></li>)}
+              </ul>
+            </section>
+
+            <section aria-labelledby="compare-title" className="mb-10">
+              <Head id="compare-title" title="Budget, our pick, upgrade" />
+              <ul className="grid gap-3 md:grid-cols-2">{COMPARE.map((id) => <CompareCard key={id} id={id} />)}</ul>
             </section>
 
             <div className="mb-10"><ListsTeaser /></div>
 
-            {seasonal.length > 0 && (
-              <section aria-labelledby="season-title" className="mb-10">
-                <h2 id="season-title" className="mb-3 text-xl font-black">Ready for {monthName}</h2>
-                <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3">{seasonal.map((k) => <li key={k.slug}><KitCard kit={k} /></li>)}</ul>
-              </section>
-            )}
-
-            <section aria-labelledby="popular-title" className="mb-10">
-              <div className="mb-3 flex items-baseline justify-between gap-2">
-                <h2 id="popular-title" className="text-xl font-black">Popular kits</h2>
-                <Link href="/kits" className="text-sm font-black pbr-accent">All {kits.length} kits →</Link>
-              </div>
-              <ul className="grid grid-cols-2 gap-2 sm:grid-cols-4">{popular.map((k) => <li key={k.slug}><KitCard kit={k} /></li>)}</ul>
-            </section>
-
-            <section aria-labelledby="essentials-title" className="mb-10">
-              <h2 id="essentials-title" className="mb-1 text-xl font-black">Everyday essentials</h2>
-              <p className="mb-4 text-xs font-semibold leading-5 text-[#94a3b8]">The basics every home should have, as exact products we picked.</p>
-              <ul className="grid gap-3 sm:grid-cols-2">{ESSENTIALS.map((id) => <ItemCard key={id} item={itemById(id)!} compact />)}</ul>
-              <div className="mt-4"><GoodToKnow /></div>
-            </section>
-
-            <section aria-labelledby="family-title" className="mb-10">
-              <h2 id="family-title" className="mb-3 text-xl font-black">Family and pets</h2>
-              <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3">{FAMILY.map((s) => kitBySlug(s)!).map((k) => <li key={k.slug}><KitCard kit={k} /></li>)}</ul>
-            </section>
-
-            <section aria-labelledby="collections-title" className="mb-10">
-              <h2 id="collections-title" className="mb-3 text-xl font-black">Products we picked for…</h2>
+            <section aria-labelledby="season-title" className="mb-10">
+              <Head id="season-title" title={`Ready for ${monthName}`} href="/guides" more="Guides" />
+              {seasonal.length > 0 && (
+                <ul className={`${rail} mb-3`}>{seasonal.map((k) => <li key={k.slug} className="w-[11.5rem] shrink-0 snap-start"><KitCard kit={k} /></li>)}</ul>
+              )}
               <ul className="flex flex-wrap gap-2">
-                {COLLECTIONS.map((c) => (
-                  <li key={c.lane}><Link href={`/shop/${c.lane}#lane-picks`} className={chip}>{c.text}</Link></li>
+                {guides.map((g) => (
+                  <li key={g.slug}>
+                    <Link href={`/guides/${g.slug}`} className="inline-flex min-h-10 items-center gap-1.5 rounded-full border border-[#26324c] bg-[#141d2e] px-3 text-sm font-bold text-[#e8edf5]">
+                      <span aria-hidden>{g.emoji}</span>{g.title}
+                    </Link>
+                  </li>
                 ))}
               </ul>
             </section>
-
-            <section aria-labelledby="lanes-title" className="mb-10">
-              <h2 id="lanes-title" className="mb-3 text-xl font-black">Shop by need</h2>
-              <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3">{lanes.map((l) => <li key={l.id}><LaneTile lane={l} /></li>)}</ul>
-            </section>
-
-            <nav aria-label="More from PleaseBeReady" className="mb-10 flex flex-col gap-2">
-              {[
-                { href: "/guides", text: "📖 Guides: how much to buy, how to store it" },
-                { href: "/checklist", text: "✅ Emergency checklist: eleven areas with official guide links" },
-                { href: "/today", text: "📅 Daily Readiness Check: one small task a day" },
-                { href: "/books", text: "📚 Preparedness Bookshelf" },
-              ].map((l) => (
-                <Link key={l.href} href={l.href}
-                  className="flex items-center justify-between gap-2 rounded-xl border border-[#26324c] bg-[#141d2e] px-4 py-3 text-sm font-black text-[#e8edf5] transition hover:border-[#34D399]">
-                  <span>{l.text}</span><span aria-hidden className="pbr-accent">→</span>
-                </Link>
-              ))}
-            </nav>
 
             <SaveBar />
           </Saver>
         </ListsProvider>
 
-        <div className="pt-6 text-center">
+        <div className="border-t border-[#26324c] pt-6 text-center">
           <p className="mx-auto max-w-xl text-xs font-semibold leading-6 text-[#94a3b8]">
+            As an Amazon Associate, PleaseBeReady earns from qualifying purchases.
+          </p>
+          <p className="mx-auto mt-2 max-w-xl text-xs font-semibold leading-6 text-[#94a3b8]">
             General preparedness information, not professional or medical advice. In any emergency, call your local
             emergency number and follow official guidance from local authorities.
-          </p>
-          <p className="mx-auto mt-3 max-w-xl text-xs font-semibold leading-6 text-[#94a3b8]">
-            As an Amazon Associate, PleaseBeReady earns from qualifying purchases.
           </p>
         </div>
       </div>
@@ -140,7 +158,7 @@ export default function Home() {
         "@context": "https://schema.org",
         "@graph": [
           { "@type": "WebSite", name: "PleaseBeReady", url: SITE, potentialAction: { "@type": "SearchAction", target: `${SITE}/search?q={search_term_string}`, "query-input": "required name=search_term_string" } },
-          { "@type": "Organization", name: "PleaseBeReady", url: SITE, parentOrganization: { "@type": "Organization", name: "Open Mirror LLC", url: "https://openmirrorllc.com" } },
+          { "@type": "Organization", name: "PleaseBeReady", url: SITE, logo: `${SITE}/icons/pbr-512.png`, parentOrganization: { "@type": "Organization", name: "Open Mirror LLC", url: "https://openmirrorllc.com" } },
         ],
       }} />
     </main>

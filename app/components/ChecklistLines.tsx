@@ -3,7 +3,7 @@
 import { itemId } from "../lib/readiness";
 import { useChecks } from "./useChecks";
 
-const A = "#34D399";
+const A = "#F97316";
 
 export default function ChecklistLines({ areaId, details }: { areaId: string; details: string[] }) {
   const { checked, toggle } = useChecks();
