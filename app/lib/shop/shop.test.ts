@@ -172,6 +172,14 @@ describe("search", () => {
     expect(ids("grab bar")[0]).toBe("grab-bars");
     expect(ids("coleman")).toEqual(expect.arrayContaining(["tent", "camp-stove", "cooler"]));
     expect(ids("midland")).toContain("weather-radio");
+    // Brand names inside product names match whole words only, and a named situation ranks its kit's must-haves.
+    const outage = ids("power outage for 4 people", 8);
+    expect(outage).toEqual(expect.arrayContaining(["flashlights", "power-bank", "batteries", "weather-radio"]));
+    expect(outage).not.toContain("tape-measure");
+    expect(ids("power outage", 30)).not.toEqual(expect.arrayContaining(["tire-inflator"]));
+    expect(ids("power outage", 30)).not.toContain("battery-powered-fan");
+    expect(ids("hot dogs", 12)).not.toContain("dog-harness");
+    expect(ids("new puppy")).toEqual(expect.arrayContaining(["puppy-pads", "pet-food"]));
     expect(searchKits("storm").map((k) => k.slug)).toEqual(expect.arrayContaining(["winter-storm", "tornado", "hurricane"]));
     expect(searchKits("generator")[0]?.slug).toBe("power-outage");
     expect(searchKits("diapers")[0]?.slug).toBe("new-baby");

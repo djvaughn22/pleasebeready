@@ -78,7 +78,7 @@ function KitBody({ kit, n, setN }: { kit: Kit; n: KitNumbers; setN: (fn: (n: Kit
         <div className="flex flex-wrap items-center gap-2">
           {mine ? (
             <>
-              <Link href={`/lists#list=${mine.id}`} style={{ borderColor: "#34D399" }} className={btnPrimary}>🛒 Shop your list ({countLeft(mine)} to buy) →</Link>
+              <Link href={`/lists#list=${mine.id}`} className={`pbr-edge ${btnPrimary}`}>🛒 Shop your list ({countLeft(mine)} to buy) →</Link>
               {missing.length > 0 && (
                 <button type="button" className={btnSmall} disabled={!saver.ready} onClick={() => saver.saveMany(missing)}>Add the {missing.length} missing</button>
               )}

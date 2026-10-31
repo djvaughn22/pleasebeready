@@ -61,7 +61,7 @@ function LaneBody({ laneId }: { laneId: LaneId }) {
     <div className="pbr-planner">
       {ourPicks.length > 0 && !filtered && (
         <section aria-labelledby="lane-picks" className="mb-8">
-          <h3 id="lane-picks" className="mb-1 text-lg font-black">Products we picked</h3>
+          <h3 id="lane-picks" className="mb-1 scroll-mt-20 text-lg font-black">Products we picked</h3>
           <p className={`mb-3 ${muted}`}>Exact products for the most-needed things here. Everything else opens an Amazon search.</p>
           <ul className="grid gap-3 sm:grid-cols-2">{ourPicks.map((i) => <ItemCard key={i.id} item={i} compact />)}</ul>
         </section>

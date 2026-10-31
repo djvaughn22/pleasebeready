@@ -37,7 +37,7 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
         <p className="mt-2 max-w-2xl text-base font-semibold leading-7 text-[#94a3b8]">{g.intro}</p>
         <p className="mt-2 text-xs font-semibold text-[#94a3b8]">Sources read {day(read)}.</p>
 
-        <Link href={`/kits/${kit.slug}`} style={{ borderColor: "#34D399" }} className="mt-6 flex items-center justify-between gap-3 rounded-2xl border-2 bg-[#141d2e] p-4 transition hover:brightness-110">
+        <Link href={`/kits/${kit.slug}`} className="pbr-edge mt-6 flex items-center justify-between gap-3 rounded-2xl border-2 bg-[#141d2e] p-4 transition hover:brightness-110">
           <span className="min-w-0">
             <span className="block text-base font-black text-[#e8edf5]">{kit.emoji} Shop the {kit.title.toLowerCase()}</span>
             <span className="mt-0.5 block text-xs font-semibold text-[#94a3b8]">Amounts for your group, Amazon links, and a list you can save.</span>

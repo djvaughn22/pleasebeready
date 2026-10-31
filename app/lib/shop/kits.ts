@@ -323,7 +323,7 @@ export const kits: Kit[] = [
     budget: [{ id: "bug-spray", instead: "citronella-candles-or-repellent-device" }],
     forget: ["aluminum-foil", "sunscreen", "serving-utensils", "tablecloths"],
     todo: ["check-forecast", "confirm-headcount", "ask-allergies"],
-    terms: ["bbq", "barbecue", "barbeque", "cookout", "cook out", "grill out", "grilling", "backyard party", "4th of july", "fourth of july", "memorial day", "labor day", "summer party", "tailgate"],
+    terms: ["bbq", "barbecue", "barbeque", "cookout", "cook out", "grill out", "grilling", "backyard party", "hot dogs", "hot dog", "burgers", "4th of july", "fourth of july", "memorial day", "labor day", "summer party", "tailgate"],
     months: [5, 6, 7, 8, 9],
   },
   {

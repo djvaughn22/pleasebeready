@@ -21,7 +21,7 @@ Only short labels travel (a kit slug, a catalog id, a situation). Never what som
 | Lists created | `plan_start` | `kit-…`, `save-home`, `picker-…`, `link-…`, `shared-…` |
 | Items added in bulk | `plan_add` | `many-…`, `category-…`, `all-…` |
 | Lists shared | `list_share` | the list's situation |
-| Amazon clicks | `shop_click` (kits, lanes, search, lists), `gear_click` (checklist) | `<category>-<p or s>-<item>` (p = checked product, s = search) |
+| Amazon clicks | `shop_click` (kits, lanes, search, lists), `gear_click` (checklist) | `<category>-<p or s>-<item>` (p = our exact product, s = search); "other choices" links under a card: `<category>-<value, upgrade or alt>-<item>` |
 | Guide link clicks | `guide_click` | guide or kit slug |
 | Confirmed revenue | **Associates only:** *Reports → Orders* and *Earnings* | — |
 

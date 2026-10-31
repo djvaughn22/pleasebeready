@@ -21,8 +21,7 @@ function CategoryChip({ category, active }: { category: ReadinessCategory | "all
   return (
     <Link
       href={href}
-      className="rounded-full border px-3 py-1.5 text-xs font-bold transition"
-      style={active ? { background: A, borderColor: A, color: "#0b1220" } : { borderColor: "#26324c", color: "#cbd5e1" }}
+      className={`rounded-full border px-3 py-1.5 text-xs font-bold transition ${active ? "pbr-edge bg-[#34D399] text-[#0b1220]" : "pbr-body"}`}
     >
       {label}
     </Link>
@@ -41,20 +40,20 @@ function BookCard({ book }: { book: PrepBook }) {
           ) : (
             <div className="flex h-full w-full flex-col items-center justify-center gap-1 p-2 text-center">
               <span className="text-xl" aria-hidden>📖</span>
-              <span className="text-[9px] font-semibold leading-tight text-[#64748b]">{book.title}</span>
+              <span className="text-[9px] font-semibold leading-tight text-[#94a3b8]">{book.title}</span>
             </div>
           )}
         </Link>
         <div className="min-w-0 flex-1">
           <p className="text-[10px] font-black uppercase tracking-wide" style={{ color: A }}>{CATEGORY_LABELS[book.category]}</p>
-          <h3 className="mt-0.5 text-lg font-black leading-tight text-[#e8edf5]">{book.title}</h3>
+          <h2 className="mt-0.5 text-lg font-black leading-tight text-[#e8edf5]">{book.title}</h2>
           <p className="text-sm font-semibold text-[#94a3b8]">{book.author} · {book.year}</p>
         </div>
       </div>
 
-      <p className="mt-3 text-sm leading-relaxed text-[#cbd5e1]">{book.whyUseful}</p>
+      <p className="mt-3 text-sm leading-relaxed pbr-body">{book.whyUseful}</p>
 
-      <p className="mt-3 text-xs font-black uppercase tracking-wide text-[#64748b]">What you&apos;ll learn</p>
+      <p className="mt-3 text-xs font-black uppercase tracking-wide text-[#94a3b8]">What you&apos;ll learn</p>
       <ul className="mt-1 list-disc space-y-0.5 pl-5 text-sm text-[#94a3b8]">
         {book.whatYouLearn.map((line) => (
           <li key={line}>{line}</li>
@@ -68,8 +67,7 @@ function BookCard({ book }: { book: PrepBook }) {
             href={openLibraryUrl(book)}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex min-h-11 items-center justify-between gap-2 rounded-xl px-4 py-2.5 text-sm font-black"
-            style={{ background: A, color: "#0b1220" }}
+            className="flex min-h-11 items-center justify-between gap-2 rounded-xl bg-[#34D399] px-4 py-2.5 text-sm font-black text-[#0b1220]"
           >
             <span>{book.freeToRead ? "📖 Read on Open Library" : "📚 Borrow on Open Library"}</span>
             <span>→</span>
@@ -144,7 +142,7 @@ export default async function BooksPage({ searchParams }: { searchParams: Promis
         <div className="mt-8 flex flex-col items-center gap-3 text-center">
           <p className="max-w-md text-xs font-semibold leading-5 text-[#94a3b8]">
             Get the Libby app to borrow ebooks and audiobooks from your public library:{" "}
-            <a href={LIBBY_APP_URL} target="_blank" rel="noopener noreferrer" style={{ color: A }}>overdrive.com/apps/libby</a>.
+            <a href={LIBBY_APP_URL} target="_blank" rel="noopener noreferrer" className="underline" style={{ color: A }}>overdrive.com/apps/libby</a>.
           </p>
           <Link href="/" className="font-black" style={{ color: A }}>
             ← Back to Get Ready

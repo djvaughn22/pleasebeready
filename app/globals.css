@@ -128,15 +128,25 @@ a[href]:hover {
 }
 /* OPEN MIRROR FAMILY STYLE OVERRIDE END */
 
-/* Household planner: visible focus, and a plain black-on-white printout. */
+/* Household planner: visible focus. */
 .pbr-planner :focus-visible { outline: 2px solid #34D399; outline-offset: 2px; }
+/* Every page prints plain black on white, without the site header and footer or the
+   Shop/Save buttons. The doubled :root raises specificity above the family and light-theme
+   rules above, which use attribute selectors like [class*="bg-[#141d2e]"] with !important. */
 @media print {
-  body:has(.pbr-planner) > :not(main) { display: none !important; }
-  html, body, main { background: #fff !important; color: #000 !important; }
-  .pbr-planner, .pbr-planner * { color: #000 !important; background: transparent !important; border-color: #999 !important; box-shadow: none !important; }
+  body > :not(main) { display: none !important; }
+  :root, :root:root body, :root:root main[class] { background: #fff !important; color: #000 !important; }
+  :root:root main *, :root:root main *::before, :root:root main *::after {
+    color: #000 !important; background: transparent !important; border-color: #999 !important; box-shadow: none !important;
+  }
+  main a[data-measure="shop"], main button { display: none !important; }
 }
 
 /* Planner colors that stay readable in both themes. */
+/* Green edge for buttons and link cards. A plain class, outside Tailwind's layers, so the family
+   `a, button` border rule can't override it; an inline border-color would also trip the light
+   theme's rule that turns any inline "color: <green>" into green text. */
+.pbr-edge { border-color: #34D399; }
 .pbr-accent { color: #34D399; }
 .pbr-body { color: #cbd5e1; }
 html[data-om-theme="light"] .pbr-accent { color: #047857 !important; }

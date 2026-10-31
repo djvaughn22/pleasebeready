@@ -91,13 +91,14 @@ export function queryWords(query: string): string[][] {
 }
 
 const catTitle = new Map(categories.map((c) => [c.id, c.title.toLowerCase()]));
-const hay = new Map<string, { name: string; rest: string }>();
+const hay = new Map<string, { name: string; brand: string; rest: string }>();
 function haystack(item: CatalogItem) {
   let h = hay.get(item.id);
   if (!h) {
-    // Our exact products' names count as the item's name, so "midland" or "coleman" finds them.
-    const brands = picksFor(item.id).map((p) => p.name).join(" ");
-    h = { name: normalize(`${item.name} ${brands}`), rest: normalize(`${item.q ?? ""} ${item.note ?? ""} ${catTitle.get(item.cat) ?? ""}`) };
+    // Our exact products' names, so "midland" or "coleman" finds them. Matched as whole words and worth
+    // less than the item's own name, so "PowerLock" or "wall power" doesn't make a tape measure a power item.
+    const brand = normalize(picksFor(item.id).map((p) => p.name).join(" "));
+    h = { name: normalize(item.name), brand, rest: normalize(`${item.q ?? ""} ${item.note ?? ""} ${catTitle.get(item.cat) ?? ""}`) };
     hay.set(item.id, h);
   }
   return h;
@@ -118,6 +119,17 @@ export function searchItems(query: string, limit = 40): CatalogItem[] {
   if (!groups.length) return [];
   const words = normalize(query).split(" ");
   const avoid = new Set(words.flatMap((w) => (AVOID[w] && !words.includes(AVOID[w].unless) ? AVOID[w].ids : [])));
+  // A synonym that is also a typed word would count that word twice ("power outage" → "power power").
+  const typed = new Set(groups.flatMap((g) => g.slice(0, 2)));
+  // A search that names a kit's situation ("power outage", "new puppy") ranks that kit's must-haves first,
+  // then its upgrades and easy-to-forget items, even when their names share no word with the search.
+  const top = scoreKits(query)[0];
+  const kit = top?.phrase ? top.k : undefined;
+  const boost = new Map<string, number>([
+    ...(kit?.forget ?? []).map((id) => [id, 1] as const),
+    ...(kit?.upgrades ?? []).map((id) => [id, 1.5] as const),
+    ...(kit?.essentials ?? []).map((id) => [id, 3] as const),
+  ]);
   const scored: { item: CatalogItem; score: number; all: boolean }[] = [];
   for (const item of catalog) {
     if (item.kind === "task" || avoid.has(item.id)) continue;
@@ -127,14 +139,16 @@ export function searchItems(query: string, limit = 40): CatalogItem[] {
     for (const g of groups) {
       // g[0] and g[1] are the typed word and its stem; the rest are synonyms, worth a little less.
       const own = g.slice(0, 2);
-      const syn = g.slice(2);
+      const syn = g.slice(2).filter((w) => !typed.has(w));
       const s = own.some((w) => hasWord(h.name, w)) ? 3 : syn.some((w) => hasWord(h.name, w)) ? 2
+        : own.some((w) => ` ${h.brand} `.includes(` ${w} `)) ? 2
         : own.some((w) => hasWord(h.rest, w)) ? 1 : syn.some((w) => hasWord(h.rest, w)) ? 0.5 : 0;
       if (s) { score += s; matched++; }
     }
-    if (!matched) continue;
-    const all = matched === groups.length;
-    score += all ? 4 : 0;
+    const kitBoost = boost.get(item.id) ?? 0;
+    if (!matched && !kitBoost) continue;
+    const all = matched === groups.length || kitBoost > 0;
+    score += (all ? 4 : 0) + kitBoost;
     score += item.pri === "essential" ? 1.5 : item.pri === "useful" ? 0.5 : 0;
     if (hasPick(item.id)) score += 0.75;
     scored.push({ item, score, all });
@@ -145,21 +159,26 @@ export function searchItems(query: string, limit = 40): CatalogItem[] {
   return pool.sort((a, b) => b.score - a.score || a.item.name.localeCompare(b.item.name)).slice(0, limit).map((s) => s.item);
 }
 
-/** Kits ranked by their search words; longer phrases count for more. */
-export function searchKits(query: string): Kit[] {
+/** Kits scored by their search words; longer phrases count for more. `phrase`: a multi-word term or the title matched. */
+function scoreKits(query: string): { k: Kit; score: number; phrase: boolean }[] {
   const t = ` ${normalize(query)} `;
   if (!t.trim()) return [];
-  const scored = kits.map((k) => {
+  return kits.map((k) => {
     let score = 0;
+    let phrase = false;
     for (const term of k.terms) {
       const n = normalize(term);
-      if (n && t.includes(` ${n} `)) score += n.split(" ").length * 2;
+      if (n && t.includes(` ${n} `)) { score += n.split(" ").length * 2; phrase ||= n.includes(" "); }
       else if (n.length > 4 && t.includes(` ${n}`)) score += 1;
     }
-    if (t.includes(` ${normalize(k.title)} `)) score += 3;
-    return { k, score };
-  }).filter((s) => s.score > 0);
-  return scored.sort((a, b) => b.score - a.score).map((s) => s.k);
+    if (t.includes(` ${normalize(k.title)} `)) { score += 3; phrase = true; }
+    return { k, score, phrase };
+  }).filter((s) => s.score > 0).sort((a, b) => b.score - a.score);
+}
+
+/** Kits ranked by their search words. */
+export function searchKits(query: string): Kit[] {
+  return scoreKits(query).map((s) => s.k);
 }
 
 /** Lanes whose title shares a word with the query. */

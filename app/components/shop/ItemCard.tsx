@@ -90,7 +90,7 @@ function ItemCard({ item, s, compact }: { item: CatalogItem; s?: Suggestion; com
         </button>
       </div>
       {!compact && others.length > 0 && (
-        <ul aria-label={`Other choices for ${item.name}`} className="flex flex-col gap-2 border-t border-[#26324c] pt-2.5">
+        <ul aria-label={`Other choices for ${item.name}`} className="flex flex-col gap-2 border-t border-[#26324c] pt-2.5 print:hidden">
           {others.map((o) => (
             <li key={o.asin} className="text-xs leading-5">
               <a href={amazonUrl(o.asin)} target="_blank" rel="noopener noreferrer sponsored"

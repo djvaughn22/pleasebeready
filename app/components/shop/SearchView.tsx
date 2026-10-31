@@ -89,7 +89,7 @@ function SearchBody() {
       {top && (
         <section aria-labelledby="best-title" className="flex flex-col gap-3">
           <h2 id="best-title" className="text-lg font-black">Best match</h2>
-          <Link href={kitHref(top, intent)} style={{ borderColor: "#34D399" }} className="flex items-start gap-3 rounded-2xl border-2 bg-[#141d2e] p-5 transition hover:brightness-110">
+          <Link href={kitHref(top, intent)} className="pbr-edge flex items-start gap-3 rounded-2xl border-2 bg-[#141d2e] p-5 transition hover:brightness-110">
             <span aria-hidden className="text-3xl leading-none">{top.emoji}</span>
             <span className="min-w-0">
               <span className="block text-xl font-black leading-snug text-[#e8edf5]">{top.title}</span>

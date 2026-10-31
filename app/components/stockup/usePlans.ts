@@ -40,10 +40,11 @@ export function usePlans({ importLinks = false }: { importLinks?: boolean } = {}
           }
           history.replaceState(null, "", window.location.pathname + window.location.search);
         }
-        // #list=<id> opens one saved list (the Open list links on shop pages).
+        // #list=<id> opens one saved list (the Open list links on shop pages); #all opens the overview.
         const open = window.location.hash.match(/^#list=([a-z0-9]+)$/);
-        if (open) {
-          if (s.plans.some((p) => p.id === open[1])) s = { ...s, activeId: open[1] };
+        if (open || window.location.hash === "#all") {
+          if (!open) s = { ...s, activeId: null };
+          else if (s.plans.some((p) => p.id === open[1])) s = { ...s, activeId: open[1] };
           history.replaceState(null, "", window.location.pathname + window.location.search);
         }
         // ?start=<situation> opens a new list of that kind (links from posts land here).

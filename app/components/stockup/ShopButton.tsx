@@ -1,7 +1,8 @@
 // The Amazon button for one item: our exact product when there is one
 // ("Shop on Amazon", solid), otherwise a tagged Amazon search ("Search Amazon",
 // outlined, so the two never look alike). Counted through the site's GA
-// listener as shop_click.
+// listener as shop_click. The green border comes from .pbr-edge in globals.css
+// (see the note there on why not a Tailwind class or an inline style).
 
 import { shopLink } from "../../lib/stockup/shop";
 import type { CatalogItem } from "../../lib/stockup/types";
@@ -20,9 +21,8 @@ export default function ShopButton({ item, big }: { item: CatalogItem; big?: boo
       data-measure="shop" data-measure-label={`${item.cat}-${exact ? "p" : "s"}-${item.id}`}
       title={exact ? link.label : `${link.label}: search results, not one chosen product`}
       aria-label={`${text}: ${exact ? link.label : item.name} (${exact ? "product page" : "search results"}, opens in a new tab)`}
-      style={{ borderColor: "#34D399" }}
       className={big
-        ? `inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xl border-2 px-4 py-2 text-sm font-black transition hover:brightness-110 ${look}`
+        ? `pbr-edge inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xl border-2 px-4 py-2 text-sm font-black transition hover:brightness-110 ${look}`
         : `${btnSmall} pbr-accent`}>
       {text}<span aria-hidden>↗</span>
     </a>

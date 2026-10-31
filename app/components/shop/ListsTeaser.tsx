@@ -1,11 +1,12 @@
 "use client";
 
 // Home page: pick up where you left off. The most recently changed list with
-// what's still to buy (each with its Amazon button), and the other lists. With
-// no lists yet, one line on how lists work.
+// what's still to buy (must-haves and our exact products first, each with its
+// Amazon button), and the other lists. With no lists yet, one line on how lists work.
 
 import Link from "next/link";
 import { isDone, toBuy, unitWord } from "../../lib/stockup/calc";
+import { kitBySlug } from "../../lib/shop/kits";
 import { primaryPick } from "../../lib/shop/picks";
 import ShopButton from "../stockup/ShopButton";
 import { listRows } from "../stockup/resolve";
@@ -16,13 +17,19 @@ export default function ListsTeaser() {
   const api = useLists();
   const plans = [...api.store.plans].sort((a, b) => b.updated - a.updated);
   const latest = plans[0];
-  const left = latest ? listRows(latest).filter((r) => r.s.item.kind === "product" && !isDone(r.line, r.s)) : [];
+  // Must-haves first (the kit's own, for a saved kit), and within them our exact products before searches.
+  const kitMust = latest?.kit ? kitBySlug(latest.kit)?.essentials : undefined;
+  const order = (id: string, pri: string) => ((kitMust ? kitMust.includes(id) : pri === "essential") ? 0 : 2) + (primaryPick(id) ? 0 : 1);
+  const left = latest
+    ? listRows(latest).filter((r) => r.s.item.kind === "product" && !isDone(r.line, r.s))
+      .sort((a, b) => order(a.s.item.id, a.s.item.pri) - order(b.s.item.id, b.s.item.pri))
+    : [];
 
   return (
     <section aria-labelledby="lists-title" className={`${card} flex flex-col gap-3 p-5`}>
-      <div className="flex items-center justify-between gap-2">
+      <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
         <h2 id="lists-title" className="text-xl font-black">{latest ? "⭐ Continue shopping" : "⭐ My Ready Lists"}</h2>
-        <Link href="/lists" className="text-sm font-black pbr-accent">{plans.length ? `All lists (${plans.length}) →` : "Open →"}</Link>
+        <Link href={plans.length > 1 ? "/lists#all" : "/lists"} className="shrink-0 whitespace-nowrap text-sm font-black pbr-accent">{plans.length ? `All lists (${plans.length}) →` : "Open →"}</Link>
       </div>
       {!api.ready ? (
         <p className={muted}>Loading your lists…</p>
