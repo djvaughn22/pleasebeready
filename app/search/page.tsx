@@ -12,8 +12,8 @@ export const metadata: Metadata = {
 export default function SearchPage() {
   return (
     <main className="min-h-screen bg-[#0b1220] text-[#e8edf5]">
-      <div className="mx-auto max-w-3xl px-4 py-8 sm:px-5 sm:py-12">
-        <h1 className="mb-5 text-3xl font-black leading-tight sm:text-4xl">What do you want to be ready for?</h1>
+      <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8">
+        <h1 className="pbr-display mb-4 text-2xl font-black sm:text-3xl">Search</h1>
         <Suspense fallback={<p className="text-sm font-semibold text-[#94a3b8]">Loading search…</p>}>
           <SearchView />
         </Suspense>

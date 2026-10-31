@@ -15,7 +15,7 @@ import { countLeft } from "../stockup/resolve";
 import { GoodToKnow, Stepper, btnPrimary, btnSmall, card, inset, muted } from "../stockup/ui";
 import ItemCard from "./ItemCard";
 import ListsProvider, { useLists } from "./ListsProvider";
-import SaveBar from "./SaveBar";
+import SaveToast from "./SaveBar";
 import Saver, { useSaver } from "./Saver";
 
 const grid = "grid gap-3 sm:grid-cols-2";
@@ -35,7 +35,7 @@ export default function KitView({ slug }: { slug: string }) {
     <ListsProvider>
       <Saver kit={kit} numbers={n}>
         <KitBody kit={kit} n={n} setN={setN} />
-        <SaveBar />
+        <SaveToast />
       </Saver>
     </ListsProvider>
   );

@@ -9,21 +9,25 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { measure } from "../../lib/measure";
 import { POPULAR, kitBySlug } from "../../lib/shop/kits";
+import { hasPick } from "../../lib/shop/picks";
 import { EXAMPLES, kitHref, parseIntent, searchItems, searchKits, searchLanes } from "../../lib/shop/search";
 import { durationLabel } from "../../lib/stockup/calc";
 import { inset, muted } from "../stockup/ui";
 import ItemCard from "./ItemCard";
 import ListsProvider from "./ListsProvider";
-import SaveBar from "./SaveBar";
+import SaveToast, { ListPicker } from "./SaveBar";
 import Saver from "./Saver";
 import { KitCard } from "./Tiles";
+
+type Show = "all" | "exact" | "must";
+const SHOW: Record<Show, string> = { all: "All", exact: "Exact products", must: "Must-haves" };
 
 export default function SearchView() {
   return (
     <ListsProvider>
       <Saver>
         <SearchBody />
-        <SaveBar />
+        <SaveToast />
       </Saver>
     </ListsProvider>
   );
@@ -35,6 +39,7 @@ function SearchBody() {
   const initial = params.get("q") ?? "";
   const [q, setQ] = useState(initial);
   const counted = useRef<string | null>(null);
+  const [show, setShow] = useState<Show>("all");
 
   const intent = useMemo(() => parseIntent(q), [q]);
   const kitsFound = useMemo(() => searchKits(q), [q]);
@@ -64,6 +69,8 @@ function SearchBody() {
     intent.days ? durationLabel(intent.days) : "",
   ].filter(Boolean);
 
+  const shown = show === "exact" ? items.filter((i) => hasPick(i.id)) : show === "must" ? items.filter((i) => i.pri === "essential") : items;
+
   return (
     <div className="pbr-planner flex flex-col gap-8">
       <form role="search" onSubmit={submit} className="flex gap-2">
@@ -73,6 +80,7 @@ function SearchBody() {
           className="h-14 min-w-0 flex-1 rounded-xl border border-[#26324c] bg-[#0c1220] px-4 text-base font-bold text-[#e8edf5]" />
         <button type="submit" className="h-14 shrink-0 rounded-xl border border-[#F97316] bg-[#F97316] px-5 text-base font-black text-[#0b1220]">Search</button>
       </form>
+      <ListPicker className="-mt-5" />
 
       {!q.trim() && (
         <section aria-labelledby="try-title">
@@ -119,8 +127,16 @@ function SearchBody() {
 
       {q.trim() && items.length > 0 && (
         <section aria-labelledby="items-title">
-          <h2 id="items-title" className="mb-3 text-lg font-black">Products <span className="text-sm text-[#94a3b8]">({items.length})</span></h2>
-          <ul className="grid gap-3 sm:grid-cols-2">{items.map((i) => <ItemCard key={i.id} item={i} />)}</ul>
+          <div className="mb-3 flex flex-wrap items-center gap-2">
+            <h2 id="items-title" className="mr-2 text-lg font-black">Products <span className="text-sm text-[#94a3b8]">({shown.length})</span></h2>
+            {(Object.keys(SHOW) as Show[]).map((k) => (
+              <button key={k} type="button" aria-pressed={show === k} onClick={() => setShow(k)}
+                className={`min-h-9 rounded-full border px-3 text-xs font-black ${show === k ? "pbr-edge pbr-accent" : "border-[#26324c] text-[#94a3b8]"}`}>{SHOW[k]}</button>
+            ))}
+          </div>
+          {shown.length === 0
+            ? <p className={muted}>None of these match that filter. <button type="button" className="font-black pbr-accent underline" onClick={() => setShow("all")}>Show all</button></p>
+            : <ul className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">{shown.map((i) => <ItemCard key={i.id} item={i} />)}</ul>}
         </section>
       )}
 

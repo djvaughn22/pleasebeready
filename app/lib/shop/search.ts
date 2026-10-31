@@ -66,6 +66,8 @@ const STOP = new Set(["a", "an", "the", "for", "of", "with", "and", "or", "to", 
   "people", "person", "days", "day", "weeks", "week", "month", "months", "night", "nights", "ready", "prepare", "prep", "going", "about",
   "new", "first", "our", "some", "all", "just"]);
 
+const DISASTER = new Set(["emergency", "disaster", "earthquake", "flood", "flooding", "evacuation", "evacuate", "evacuating", "landslide", "tsunami"]);
+
 /** Words that mean the same thing for product matching. */
 const SYN: Record<string, string[]> = {
   electricity: ["power"], electric: ["power"], blackout: ["power", "outage"], outage: ["power"],
@@ -128,7 +130,8 @@ export function searchItems(query: string, limit = 40): CatalogItem[] {
   // A search that names a kit's situation ("power outage", "new puppy") ranks that kit's must-haves first,
   // then its upgrades and easy-to-forget items, even when their names share no word with the search.
   const top = scoreKits(query)[0];
-  const kit = top?.phrase ? top.k : undefined;
+  // A disaster with no kit of its own ("earthquake", "flood") gets the basic emergency kit's ranking.
+  const kit = top?.phrase ? top.k : words.some((w) => DISASTER.has(w)) ? kits.find((k) => k.slug === "five-day-emergency") : undefined;
   const boost = new Map<string, number>([
     ...(kit?.forget ?? []).map((id) => [id, 1] as const),
     ...(kit?.upgrades ?? []).map((id) => [id, 1.5] as const),
@@ -175,7 +178,8 @@ function scoreKits(query: string): { k: Kit; score: number; phrase: boolean }[] 
     let phrase = false;
     for (const term of k.terms) {
       const n = normalize(term);
-      if (n && t.includes(` ${n} `)) { score += n.split(" ").length * 2; phrase ||= n.includes(" "); }
+      // A one-word search that is the kit's own name ("hurricane", "tornado") counts as naming it.
+      if (n && t.includes(` ${n} `)) { score += n.split(" ").length * 2; phrase ||= n.includes(" ") || (t.trim() === n && k.slug === n); }
       else if (n.length > 4 && t.includes(` ${n}`)) score += 1;
     }
     if (t.includes(` ${normalize(k.title)} `)) { score += 3; phrase = true; }

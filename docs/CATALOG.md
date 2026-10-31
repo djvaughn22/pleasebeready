@@ -51,6 +51,17 @@ There is no authorized product feed yet (see below), so exact products are revie
 
 At about 95 a session, 600 exact products is roughly four more batches.
 
+**Oct 31, 2026 re-check of the home page's products:** the 34 exact products the home page can show (Emergency essentials, the New and this week's Everyday finds, every Budget pick and Upgrade) were searched again by ASIN on amazon.com. 32 matched their names. Two were fixed:
+
+- `3-day-emergency-food-supply`: the Mountain House 3-day kit (B014ER40MS) and the other Mountain House 3-day listing (B0898QSCNG) both showed as currently unavailable, as did ReadyWise's 72-hour kit. Replaced by the Datrex 3600 3-day ration (B001CSAHW0), the same product as the car food-bar pick; the checklist gear lines follow.
+- `personal-water-filter` upgrade (B00B1OSU4W): the listing now sells the Sawyer Squeeze SP302 with a 1-liter bottle, not the SP129 pouch kit. Renamed to what the listing sells.
+
+The other 84 products featured at the top of departments were last checked Oct 30-31 by the same method and were not searched again this time.
+
+## Department order
+
+Each department (`lanes.ts`) ranks its categories by importance (`order`, then its own `cats`); plates, cups, party goods and games (`SECONDARY`) go last anywhere they aren't the point. Emergency and Travel lead with a hand-ranked `featured` list; Emergency's follows Ready.gov's basic kit (water, food and a can opener, light, batteries and charging, radio, first aid, whistle and masks, sanitation, plastic sheeting and tape, tools, maps). `lanes.test.ts` fails if a convenience item leads a department, if Emergency doesn't open with water and food, if a disaster search ("hurricane", "earthquake", "flood") misses the basics, or if the home page shows a product twice.
+
 ## Amazon APIs and programs
 
 - **Creators API (replacing Product Advertising API 5):** returns titles, images and time-stamped prices for ASINs. Under the Associates policies it is the only allowed source for showing Amazon product images or prices on the site, and it would allow automated title checks. Registering is DJ's step in Associates Central (keys then go in Vercel); access depends on the account's recent qualifying sales. Until then the site shows no product images and no prices.

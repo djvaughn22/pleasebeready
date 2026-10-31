@@ -51,7 +51,7 @@ export const READINESS_TASKS: ReadinessTask[] = [
   { emoji: "🥫", area: "Food", title: "Count your shelf food", detail: "Two weeks of no-cook food is the goal. Count how many days of meals you have for each person." },
   { emoji: "🥫", area: "Food", title: "Find your manual can opener", detail: "A shelf of cans and no way to open them is a bad day. If you can't find one in a minute, that's the gap.", gear: { name: "Heavy-duty manual can opener", asin: "B09HKDZ3CV" } },
   { emoji: "🥫", area: "Food", title: "Check five expiration dates", detail: "Pull five cans, check the dates, move the oldest to the front. Two minutes, real progress." },
-  { emoji: "🥫", area: "Food", title: "Add one no-cook meal", detail: "Every grocery run, add one shelf-stable meal to the emergency shelf. It compounds fast.", gear: { name: "Mountain House 3-day food supply kit", asin: "B014ER40MS" } },
+  { emoji: "🥫", area: "Food", title: "Add one no-cook meal", detail: "Every grocery run, add one shelf-stable meal to the emergency shelf. It compounds fast.", gear: { name: "Datrex 3600 emergency food bars (3-day ration)", asin: "B001CSAHW0" } },
   // 🩹 First Aid
   { emoji: "🩹", area: "First Aid", title: "The 60-second kit test", detail: "Can you put your hands on your first-aid kit in under a minute, in the dark? If not, move it tonight.", gear: { name: "First Aid Only 298-piece kit", asin: "B000069EYA" } },
   { emoji: "🩹", area: "First Aid", title: "Print the medication list", detail: "Everyone's medications and doses, on paper, in the kit. Phones die in exactly the moments this list matters." },

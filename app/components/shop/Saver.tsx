@@ -2,7 +2,7 @@
 
 // Where the Save buttons on a page put things. On a kit page that is the
 // visitor's list for that kit (made on the first save, with the kit page's
-// numbers); everywhere else it is the list picked in the Saving-to bar.
+// numbers); everywhere else it is the list picked in the Saving-to picker (SaveBar.tsx).
 
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react";
 import type { KitNumbers } from "../../lib/shop/kitPlan";
@@ -19,13 +19,16 @@ export type SaverApi = {
   toggle: (id: string) => void;
   saveMany: (ids: string[]) => void;
   message: string;
+  /** Counts messages, so the same text twice still shows again. */
+  seq: number;
 };
 
 const SaverContext = createContext<SaverApi | null>(null);
 
 export default function Saver({ kit = null, numbers, children }: { kit?: Kit | null; numbers?: KitNumbers; children: ReactNode }) {
   const api = useLists();
-  const [message, setMessage] = useState("");
+  const [note, setNote] = useState({ message: "", seq: 0 });
+  const setMessage = useCallback((message: string) => setNote((n) => ({ message, seq: n.seq + 1 })), []);
   const target = kit ? api.kitList(kit.slug) : api.target;
 
   const has = useCallback((id: string) => !!target?.list[id], [target]);
@@ -35,17 +38,17 @@ export default function Saver({ kit = null, numbers, children }: { kit?: Kit | n
     const r = kit && numbers ? api.saveKit(kit, ids, numbers) : api.saveItems(ids);
     const one = ids.length === 1 ? itemById(ids[0])?.name : null;
     setMessage(r.added === 0 ? `Already on ${r.name}.` : one ? `Saved ${one} to ${r.name}.` : `Saved ${r.added} to ${r.name}.`);
-  }, [api, kit, numbers]);
+  }, [api, kit, numbers, setMessage]);
 
   const toggle = useCallback((id: string) => {
     if (target?.list[id]) {
       api.unsave(id, target.id);
       setMessage(`Removed ${itemById(id)?.name ?? "it"} from ${target.name}.`);
     } else saveMany([id]);
-  }, [api, target, saveMany]);
+  }, [api, target, saveMany, setMessage]);
 
-  const value = useMemo<SaverApi>(() => ({ ready: api.ready, target, kit, has, toggle, saveMany, message }),
-    [api.ready, target, kit, has, toggle, saveMany, message]);
+  const value = useMemo<SaverApi>(() => ({ ready: api.ready, target, kit, has, toggle, saveMany, message: note.message, seq: note.seq }),
+    [api.ready, target, kit, has, toggle, saveMany, note]);
   return <SaverContext.Provider value={value}>{children}</SaverContext.Provider>;
 }
 

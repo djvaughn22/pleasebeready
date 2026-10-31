@@ -3,18 +3,21 @@
 // One product card, the same everywhere: the exact product we picked (brand
 // and model, why, what it suits) or the plain item with its Amazon search,
 // the amount on kit pages, Shop and Save buttons, and other good choices.
-// No product images: Amazon only allows them through its API, which this site
-// doesn't use yet. Tasks never get a card.
+// No product photos: Amazon only allows them through its API, which this site
+// doesn't use yet, so the card shows a drawing of the kind of product (Art.tsx).
+// Tasks never get a card.
 
 import { memo } from "react";
 import { amazonUrl } from "../../lib/gear";
+import { lanesFor } from "../../lib/shop/lanes";
 import { checkedOn, picksFor, roleText } from "../../lib/shop/picks";
 import { unitWord } from "../../lib/stockup/calc";
-import { categoryById } from "../../lib/stockup/catalog";
 import type { CatalogItem, Per, Suggestion } from "../../lib/stockup/types";
 import ShopButton from "../stockup/ShopButton";
 import { btnSmall, muted } from "../stockup/ui";
+import { ProductArt } from "./Art";
 import { useSaver } from "./Saver";
+import { earnedBadge, tint } from "./Store";
 
 const perText: Partial<Record<Per, string>> = {
   group: "for the group", person: "each", adult: "per adult", kid: "per kid", baby: "per baby", pet: "per pet",
@@ -36,21 +39,27 @@ export const dateText = (iso: string) =>
 
 const tag = "rounded-md border px-1.5 py-0.5 text-[0.65rem] font-black uppercase tracking-wider";
 
-function ItemCard({ item, s, compact }: { item: CatalogItem; s?: Suggestion; compact?: boolean }) {
+/** `minor`: a convenience item on this page (party cups in Emergency), so no Must-have badge. */
+function ItemCard({ item, s, compact, minor }: { item: CatalogItem; s?: Suggestion; compact?: boolean; minor?: boolean }) {
   const saver = useSaver();
   const saved = saver.has(item.id);
   const [main, ...others] = picksFor(item.id);
   const rule = s ? null : ruleText(item);
   const varies = item.rule.per === "varies";
+  const must = item.pri === "essential" && !minor;
+  const badge = main ? earnedBadge(main) : null;
+  const color = lanesFor(item)[0]?.color ?? "#F97316";
   return (
     <li className={`flex flex-col gap-3 rounded-2xl border bg-[#141d2e] ${compact ? "p-3.5" : "p-4"} ${saved ? "border-[#F97316]" : "border-[#26324c]"}`}>
       <div className="flex items-start gap-3">
-        <span aria-hidden className="mt-0.5 text-2xl leading-none">{categoryById(item.cat).emoji}</span>
+        <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl" style={tint(color)}>
+          <ProductArt id={item.id} cat={item.cat} color={color} size={44} />
+        </span>
         <div className="min-w-0 flex-1">
-          {(item.pri === "essential" || main || item.pro) && (
+          {(must || badge || item.pro) && (
             <div className="mb-1 flex flex-wrap gap-1.5">
-              {item.pri === "essential" && <span className={`${tag} border-[#F97316] pbr-accent`}>Must-have</span>}
-              {main && <span className={`${tag} border-[#26324c] pbr-blue`}>{roleText[main.role]}</span>}
+              {must && <span className={`${tag} border-[#F97316] pbr-accent`}>Must-have</span>}
+              {badge && <span className={`${tag} border-[#26324c] pbr-blue`}>{badge}</span>}
               {item.pro && <span className={`${tag} border-[#26324c] pbr-amber`}>Check with a pro</span>}
             </div>
           )}

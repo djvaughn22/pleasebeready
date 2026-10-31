@@ -4,8 +4,9 @@ import { notFound } from "next/navigation";
 import JsonLd, { SITE, breadcrumbs } from "../../components/JsonLd";
 import LaneShop from "../../components/shop/LaneShop";
 import { KitCard } from "../../components/shop/Tiles";
+import { guides } from "../../lib/shop/guides";
 import { kitsInLane } from "../../lib/shop/kits";
-import { laneById, laneItems, lanes } from "../../lib/shop/lanes";
+import { laneById, lanes } from "../../lib/shop/lanes";
 
 export const dynamicParams = false;
 export const generateStaticParams = () => lanes.map((l) => ({ lane: l.id }));
@@ -25,24 +26,40 @@ export default async function LanePage({ params }: { params: Promise<{ lane: str
   const lane = laneById((await params).lane);
   if (!lane) notFound();
   const laneKits = kitsInLane(lane.id);
+  const laneGuides = guides.filter((g) => laneKits.some((k) => k.slug === g.kit));
   return (
     <main className="min-h-screen bg-[#0b1220] text-[#e8edf5]">
-      <div className="mx-auto max-w-3xl px-4 py-8 sm:px-5 sm:py-12">
-        <nav aria-label="Breadcrumb" className="mb-3 text-xs font-bold text-[#94a3b8]">
-          <Link href="/shop" className="hover:underline">Shop by need</Link>
+      <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8">
+        <nav aria-label="Breadcrumb" className="mb-2 text-xs font-bold text-[#94a3b8]">
+          <Link href="/" className="hover:underline">Home</Link> › <Link href="/shop" className="hover:underline">Departments</Link>
         </nav>
-        <h1 className="text-3xl font-black leading-tight sm:text-4xl"><span aria-hidden>{lane.emoji} </span>{lane.title}</h1>
-        <p className="mt-2 max-w-2xl text-base font-semibold leading-7 text-[#94a3b8]">{lane.blurb}</p>
+        <h1 className="pbr-display text-2xl font-black leading-tight sm:text-4xl"><span aria-hidden>{lane.emoji} </span>{lane.title}</h1>
+        <p className="mt-1 text-sm font-semibold text-[#94a3b8]">{lane.blurb}</p>
 
-        <section aria-labelledby="lane-kits" className="mt-6">
-          <h2 id="lane-kits" className="mb-3 text-lg font-black">Kits</h2>
-          <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3">{laneKits.map((k) => <li key={k.slug}><KitCard kit={k} /></li>)}</ul>
-        </section>
-
-        <section aria-labelledby="lane-all" className="mt-10">
-          <h2 id="lane-all" className="mb-3 text-lg font-black">Everything in {lane.title.toLowerCase()} <span className="text-sm text-[#94a3b8]">({laneItems(lane).length})</span></h2>
-          <LaneShop laneId={lane.id} />
-        </section>
+        <LaneShop laneId={lane.id}>
+          {laneKits.length > 0 && (
+            <section aria-labelledby="lane-kits" className="mb-10">
+              <div className="mb-3 flex items-baseline justify-between gap-3">
+                <h2 id="lane-kits" className="pbr-display text-xl font-black sm:text-2xl">{lane.id === "emergency" ? "Shop by emergency" : "Kits"}</h2>
+                <Link href="/kits" className="shrink-0 text-sm font-black pbr-accent">All kits →</Link>
+              </div>
+              <ul className="-mx-4 flex snap-x scroll-px-4 gap-3 overflow-x-auto px-4 pb-2 sm:mx-0 sm:grid sm:grid-cols-3 sm:overflow-visible sm:px-0 lg:grid-cols-5">
+                {laneKits.map((k) => <li key={k.slug} className="w-[11.5rem] shrink-0 snap-start sm:w-auto"><KitCard kit={k} /></li>)}
+              </ul>
+              {laneGuides.length > 0 && (
+                <ul className="mt-3 flex flex-wrap gap-2" aria-label="Buying guides">
+                  {laneGuides.map((g) => (
+                    <li key={g.slug}>
+                      <Link href={`/guides/${g.slug}`} className="inline-flex min-h-10 items-center gap-1.5 rounded-full border border-[#26324c] bg-[#141d2e] px-3 text-sm font-bold text-[#e8edf5]">
+                        <span aria-hidden>📖</span>{g.title}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </section>
+          )}
+        </LaneShop>
 
         <p className="mx-auto mt-10 max-w-xl text-center text-xs font-semibold leading-6 text-[#94a3b8]">
           As an Amazon Associate, PleaseBeReady earns from qualifying purchases. “Search Amazon” opens search results, not one chosen product.

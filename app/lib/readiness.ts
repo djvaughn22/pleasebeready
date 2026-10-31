@@ -37,7 +37,7 @@ export const areas: Area[] = [
       "Keep a manual can opener. Rotate by expiration date.",
     ],
     gear: [
-      { name: "Mountain House 3-day emergency food supply kit", asin: "B014ER40MS" },
+      { name: "Datrex 3600 emergency food bars (3-day ration)", asin: "B001CSAHW0" },
       { name: "Heavy-duty manual can opener", asin: "B09HKDZ3CV" },
     ],
   },
