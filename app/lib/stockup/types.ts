@@ -108,6 +108,8 @@ export type Line = {
   have: number;
   /** Marked as bought. */
   got: boolean;
+  /** Bought so far when only part is bought (got means all of it). */
+  bought?: number;
   /** Bought and put where it belongs (the kit is packed, the shelf is stocked). */
   ready?: boolean;
   /** Used up or expired: needs buying again. */
@@ -141,6 +143,21 @@ export type Plan = {
   note?: string;
   /** The kit this list was started from, if any (kits.ts slug). */
   kit?: string;
+  /** Set when the list is a guided readiness plan (Get Ready, lib/ready). */
+  guide?: Guide;
+};
+
+/** now: everything at once. weekly / monthly / custom: a shopping step every `every` days. */
+export type Pace = "now" | "weekly" | "monthly" | "custom";
+
+export type Guide = {
+  pace: Pace;
+  /** Days between steps (7 weekly, 30 monthly, the visitor's own for custom). */
+  every: number;
+  /** Things to buy per step: the visitor's budget, in items, since the site shows no prices. */
+  size: number;
+  /** ISO date the plan was started. */
+  started: string;
 };
 
 export type Suggestion = {

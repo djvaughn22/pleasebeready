@@ -17,6 +17,7 @@ import ItemCard from "./ItemCard";
 import ListsProvider from "./ListsProvider";
 import SaveToast, { ListPicker } from "./SaveBar";
 import Saver from "./Saver";
+import PlanGaps from "../ready/PlanGaps";
 import { CompareCard, ProductTile } from "./Store";
 
 type Level = "essential" | "useful" | "all";
@@ -33,6 +34,7 @@ export default function LaneShop({ laneId, children }: { laneId: LaneId; childre
     <ListsProvider>
       <Saver>
         <div className="mb-6 flex flex-wrap items-center justify-between gap-2"><ListPicker /></div>
+        <PlanGaps ids={featured.map((i) => i.id)} className="-mt-3 mb-6" />
         {featured.length > 0 && (
           <section aria-labelledby="lane-picks" className="mb-10">
             <div className="mb-3 flex flex-wrap items-baseline justify-between gap-x-3">

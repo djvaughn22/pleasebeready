@@ -103,6 +103,7 @@ export function usePlans({ importLinks = false }: { importLinks?: boolean } = {}
     measure("plan_start", `picker-${occasion}`);
     setStore((s) => ({ ...s, plans: [p, ...s.plans], activeId: p.id }));
     window.scrollTo({ top: 0 });
+    return p.id;
   }, []);
 
   const update = useCallback((id: string, fn: (p: Plan) => Plan) => {

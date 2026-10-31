@@ -4,7 +4,7 @@
 
 import { itemById, occasionById, occasions } from "./catalog";
 import { clampPlan } from "./calc";
-import type { Line, OccasionId, Plan } from "./types";
+import type { Guide, Line, OccasionId, Plan } from "./types";
 
 // The key keeps its v1 name so lists saved before Ready Lists still load. The
 // stored object carries its own version (v) for future changes; v1 data has
@@ -46,6 +46,7 @@ export function parsePlan(v: unknown): Plan | null {
       if (!itemById(id) || !l || typeof l !== "object") continue;
       const qty = typeof l.qty === "number" && l.qty >= 0 ? Math.round(l.qty) : null;
       const line: Line = { qty, have: typeof l.have === "number" && l.have > 0 ? Math.round(l.have) : 0, got: l.got === true };
+      if (typeof l.bought === "number" && l.bought > 0) line.bought = Math.min(100000, Math.round(l.bought));
       if (l.ready === true) line.ready = true;
       if (l.restock === true) line.restock = true;
       if (typeof l.note === "string" && l.note.trim()) line.note = l.note.slice(0, NOTE_MAX);
@@ -67,7 +68,24 @@ export function parsePlan(v: unknown): Plan | null {
     list,
     ...(typeof p.note === "string" && p.note.trim() ? { note: p.note.slice(0, LIST_NOTE_MAX) } : {}),
     ...(typeof p.kit === "string" && /^[a-z0-9-]{1,60}$/.test(p.kit) ? { kit: p.kit } : {}),
+    ...(parseGuide(p.guide) ? { guide: parseGuide(p.guide)! } : {}),
   });
+}
+
+const PACES = ["now", "weekly", "monthly", "custom"] as const;
+
+export function parseGuide(v: unknown): Guide | null {
+  if (!v || typeof v !== "object") return null;
+  const g = v as Partial<Guide>;
+  if (!PACES.includes(g.pace as Guide["pace"])) return null;
+  const whole = (x: unknown, lo: number, hi: number, d: number) =>
+    typeof x === "number" && Number.isFinite(x) ? Math.min(hi, Math.max(lo, Math.round(x))) : d;
+  return {
+    pace: g.pace as Guide["pace"],
+    every: whole(g.every, 1, 90, g.pace === "monthly" ? 30 : 7),
+    size: whole(g.size, 1, 50, 6),
+    started: typeof g.started === "string" && /^\d{4}-\d{2}-\d{2}$/.test(g.started) ? g.started : new Date().toISOString().slice(0, 10),
+  };
 }
 
 export function parseStore(raw: string | null): Store {

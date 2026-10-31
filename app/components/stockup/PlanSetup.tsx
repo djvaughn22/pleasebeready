@@ -92,7 +92,7 @@ const needText: Record<Need, string> = {
 };
 const climateText: Record<Climate, string> = { cold: "❄️ Cold or snow", hot: "☀️ Hot", wet: "🌧️ Rain or flooding" };
 
-function Check({ checked, text, onChange, disabled }: { checked: boolean; text: string; onChange: (v: boolean) => void; disabled?: boolean }) {
+export function Check({ checked, text, onChange, disabled }: { checked: boolean; text: string; onChange: (v: boolean) => void; disabled?: boolean }) {
   return (
     <label className={`flex min-h-11 cursor-pointer items-center gap-3 rounded-xl border px-3 py-2 text-sm font-bold ${checked ? "border-[#F97316]" : "border-[#26324c]"} ${disabled ? "opacity-75" : ""}`}>
       <input type="checkbox" className="h-5 w-5 shrink-0" style={{ accentColor: "#F97316" }} checked={checked} disabled={disabled} onChange={(e) => onChange(e.target.checked)} />

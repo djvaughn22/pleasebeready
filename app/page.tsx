@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Mark, Wordmark } from "./components/Brand";
 import JsonLd, { SITE } from "./components/JsonLd";
 import ListsProvider from "./components/shop/ListsProvider";
+import ReadyCard from "./components/ready/ReadyCard";
 import ListsTeaser from "./components/shop/ListsTeaser";
 import Saver from "./components/shop/Saver";
 import SaveToast, { ListPicker } from "./components/shop/SaveBar";
@@ -15,7 +16,7 @@ import { POPULAR, kitBySlug, kits, kitsForMonth } from "./lib/shop/kits";
 import { laneById, laneFeatured, lanes } from "./lib/shop/lanes";
 import { hasPick, pickByAsin, primaryPick } from "./lib/shop/picks";
 
-// Home is a storefront: wordmark and search, departments, then products.
+// Home is a storefront: wordmark and search, Get Ready (or Continue my plan), departments, then products.
 // No headline or pitch: the name says what the store is. Order: departments,
 // Ready Finds in tabs (New, Everyday, Budget picks, Upgrades, and Verified
 // deals only when deals.ts has one), Emergency essentials, kits, the visitor's
@@ -81,6 +82,7 @@ export default function Home() {
               </form>
             </header>
             <ListPicker className="-mt-3 mb-3" />
+            <div className="mb-6"><ReadyCard /></div>
 
             <nav aria-label="Departments" className="mb-8">
               <ul className={`${rail} sm:grid sm:grid-cols-8 sm:overflow-visible sm:pb-0`}>

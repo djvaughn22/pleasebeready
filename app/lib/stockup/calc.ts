@@ -119,7 +119,7 @@ export function lineQty(line: Line, s: Suggestion): number {
 /** What is left to buy after what the visitor already has. Tasks are never bought. */
 export function toBuy(line: Line, s: Suggestion): number {
   if (s.item.kind === "task") return 0;
-  return Math.max(0, lineQty(line, s) - line.have);
+  return Math.max(0, lineQty(line, s) - line.have - (line.bought ?? 0));
 }
 
 /** Done: a task ticked off, or a product bought or already covered. */

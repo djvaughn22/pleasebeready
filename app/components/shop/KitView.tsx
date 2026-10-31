@@ -13,6 +13,7 @@ import { MAX_DAYS, MAX_PEOPLE, durationLabel, unitWord } from "../../lib/stockup
 import { itemById } from "../../lib/stockup/catalog";
 import { countLeft } from "../stockup/resolve";
 import { GoodToKnow, Stepper, btnPrimary, btnSmall, card, inset, muted } from "../stockup/ui";
+import PlanGaps from "../ready/PlanGaps";
 import ItemCard from "./ItemCard";
 import ListsProvider, { useLists } from "./ListsProvider";
 import SaveToast from "./SaveBar";
@@ -63,6 +64,7 @@ function KitBody({ kit, n, setN }: { kit: Kit; n: KitNumbers; setN: (fn: (n: Kit
 
   return (
     <div className="pbr-planner flex flex-col gap-10">
+      <PlanGaps ids={[...saveSet, ...kit.upgrades]} className="-mb-6" />
       <section aria-label="Your group and how long" className={`${inset} flex flex-col gap-4 p-4`}>
         {kit.ask.length > 0 && (
           <div className="flex flex-wrap gap-x-6 gap-y-3">
