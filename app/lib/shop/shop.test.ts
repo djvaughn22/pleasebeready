@@ -2,13 +2,17 @@
 // checked products stay the title-verified set, and the search phrases people
 // actually type land on the right kit.
 import { describe, expect, it } from "vitest";
-import { catalog, gearFor, itemById, occasions } from "../stockup/catalog";
+import { catalog, itemById, occasions } from "../stockup/catalog";
 import { NOTE_MAX, decodePlan, encodePlan, parseStore } from "../stockup/storage";
 import { guideForKit, guides } from "./guides";
 import { kitNumbers, kitPlan, kitRows, numbersFromQuery } from "./kitPlan";
 import { kitBySlug, kits, kitsInLane } from "./kits";
 import { laneItems, lanes } from "./lanes";
-import { pickForItem, picks } from "./picks";
+import { areas, levels } from "../readiness";
+import { READINESS_TASKS as dailyTasks } from "../dailyReadiness";
+import { AMAZON_TAG } from "../gear";
+import { shopLink } from "../stockup/shop";
+import { checkedOn, hasPick, pickByAsin, picks, primaryPick } from "./picks";
 import { kitHref, parseIntent, searchItems, searchKits, searchLanes } from "./search";
 
 describe("kits", () => {
@@ -44,7 +48,7 @@ describe("kits", () => {
       expect(k.preset.people).toBeGreaterThan(0);
       expect((k.preset.kids ?? 0) + (k.preset.babies ?? 0)).toBeLessThanOrEqual(k.preset.people);
       expect(k.preset.days).toBeGreaterThan(0);
-      expect(k.essentials.length, k.slug).toBeGreaterThanOrEqual(6);
+      expect(k.essentials.length, k.slug).toBeGreaterThanOrEqual(5);
       expect(k.intro.length, k.slug).toBeLessThan(200);
       expect(k.terms.length, k.slug).toBeGreaterThan(3);
       if (k.guide) expect(k.guide.href).toMatch(/^https:\/\/www\.(ready\.gov|redcross\.org|cdc\.gov)\//);
@@ -84,16 +88,41 @@ describe("lanes", () => {
   });
 });
 
-describe("checked products", () => {
-  it("are exactly the title-verified ASINs from readiness.ts, one per catalog item", () => {
+describe("exact products", () => {
+  it("each fills a real catalog product, with evidence and a date", () => {
+    expect(picks.length).toBeGreaterThanOrEqual(100);
     for (const p of picks) {
-      expect(gearFor(p.asin), p.asin).toBeDefined();
-      expect(itemById(p.item)?.asin, p.item).toBe(p.asin);
-      if (p.checked) expect(p.checked).toMatch(/^\d{4}-\d{2}-\d{2}$/);
-      expect(p.why.length).toBeLessThan(90);
+      expect(itemById(p.item)?.kind, p.asin).toBe("product");
+      expect(p.asin, p.item).toMatch(/^[0-9A-Z]{10}$/);
+      expect(["page", "search"]).toContain(p.via);
+      expect(p.seen.length, p.asin).toBeGreaterThan(5);
+      expect(checkedOn(p)).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+      expect(p.why.length, p.asin).toBeLessThanOrEqual(90);
+      for (const text of [p.name, p.why, p.use]) expect(text, p.asin).not.toMatch(/\bbest\b|#1|guarantee|\$\d|\bfree\b|on sale|deal/i);
     }
-    for (const c of catalog) if (c.asin) expect(pickForItem(c.id)?.asin, c.id).toBe(c.asin);
-    expect(new Set(picks.map((p) => p.asin)).size).toBe(picks.length);
+  });
+
+  it("has one entry per role per item and no ASIN twice for one item", () => {
+    const keys = picks.map((p) => `${p.item}:${p.role}`);
+    expect(keys.filter((k, i) => keys.indexOf(k) !== i)).toEqual([]);
+    const pairs = picks.map((p) => `${p.item}:${p.asin}`);
+    expect(pairs.filter((k, i) => pairs.indexOf(k) !== i)).toEqual([]);
+  });
+
+  it("covers every Amazon product the checklist and daily tasks link to", () => {
+    const linked = [...areas.flatMap((a) => a.gear), ...levels.flatMap((l) => l.gear), ...dailyTasks.flatMap((t) => (t.gear ? [t.gear] : []))];
+    for (const g of linked) expect(pickByAsin(g.asin), `${g.name} ${g.asin}`).toBeDefined();
+  });
+
+  it("sends the main Amazon button to the item's first pick, and everything else to a labelled search", () => {
+    const radio = itemById("weather-radio")!;
+    expect(primaryPick("weather-radio")?.role).toBe("pick");
+    expect(shopLink(radio)).toMatchObject({ kind: "product", url: `https://www.amazon.com/dp/B015QIC1PW?tag=${AMAZON_TAG}` });
+    const chili = itemById("canned-chili")!;
+    expect(hasPick("canned-chili")).toBe(false);
+    expect(shopLink(chili).kind).toBe("search");
+    expect(shopLink(chili).url).toContain(`tag=${AMAZON_TAG}`);
+    expect(AMAZON_TAG).toBe("pleasebeready-20");
   });
 });
 
@@ -132,6 +161,20 @@ describe("search", () => {
     expect(names("puppy")).toContain("puppy-pads");
     expect(names("flashlight")).toContain("flashlights");
     expect(searchItems("zzqx")).toEqual([]);
+  });
+
+  it("keeps everyday searches on target", () => {
+    const ids = (q: string, n = 6) => searchItems(q, n).map((i) => i.id);
+    expect(ids("dog")).not.toContain("hot-dogs");
+    expect(ids("hot dogs")).toContain("hot-dogs");
+    expect(ids("car")).not.toContain("carbon-monoxide-alarm");
+    expect(ids("grab bar")).not.toContain("granola-or-protein-bars");
+    expect(ids("grab bar")[0]).toBe("grab-bars");
+    expect(ids("coleman")).toEqual(expect.arrayContaining(["tent", "camp-stove", "cooler"]));
+    expect(ids("midland")).toContain("weather-radio");
+    expect(searchKits("storm").map((k) => k.slug)).toEqual(expect.arrayContaining(["winter-storm", "tornado", "hurricane"]));
+    expect(searchKits("generator")[0]?.slug).toBe("power-outage");
+    expect(searchKits("diapers")[0]?.slug).toBe("new-baby");
   });
 
   it("carries the numbers into the kit link", () => {

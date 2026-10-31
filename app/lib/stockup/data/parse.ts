@@ -10,7 +10,8 @@
 // unit:       "can" or "box/boxes".
 // priority:   e essential, u useful, x extra.
 // extras:     separated by " | " or " ; ": n=note  q=Amazon search words  pack=24  need=kids|babies|pets|older|mobility|medical
-//             clim=cold|hot|wet  s=seasonal|event  src=<source id>  asin=<ASIN in readiness.ts>  pro  id=<id>
+//             clim=cold|hot|wet  s=seasonal|event  src=<source id>  pro  id=<id>
+//             (exact Amazon products are not set here: see app/lib/shop/picks.ts)
 // A "## category" line sets the category for the lines below it. Tasks always
 // land in the "tasks" category.
 
@@ -79,7 +80,7 @@ export function parseBlock(text: string): CatalogItem[] {
       else if (key === "clim" && CLIMATES.includes(val)) item.climate = val as Climate;
       else if (key === "s" && (val === "seasonal" || val === "event")) item.season = val as Season;
       else if (key === "src") item.source = val as SourceId;
-      else if (key === "asin") item.asin = val;
+      else if (key === "asin") throw new Error(`Exact products live in app/lib/shop/picks.ts, not catalog lines: ${line}`);
       else if (key === "pro") item.pro = true;
       else if (key === "id") item.id = val;
       else throw new Error(`Bad extra "${ex}" in: ${line}`);

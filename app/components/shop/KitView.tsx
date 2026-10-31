@@ -8,9 +8,11 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { kitNumbers, kitPlan, kitRows, numbersFromQuery, type KitNumbers } from "../../lib/shop/kitPlan";
 import { kitBySlug, type Kit } from "../../lib/shop/kits";
-import { MAX_DAYS, MAX_PEOPLE, durationLabel } from "../../lib/stockup/calc";
+import { hasPick } from "../../lib/shop/picks";
+import { MAX_DAYS, MAX_PEOPLE, durationLabel, unitWord } from "../../lib/stockup/calc";
 import { itemById } from "../../lib/stockup/catalog";
-import { GoodToKnow, Stepper, btnPrimary, btnSmall, inset, muted } from "../stockup/ui";
+import { countLeft } from "../stockup/resolve";
+import { GoodToKnow, Stepper, btnPrimary, btnSmall, card, inset, muted } from "../stockup/ui";
 import ItemCard from "./ItemCard";
 import ListsProvider, { useLists } from "./ListsProvider";
 import SaveBar from "./SaveBar";
@@ -74,17 +76,38 @@ function KitBody({ kit, n, setN }: { kit: Kit; n: KitNumbers; setN: (fn: (n: Kit
           Amounts below are for {who.join(", ")}{kit.ask.includes("days") ? `, ${durationLabel(n.days)}` : ""}. They are planning estimates; change any of them on your list.
         </p>
         <div className="flex flex-wrap items-center gap-2">
-          <button type="button" className={btnPrimary} disabled={!saver.ready || missing.length === 0} onClick={() => saver.saveMany(missing)}>
-            {mine ? (missing.length ? `⭐ Add the ${missing.length} missing to your list` : "✓ Kit saved") : "⭐ Save this kit"}
-          </button>
-          {mine && <Link href={`/lists#list=${mine.id}`} className={btnSmall}>Open your list ({Object.keys(mine.list).length})</Link>}
+          {mine ? (
+            <>
+              <Link href={`/lists#list=${mine.id}`} style={{ borderColor: "#34D399" }} className={btnPrimary}>🛒 Shop your list ({countLeft(mine)} to buy) →</Link>
+              {missing.length > 0 && (
+                <button type="button" className={btnSmall} disabled={!saver.ready} onClick={() => saver.saveMany(missing)}>Add the {missing.length} missing</button>
+              )}
+            </>
+          ) : (
+            <button type="button" className={btnPrimary} disabled={!saver.ready} onClick={() => saver.saveMany(missing)}>⭐ Save this kit</button>
+          )}
         </div>
         <p className={muted}>
           Saves the {kit.essentials.length} must-haves{forget.length ? `, ${forget.length} easy-to-forget items` : ""}{todo.length ? ` and ${todo.length} things to do` : ""} to a list on this device. Upgrades are up to you. Then shop the list item by item and tick things off.
         </p>
       </section>
 
-      <GoodToKnow> “Buy on Amazon” opens a product we checked; “Find on Amazon” opens search results. Each button opens one item; there is no combined cart.</GoodToKnow>
+      <section aria-labelledby="kit-glance" className={`${card} p-4`}>
+        <h2 id="kit-glance" className="text-base font-black">At a glance</h2>
+        <ul className="mt-2 grid gap-x-6 sm:grid-cols-2">
+          {rows(kit.essentials).map((s) => (
+            <li key={s.item.id} className="flex items-baseline justify-between gap-3 border-b border-[#26324c] py-1.5 text-sm">
+              <span className="min-w-0 font-bold text-[#e8edf5]">{hasPick(s.item.id) ? "🛒 " : "🔎 "}{s.item.name}</span>
+              <span className="shrink-0 tabular-nums text-[#94a3b8]">{s.item.rule.per === "varies" ? "varies" : `${s.qty.toLocaleString("en-US")} ${unitWord(s.item, s.qty)}`}</span>
+            </li>
+          ))}
+        </ul>
+        <p className={`mt-2 ${muted}`}>
+          🛒 {kit.essentials.filter(hasPick).length} exact products we picked · 🔎 {kit.essentials.filter((id) => !hasPick(id)).length} Amazon searches, so you choose the brand and size.
+        </p>
+      </section>
+
+      <GoodToKnow> “Shop on Amazon” opens one exact product we picked; “Search Amazon” opens search results. Each button opens one item; there is no combined cart.</GoodToKnow>
 
       <Section id="must" title="Must-haves" count={kit.essentials.length}>
         <ul className={grid}>{rows(kit.essentials).map((s) => <ItemCard key={s.item.id} item={s.item} s={s} />)}</ul>

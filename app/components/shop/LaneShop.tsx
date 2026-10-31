@@ -6,9 +6,10 @@
 
 import { useState } from "react";
 import { laneById, laneItems, type LaneId } from "../../lib/shop/lanes";
+import { hasPick } from "../../lib/shop/picks";
 import { matches } from "../../lib/stockup/calc";
 import { categories, occasions } from "../../lib/stockup/catalog";
-import type { CategoryId, OccasionId, Priority } from "../../lib/stockup/types";
+import type { CatalogItem, CategoryId, OccasionId, Priority } from "../../lib/stockup/types";
 import { btnSmall, input, inset, label, muted } from "../stockup/ui";
 import ItemCard from "./ItemCard";
 import ListsProvider from "./ListsProvider";
@@ -47,14 +48,24 @@ function LaneBody({ laneId }: { laneId: LaneId }) {
   const situations = occasions.filter((o) => items.some((i) => i.occ.includes(o.id)));
   const searching = query.trim() !== "";
   const shown = items.filter((i) => (cat === "all" || i.cat === cat) && (searching || allowed(i.pri, level))
-    && (situation === "any" || i.occ.includes(situation)) && (!picksOnly || !!i.asin) && matches(i, query));
-  const groups = cats.map((c) => ({ c, list: shown.filter((i) => i.cat === c.id).sort((a, b) => rank[a.pri] - rank[b.pri]) }))
+    && (situation === "any" || i.occ.includes(situation)) && (!picksOnly || hasPick(i.id)) && matches(i, query));
+  // Must-haves first, and within each level our exact products before plain searches.
+  const order = (i: CatalogItem) => rank[i.pri] * 2 + (hasPick(i.id) ? 0 : 1);
+  const groups = cats.map((c) => ({ c, list: shown.filter((i) => i.cat === c.id).sort((a, b) => order(a) - order(b)) }))
     .filter((g) => g.list.length);
+  const ourPicks = items.filter((i) => hasPick(i.id)).sort((a, b) => order(a) - order(b)).slice(0, 6);
   const filtered = cat !== "all" || level !== "useful" || situation !== "any" || picksOnly || searching;
   const reset = () => { setCat("all"); setLevel("useful"); setSituation("any"); setPicksOnly(false); setQuery(""); };
 
   return (
     <div className="pbr-planner">
+      {ourPicks.length > 0 && !filtered && (
+        <section aria-labelledby="lane-picks" className="mb-8">
+          <h3 id="lane-picks" className="mb-1 text-lg font-black">Products we picked</h3>
+          <p className={`mb-3 ${muted}`}>Exact products for the most-needed things here. Everything else opens an Amazon search.</p>
+          <ul className="grid gap-3 sm:grid-cols-2">{ourPicks.map((i) => <ItemCard key={i.id} item={i} compact />)}</ul>
+        </section>
+      )}
       <label htmlFor="lane-search" className="sr-only">Search {lane.title.toLowerCase()}</label>
       <input id="lane-search" type="search" className={`${input} h-12 w-full`} placeholder={`🔎 Search ${items.length} items in ${lane.title.toLowerCase()}`}
         value={query} onChange={(e) => setQuery(e.target.value)} />

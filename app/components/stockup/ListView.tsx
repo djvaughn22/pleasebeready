@@ -13,6 +13,7 @@ import { categories } from "../../lib/stockup/catalog";
 import { listText, statusText, type TextRow } from "../../lib/stockup/shop";
 import { LIST_NOTE_MAX, NOTE_MAX, encodePlan } from "../../lib/stockup/storage";
 import type { Line, Plan } from "../../lib/stockup/types";
+import { primaryPick, roleText } from "../../lib/shop/picks";
 import { listRows, type Row } from "./resolve";
 import ShopButton from "./ShopButton";
 import type { PlansApi } from "./usePlans";
@@ -198,12 +199,14 @@ function BuyRow({ r, setLine, remove }: { r: Row; setLine: SetLine; remove: (id:
   const qty = lineQty(line, s);
   const need = toBuy(line, s);
   const own = line.qty !== null && line.qty !== s.qty;
+  const pick = primaryPick(id);
   return (
     <li className={`${inset} flex flex-col gap-3 p-3`}>
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           {line.restock && <span className="mb-1 inline-block rounded-md border border-[#26324c] px-1.5 py-0.5 text-[0.65rem] font-black uppercase tracking-wider pbr-amber">Restock</span>}
           <p className="text-sm font-black text-[#e8edf5]">{s.item.name}</p>
+          {pick && <p className="text-xs font-bold pbr-blue">{roleText[pick.role]}: {pick.name}</p>}
           <p className={muted}>
             {own ? <>Suggested {s.qty.toLocaleString("en-US")}. <button type="button" className="font-black underline pbr-accent" onClick={() => setLine(id, { qty: null })}>Reset</button></> : s.how}
             {line.have > 0 && <> · you have {line.have} <button type="button" className="font-black underline pbr-accent" onClick={() => setLine(id, { have: 0 })}>clear</button></>}

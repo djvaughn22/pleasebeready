@@ -45,7 +45,7 @@ export default async function LanePage({ params }: { params: Promise<{ lane: str
         </section>
 
         <p className="mx-auto mt-10 max-w-xl text-center text-xs font-semibold leading-6 text-[#94a3b8]">
-          As an Amazon Associate, PleaseBeReady earns from qualifying purchases. “Find on Amazon” opens search results, not one chosen product.
+          As an Amazon Associate, PleaseBeReady earns from qualifying purchases. “Search Amazon” opens search results, not one chosen product.
         </p>
       </div>
       <JsonLd data={{

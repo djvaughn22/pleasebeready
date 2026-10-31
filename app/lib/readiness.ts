@@ -37,7 +37,7 @@ export const areas: Area[] = [
       "Keep a manual can opener. Rotate by expiration date.",
     ],
     gear: [
-      { name: "Mountain House 3-day emergency food supply", asin: "B0898QSCNG" },
+      { name: "Mountain House 3-day emergency food supply kit", asin: "B014ER40MS" },
       { name: "Heavy-duty manual can opener", asin: "B09HKDZ3CV" },
     ],
   },
@@ -159,8 +159,8 @@ export const levels: Level[] = [
     tag: "Level 2", title: "2 Weeks",
     text: "FEMA's current guidance for many disasters. Water, food, meds, and power for two weeks.",
     gear: [
-      { name: "Augason Farms 30-day food supply, 1 person", asin: "B071KPGLBK" },
-      { name: "Augason Farms 55-gal water barrel + treatment kit", asin: "B006OW4FVI" },
+      { name: "Augason Farms 30-day food supply, 1 person", asin: "B0FH3K7GS3" },
+      { name: "Augason Farms 55-gallon water storage barrel", asin: "B07YSZ68GV" },
       { name: "Jackery Explorer 1000 v2 power station", asin: "B0D7PPG25F" },
     ],
   },
@@ -169,7 +169,7 @@ export const levels: Level[] = [
     text: "Extended resilience for longer disruptions — build here once Levels 1–2 are solid.",
     gear: [
       { name: "Westinghouse 9500W dual-fuel generator (CO sensor)", asin: "B099KPDJBD" },
-      { name: "Boroux gravity-fed water filter, 3 gallons", asin: "B0D9WNBTD8" },
+      { name: "LifeStraw Family gravity water purifier, 12 L", asin: "B0BX5F7L2X" },
       { name: "SentrySafe fireproof + waterproof safe", asin: "B005P12C5A" },
     ],
   },

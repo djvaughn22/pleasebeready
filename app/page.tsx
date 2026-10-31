@@ -9,12 +9,14 @@ import Saver from "./components/shop/Saver";
 import { KitCard, LaneTile } from "./components/shop/Tiles";
 import { GoodToKnow } from "./components/stockup/ui";
 import { POPULAR, kitBySlug, kits, kitsForMonth } from "./lib/shop/kits";
+import { picks } from "./lib/shop/picks";
 import { lanes } from "./lib/shop/lanes";
 import { EXAMPLES } from "./lib/shop/search";
 import { itemById } from "./lib/stockup/catalog";
 
-// Home: one question, a search box, then ways in (kits for this month,
-// popular kits, sixteen lanes), the visitor's lists, and the products we checked.
+// Home: one question and a search box, then the visitor's own list to pick up,
+// kits for this month, popular kits, everyday essentials as exact products,
+// family and pet kits, our product picks by lane, and the sixteen lanes.
 // Rebuilt daily so the seasonal kits follow the month.
 export const revalidate = 86400;
 
@@ -25,7 +27,12 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
 };
 
-const ESSENTIALS = ["weather-radio", "headlamps", "power-bank", "first-aid-kit"];
+const ESSENTIALS = ["batteries", "power-bank", "flashlights", "first-aid-kit", "smoke-and-co-alarm", "fire-extinguisher"];
+const FAMILY = ["new-baby", "family-emergency-kit", "kids-sleepover", "new-puppy", "dog-travel", "pet-emergency"];
+const COLLECTIONS = [
+  { lane: "emergency", text: "🔦 Power outages" }, { lane: "seasonal", text: "❄️ Winter" }, { lane: "car", text: "🚙 The car" },
+  { lane: "pets", text: "🐾 Pets" }, { lane: "outdoors", text: "⛺ Camping" }, { lane: "tools", text: "🧰 Tools" },
+];
 const chip = "inline-flex min-h-10 items-center rounded-full border border-[#26324c] bg-[#141d2e] px-3 text-sm font-bold text-[#e8edf5] transition hover:border-[#34D399]";
 
 export default function Home() {
@@ -53,7 +60,12 @@ export default function Home() {
                   <li key={e}><Link href={`/search?q=${encodeURIComponent(e)}`} className={chip}>{e}</Link></li>
                 ))}
               </ul>
+              <p className="mt-4 text-xs font-semibold leading-5 text-[#94a3b8]">
+                {kits.length} kits with amounts for your group · {new Set(picks.map((p) => p.asin)).size} exact products, each Amazon link checked · lists saved on your phone, no account
+              </p>
             </section>
+
+            <div className="mb-10"><ListsTeaser /></div>
 
             {seasonal.length > 0 && (
               <section aria-labelledby="season-title" className="mb-10">
@@ -70,20 +82,30 @@ export default function Home() {
               <ul className="grid grid-cols-2 gap-2 sm:grid-cols-4">{popular.map((k) => <li key={k.slug}><KitCard kit={k} /></li>)}</ul>
             </section>
 
+            <section aria-labelledby="essentials-title" className="mb-10">
+              <h2 id="essentials-title" className="mb-1 text-xl font-black">Everyday essentials</h2>
+              <p className="mb-4 text-xs font-semibold leading-5 text-[#94a3b8]">The basics every home should have, as exact products we picked.</p>
+              <ul className="grid gap-3 sm:grid-cols-2">{ESSENTIALS.map((id) => <ItemCard key={id} item={itemById(id)!} compact />)}</ul>
+              <div className="mt-4"><GoodToKnow /></div>
+            </section>
+
+            <section aria-labelledby="family-title" className="mb-10">
+              <h2 id="family-title" className="mb-3 text-xl font-black">Family and pets</h2>
+              <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3">{FAMILY.map((s) => kitBySlug(s)!).map((k) => <li key={k.slug}><KitCard kit={k} /></li>)}</ul>
+            </section>
+
+            <section aria-labelledby="collections-title" className="mb-10">
+              <h2 id="collections-title" className="mb-3 text-xl font-black">Products we picked for…</h2>
+              <ul className="flex flex-wrap gap-2">
+                {COLLECTIONS.map((c) => (
+                  <li key={c.lane}><Link href={`/shop/${c.lane}#lane-picks`} className={chip}>{c.text}</Link></li>
+                ))}
+              </ul>
+            </section>
+
             <section aria-labelledby="lanes-title" className="mb-10">
               <h2 id="lanes-title" className="mb-3 text-xl font-black">Shop by need</h2>
               <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3">{lanes.map((l) => <li key={l.id}><LaneTile lane={l} /></li>)}</ul>
-            </section>
-
-            <div className="mb-10"><ListsTeaser /></div>
-
-            <section aria-labelledby="checked-title" className="mb-10">
-              <h2 id="checked-title" className="mb-1 text-xl font-black">Products we checked</h2>
-              <p className="mb-4 text-xs font-semibold leading-5 text-[#94a3b8]">
-                Exact products for a few basics. Everything else opens an Amazon search, so you pick the size and brand.
-              </p>
-              <ul className="grid gap-3 sm:grid-cols-2">{ESSENTIALS.map((id) => <ItemCard key={id} item={itemById(id)!} />)}</ul>
-              <div className="mt-4"><GoodToKnow /></div>
             </section>
 
             <nav aria-label="More from PleaseBeReady" className="mb-10 flex flex-col gap-2">

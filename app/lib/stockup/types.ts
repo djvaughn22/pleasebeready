@@ -80,8 +80,6 @@ export type CatalogItem = {
   note?: string;
   /** Set only when the amount itself comes from this source. */
   source?: SourceId;
-  /** A title-verified ASIN that already lives in readiness.ts gear. */
-  asin?: string;
   /** Amazon search words when there is no verified product (defaults to the name). */
   q?: string;
 };

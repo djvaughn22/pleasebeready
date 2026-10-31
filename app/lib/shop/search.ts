@@ -4,6 +4,7 @@
 // match on name, search words, notes and category.
 
 import { catalog, categories } from "../stockup/catalog";
+import { hasPick, picksFor } from "./picks";
 import type { CatalogItem } from "../stockup/types";
 import { kits, type Kit } from "./kits";
 import { lanes, type Lane } from "./lanes";
@@ -70,7 +71,7 @@ const SYN: Record<string, string[]> = {
   electricity: ["power"], electric: ["power"], blackout: ["power", "outage"], outage: ["power"],
   dog: ["pet"], dogs: ["pet"], puppy: ["pet", "puppy"], puppies: ["pet", "puppy"], cat: ["pet", "litter"], cats: ["pet", "litter"],
   kitten: ["pet", "litter"], baby: ["baby"], newborn: ["baby", "diaper"], infant: ["baby"],
-  elderly: ["older", "grab", "shower"], senior: ["older"], grandma: ["older"], grandpa: ["older"],
+  elderly: ["older", "grab"], senior: ["older"], grandma: ["older"], grandpa: ["older"],
   snow: ["snow", "winter", "ice"], blizzard: ["snow", "winter"], freezing: ["cold", "winter"], cold: ["cold", "warm"],
   flashlight: ["flashlights"], light: ["flashlights", "lantern", "headlamps"], lights: ["flashlights", "lantern"],
   charger: ["charger", "charging"], phone: ["charger", "phone"], car: ["car"], tire: ["tire"], battery: ["batteries"],
@@ -94,20 +95,32 @@ const hay = new Map<string, { name: string; rest: string }>();
 function haystack(item: CatalogItem) {
   let h = hay.get(item.id);
   if (!h) {
-    h = { name: normalize(item.name), rest: normalize(`${item.q ?? ""} ${item.note ?? ""} ${catTitle.get(item.cat) ?? ""}`) };
+    // Our exact products' names count as the item's name, so "midland" or "coleman" finds them.
+    const brands = picksFor(item.id).map((p) => p.name).join(" ");
+    h = { name: normalize(`${item.name} ${brands}`), rest: normalize(`${item.q ?? ""} ${item.note ?? ""} ${catTitle.get(item.cat) ?? ""}`) };
     hay.set(item.id, h);
   }
   return h;
 }
-const hasWord = (text: string, w: string) => ` ${text} `.includes(` ${w}`);
+// Words of four letters or more also match the start of a longer word ("tent" → "tents"); short ones
+// must match whole, so "car" doesn't find "carbon" and "bar" doesn't find "barrel".
+const hasWord = (text: string, w: string) => ` ${text} `.includes(w.length >= 4 ? ` ${w}` : ` ${w} `);
+
+/** Items a word finds by accident, unless another word in the search asks for them. */
+const AVOID: Record<string, { ids: string[]; unless: string }> = {
+  dog: { ids: ["hot-dogs", "hot-dog-buns"], unless: "hot" },
+  dogs: { ids: ["hot-dogs", "hot-dog-buns"], unless: "hot" },
+};
 
 /** Products ranked by how well they match. Each query word must match somewhere unless none would. */
 export function searchItems(query: string, limit = 40): CatalogItem[] {
   const groups = queryWords(query);
   if (!groups.length) return [];
-  const scored: { item: CatalogItem; score: number }[] = [];
+  const words = normalize(query).split(" ");
+  const avoid = new Set(words.flatMap((w) => (AVOID[w] && !words.includes(AVOID[w].unless) ? AVOID[w].ids : [])));
+  const scored: { item: CatalogItem; score: number; all: boolean }[] = [];
   for (const item of catalog) {
-    if (item.kind === "task") continue;
+    if (item.kind === "task" || avoid.has(item.id)) continue;
     const h = haystack(item);
     let score = 0;
     let matched = 0;
@@ -120,12 +133,16 @@ export function searchItems(query: string, limit = 40): CatalogItem[] {
       if (s) { score += s; matched++; }
     }
     if (!matched) continue;
-    score += matched === groups.length ? 4 : 0;
+    const all = matched === groups.length;
+    score += all ? 4 : 0;
     score += item.pri === "essential" ? 1.5 : item.pri === "useful" ? 0.5 : 0;
-    if (item.asin) score += 0.5;
-    scored.push({ item, score });
+    if (hasPick(item.id)) score += 0.75;
+    scored.push({ item, score, all });
   }
-  return scored.sort((a, b) => b.score - a.score || a.item.name.localeCompare(b.item.name)).slice(0, limit).map((s) => s.item);
+  // When enough items match every word, the partial matches are noise ("grab bar" → not "granola bars").
+  const full = scored.filter((s) => s.all);
+  const pool = groups.length > 1 && full.length >= 3 ? full : scored;
+  return pool.sort((a, b) => b.score - a.score || a.item.name.localeCompare(b.item.name)).slice(0, limit).map((s) => s.item);
 }
 
 /** Kits ranked by their search words; longer phrases count for more. */

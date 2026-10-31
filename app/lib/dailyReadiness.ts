@@ -51,7 +51,7 @@ export const READINESS_TASKS: ReadinessTask[] = [
   { emoji: "🥫", area: "Food", title: "Count your shelf food", detail: "Two weeks of no-cook food is the goal. Count how many days of meals you have for each person." },
   { emoji: "🥫", area: "Food", title: "Find your manual can opener", detail: "A shelf of cans and no way to open them is a bad day. If you can't find one in a minute, that's the gap.", gear: { name: "Heavy-duty manual can opener", asin: "B09HKDZ3CV" } },
   { emoji: "🥫", area: "Food", title: "Check five expiration dates", detail: "Pull five cans, check the dates, move the oldest to the front. Two minutes, real progress." },
-  { emoji: "🥫", area: "Food", title: "Add one no-cook meal", detail: "Every grocery run, add one shelf-stable meal to the emergency shelf. It compounds fast.", gear: { name: "Mountain House 3-day food supply", asin: "B0898QSCNG" } },
+  { emoji: "🥫", area: "Food", title: "Add one no-cook meal", detail: "Every grocery run, add one shelf-stable meal to the emergency shelf. It compounds fast.", gear: { name: "Mountain House 3-day food supply kit", asin: "B014ER40MS" } },
   // 🩹 First Aid
   { emoji: "🩹", area: "First Aid", title: "The 60-second kit test", detail: "Can you put your hands on your first-aid kit in under a minute, in the dark? If not, move it tonight.", gear: { name: "First Aid Only 298-piece kit", asin: "B000069EYA" } },
   { emoji: "🩹", area: "First Aid", title: "Print the medication list", detail: "Everyone's medications and doses, on paper, in the kit. Phones die in exactly the moments this list matters." },
@@ -94,9 +94,9 @@ export const READINESS_TASKS: ReadinessTask[] = [
   { emoji: "🤝", area: "Skills", title: "Run the drill", detail: "Practice the family evacuation once. Where do you meet? Who grabs what? Ten minutes, twice a year." },
   { emoji: "🤝", area: "Skills", title: "Trade two phone numbers", detail: "Two neighbors, numbers exchanged, tonight. In a real emergency the people closest to you matter most." },
   // ⬆️ Level up
-  { emoji: "⬆️", area: "Level Up", title: "Step up to two weeks of water", detail: "Once the 72-hour basics are set, bulk water storage is the next real upgrade.", gear: { name: "Augason Farms 55-gal water barrel kit", asin: "B006OW4FVI" } },
-  { emoji: "⬆️", area: "Level Up", title: "A month of food, one pail", detail: "Long-shelf-life food pails turn 'two weeks' into 'a month' without a second freezer.", gear: { name: "Augason Farms 30-day food supply", asin: "B071KPGLBK" } },
-  { emoji: "⬆️", area: "Level Up", title: "Filter beyond bottles", detail: "A gravity-fed filter makes water independence real — no power, no plumbing, thousands of gallons.", gear: { name: "Boroux gravity-fed water filter", asin: "B0D9WNBTD8" } },
+  { emoji: "⬆️", area: "Level Up", title: "Step up to two weeks of water", detail: "Once the 72-hour basics are set, bulk water storage is the next real upgrade.", gear: { name: "Augason Farms 55-gallon water barrel", asin: "B07YSZ68GV" } },
+  { emoji: "⬆️", area: "Level Up", title: "A month of food, one pail", detail: "Long-shelf-life food pails turn 'two weeks' into 'a month' without a second freezer.", gear: { name: "Augason Farms 30-day food supply", asin: "B0FH3K7GS3" } },
+  { emoji: "⬆️", area: "Level Up", title: "Filter beyond bottles", detail: "A gravity-fed filter makes water independence real — no power, no plumbing, thousands of gallons.", gear: { name: "LifeStraw Family gravity water purifier", asin: "B0BX5F7L2X" } },
 ];
 
 export function taskIndexForDate(dateKey: string, offset = 0): number {

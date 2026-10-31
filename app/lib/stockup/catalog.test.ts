@@ -2,7 +2,7 @@
 // rules. These run in CI-like `npm test`, so a bad data edit fails loudly.
 import { describe, expect, it } from "vitest";
 import { AMAZON_TAG } from "../gear";
-import { catalog, categories, gearFor, occasions } from "./catalog";
+import { catalog, categories, occasions } from "./catalog";
 import { clampPlan, suggest, suggestionsFor } from "./calc";
 import { parseBlock, slug } from "./data/parse";
 import { shopLink } from "./shop";
@@ -27,7 +27,7 @@ describe("catalog size and distinctness", () => {
     for (const t of tasks) {
       expect(t.cat, t.id).toBe("tasks");
       expect(t.rule.per, t.id).toBe("task");
-      expect(t.asin ?? t.pack ?? t.q, t.id).toBeUndefined();
+      expect(t.pack ?? t.q, t.id).toBeUndefined();
     }
     for (const p of catalog.filter((c) => c.kind === "product")) expect(p.cat, p.id).not.toBe("tasks");
   });
@@ -51,8 +51,8 @@ describe("catalog fields", () => {
       if (c.note) expect(c.note.length, c.id).toBeLessThan(260);
     }
   });
-  it("only uses ASINs that readiness.ts gear already holds", () => {
-    for (const c of catalog) if (c.asin) expect(gearFor(c.asin), c.id).toBeDefined();
+  it("keeps exact products out of catalog lines (they live in picks.ts)", () => {
+    expect(() => parseBlock("## water\nJug ; eme ; g:1 ; jug ; u ; asin=B001QC31G6")).toThrow(/picks\.ts/);
   });
   it("uses every category", () => {
     for (const k of categories) expect(catalog.some((c) => c.cat === k.id), k.id).toBe(true);

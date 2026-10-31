@@ -86,7 +86,7 @@ const EAT: OccasionId[] = ["party", "picnic", "tailgate", "hosting", "sleepover"
 const GATHER: OccasionId[] = ["party", "tailgate", "hosting", "picnic"];
 const AWAY: OccasionId[] = ["camping", "roadtrip", "vacation"];
 
-type Opts = Partial<Pick<CatalogItem, "needs" | "pack" | "note" | "source" | "asin" | "q" | "id" | "season" | "pro" | "climate">>;
+type Opts = Partial<Pick<CatalogItem, "needs" | "pack" | "note" | "source" | "q" | "id" | "season" | "pro" | "climate">>;
 
 export const slug = (s: string) => s.toLowerCase().replace(/&/g, "and").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 
@@ -104,12 +104,12 @@ const base: CatalogItem[] = [
   it("Camp water jug", "water", ["camping", "tailgate"], "group", 1, u("jug"), "useful", {
     q: "camping water jug with spigot", note: "One refillable jug for washing and cooking." }),
   it("Water storage container", "water", PREP, "group", 2, u("container"), "useful", {
-    asin: "B001QC31G6", note: "For filling your own water. Two 7-gallon containers hold about 14 gallons." }),
+    note: "For filling your own water. Two 7-gallon containers hold about 14 gallons." }),
   it("55-gallon water barrel", "water", ["emergency"], "group", 1, u("barrel"), "extra", {
-    asin: "B006OW4FVI", note: "For long plans with space to store it." }),
+    note: "For long plans with space to store it." }),
   it("Personal water filter", "water", ["emergency", "camping"], "person", 0.25, u("filter"), "useful", {
-    asin: "B006QF3TW4", note: "Our rule: one backup filter per four people. Check what a filter removes before relying on it." }),
-  it("Gravity water filter", "water", ["emergency", "camping"], "group", 1, u("filter"), "extra", { asin: "B0D9WNBTD8" }),
+    note: "Our rule: one backup filter per four people. Check what a filter removes before relying on it." }),
+  it("Gravity water filter", "water", ["emergency", "camping"], "group", 1, u("filter"), "extra"),
   it("Water purification tablets", "water", ["emergency", "camping"], "group", 1, u("pack"), "useful", {
     note: "CDC lists tablets and bleach for making water safe. Follow the label." }),
   it("Unscented household bleach", "water", PREP, "group", 1, u("bottle"), "useful", {
@@ -120,8 +120,8 @@ const base: CatalogItem[] = [
   // ── Food ─────────────────────────────────────────────────────────────────
   it("Non-perishable food", "food", PREP, "personDay", 1, u("person-day"), "essential", {
     id: "shelf-food", q: "non perishable food", note: "One person-day is a day of food for one person. Pick food your household already eats." }),
-  it("3-day emergency food supply", "food", ["emergency"], "person", 1, u("kit"), "useful", { asin: "B0898QSCNG", note: "A ready-made option; one kit per person." }),
-  it("30-day food supply", "food", ["emergency"], "person", 1, u("kit"), "extra", { asin: "B071KPGLBK" }),
+  it("3-day emergency food supply", "food", ["emergency"], "person", 1, u("kit"), "useful", { note: "A ready-made option; one kit per person." }),
+  it("30-day food supply", "food", ["emergency"], "person", 1, u("kit"), "extra"),
   it("Canned soups and stews", "food", ["home", "emergency", "camping"], "personDay", 0.5, u("can"), "useful", { note: "Our rule: half a can per person per day." }),
   it("Canned vegetables", "food", PREP, "personDay", 0.5, u("can"), "useful"),
   it("Canned fruit", "food", PREP, "personDay", 0.3, u("can"), "useful"),
@@ -176,7 +176,7 @@ const base: CatalogItem[] = [
   it("Soda or sparkling water", "drinks", [...GATHER, "sleepover", "beach"], "person", 2, u("can"), "useful", { pack: 12, q: "sparkling water variety pack", note: "Our rule: two cans each for a few hours." }),
   it("Sports drinks", "drinks", ["tailgate", "beach", "camping", "picnic", "heat"], "personDay", 1, u("bottle"), "extra", { pack: 12 }),
   it("Lemonade or iced tea", "drinks", ["picnic", "party", "beach"], "person", 0.15, u("gallon"), "extra"),
-  it("Coffee", "drinks", ["home", "camping", "hosting", "vacation"], "adult", 0.25, u("bag"), "useful", { q: "ground coffee", note: "Our rule: about a quarter bag per adult for a short stay." }),
+  it("Coffee", "drinks", ["home", "camping", "hosting", "vacation"], "personDay", 0.04, u("bag"), "useful", { q: "ground coffee", note: "Our rule: a 12-ounce bag covers about 25 person-days." }),
   it("Instant coffee or tea", "drinks", ["emergency", "camping"], "adult", 1, u("pack"), "extra"),
   it("Hot cocoa", "drinks", ["sleepover", "camping", "hosting"], "person", 1, u("packet"), "extra", { pack: 12 }),
   it("Milk", "drinks", ["sleepover", "hosting", "home"], "personDay", 0.15, u("gallon"), "useful", { q: "shelf stable milk" }),
@@ -199,9 +199,9 @@ const base: CatalogItem[] = [
   it("Picnic blanket", "dining", ["picnic", "beach"], "person", 0.25, u("blanket"), "useful", { q: "waterproof picnic blanket", note: "Our rule: one blanket seats about four." }),
 
   // ── Cooking and coolers ──────────────────────────────────────────────────
-  it("Cooler", "cooking", [...OUT, "roadtrip", "party", "heat"], "person", 0.2, u("cooler"), "essential", { q: "large cooler", note: "Our rule: one large cooler per five people for a day." }),
+  it("Cooler", "cooking", [...OUT, "roadtrip", "party", "heat"], "person", 0.15, u("cooler"), "essential", { q: "large cooler", note: "Our rule: one large cooler for every six or seven people." }),
   it("Ice packs", "cooking", [...OUT, "roadtrip"], "group", 4, u("pack"), "useful", { q: "reusable ice packs for cooler" }),
-  it("Manual can opener", "cooking", [...PREP, "camping"], "group", 1, u("can opener"), "essential", { asin: "B09HKDZ3CV", note: "Ready.gov puts one in the basic kit." }),
+  it("Manual can opener", "cooking", [...PREP, "camping"], "group", 1, u("can opener"), "essential", { note: "Ready.gov puts one in the basic kit." }),
   it("Camp stove", "cooking", ["camping", "emergency"], "group", 1, u("stove"), "useful", { q: "camping stove propane", note: "Use outdoors only. Never cook with fuel indoors." }),
   it("Propane canisters", "cooking", ["camping", "tailgate", "emergency"], "group", 2, u("canister"), "useful", { q: "1 lb propane cylinder" }),
   it("Portable grill", "cooking", ["tailgate", "camping", "beach"], "group", 1, u("grill"), "useful", { q: "portable grill" }),
@@ -223,7 +223,7 @@ const base: CatalogItem[] = [
 
   // ── Paper goods and bags ─────────────────────────────────────────────────
   it("Toilet paper", "paper", ["home", "emergency", "camping", "hosting", "vacation"], "personDay", 0.4, u("roll"), "essential", { pack: 12, note: "Our rule: about 3 rolls per person per week." }),
-  it("Paper towels", "paper", [...ALL], "personDay", 0.15, u("roll"), "essential", { pack: 6, note: "Our rule: about a roll per person per week; more for cookouts." }),
+  it("Paper towels", "paper", [...ALL], "personDay", 0.05, u("roll"), "essential", { pack: 6, note: "Our rule: about a roll per person every three weeks; more for cookouts." }),
   it("Facial tissues", "paper", ["home", "hosting", "roadtrip", "emergency"], "personDay", 0.03, u("box", "boxes"), "useful"),
   it("Trash bags", "paper", ALL, "personDay", 0.5, u("bag"), "essential", { pack: 50, q: "heavy duty trash bags", note: "Our rule: half a bag per person per day; at least one per day." }),
   it("Recycling bags", "paper", ["party", "tailgate", "hosting"], "group", 1, u("box", "boxes"), "extra", { q: "clear recycling bags" }),
@@ -233,11 +233,11 @@ const base: CatalogItem[] = [
 
   // ── Cleaning and laundry ─────────────────────────────────────────────────
   it("Dish soap", "cleaning", ["home", "camping", "hosting"], "group", 1, u("bottle"), "useful", { q: "biodegradable camp soap" }),
-  it("Laundry detergent", "cleaning", ["home", "vacation", "hosting"], "personDay", 0.02, u("container"), "useful", { note: "Our rule: one container lasts one person about 50 days." }),
+  it("Laundry detergent", "cleaning", ["home", "vacation", "hosting"], "personDay", 0.01, u("container"), "useful", { note: "Our rule: a large container lasts one person about 100 days." }),
   it("Disinfecting wipes", "cleaning", ["home", "emergency", "party", "hosting", "roadtrip"], "group", 1, u("canister"), "useful"),
   it("All-purpose cleaner", "cleaning", ["home", "hosting"], "group", 1, u("bottle"), "useful"),
   it("Sponges", "cleaning", ["home", "camping", "hosting"], "group", 1, u("pack"), "useful"),
-  it("Dishwasher detergent", "cleaning", ["home", "hosting"], "personDay", 0.05, u("pod"), "extra", { pack: 40 }),
+  it("Dishwasher detergent", "cleaning", ["home", "hosting"], "personDay", 0.25, u("pod"), "extra", { pack: 40, note: "Our rule: about one load a day for four people." }),
   it("Rubber gloves", "cleaning", ["emergency", "home", "party"], "group", 1, u("box", "boxes"), "useful", { q: "disposable gloves" }),
   it("Collapsible wash basin", "cleaning", ["camping"], "group", 1, u("basin"), "extra", { q: "collapsible sink camping" }),
   it("Stain remover", "cleaning", ["party", "hosting", "vacation"], "group", 1, u("bottle"), "extra", { q: "stain remover pen" }),
@@ -258,8 +258,8 @@ const base: CatalogItem[] = [
   it("Contact lens supplies or spare glasses", "toiletries", ["emergency", "vacation", "camping"], "group", 1, u("set"), "useful", { q: "contact lens case travel", note: "Ready.gov lists glasses and contact lens solution." }),
 
   // ── First aid and medicine ───────────────────────────────────────────────
-  it("First aid kit", "health", ALL, "group", 1, u("kit"), "essential", { asin: "B000069EYA" }),
-  it("Prescription medicines", "health", ["emergency", "vacation", "camping", "roadtrip"], "person", 7, u("day's supply", "days' supply"), "essential", {
+  it("First aid kit", "health", ALL, "group", 1, u("kit"), "essential"),
+  it("Prescription medicines", "health", ["emergency", "vacation", "camping", "roadtrip"], "person", 1, u("one-week supply", "one-week supplies"), "essential", {
     id: "meds", source: "rc-kit", q: "weekly pill organizer", note: "Red Cross: a 7-day supply. Ask your prescriber or pharmacy what is possible." }),
   it("Pain and fever reliever", "health", ["home", "emergency", "vacation", "camping", "hosting"], "group", 1, u("bottle"), "useful", { q: "pain reliever" }),
   it("Children's pain and fever reliever", "health", ["home", "emergency", "vacation", "sleepover"], "group", 1, u("bottle"), "useful", { needs: "kids", q: "children's fever reducer" }),
@@ -275,21 +275,21 @@ const base: CatalogItem[] = [
   it("Antacids", "health", ["vacation", "hosting", "roadtrip"], "group", 1, u("bottle"), "extra"),
   it("Masks", "health", ["emergency", "wildfire", "sick"], "person", 2, u("mask"), "useful", { q: "n95 masks", note: "Ready.gov lists masks to filter contaminated air. EPA says a well-fitted N95 can reduce wildfire smoke; kids need their own sizes.", pro: true }),
   it("Instant cold packs", "health", ["tailgate", "camping", "beach"], "group", 2, u("pack"), "extra"),
-  it("First aid manual", "health", ["emergency"], "group", 1, u("book"), "extra", { asin: "173674478X" }),
+  it("First aid manual", "health", ["emergency"], "group", 1, u("book"), "extra"),
   it("Pill organizer", "health", ["vacation", "roadtrip"], "group", 1, u("organizer"), "extra", { q: "weekly pill organizer travel" }),
 
   // ── Light and power ──────────────────────────────────────────────────────
   it("Flashlights", "power", [...PREP, "camping", "roadtrip"], "person", 1, u("flashlight"), "essential", { q: "led flashlight", note: "One per person, so nobody is left in the dark." }),
-  it("Headlamps", "power", ["camping", "emergency", "sleepover"], "person", 1, u("headlamp"), "useful", { asin: "B092RHC2FY", pack: 2 }),
+  it("Headlamps", "power", ["camping", "emergency", "sleepover"], "person", 1, u("headlamp"), "useful", { pack: 2 }),
   it("Lantern", "power", ["camping", "emergency", "home"], "group", 2, u("lantern"), "useful", { q: "led camping lantern" }),
   it("Batteries", "power", [...PREP, "camping"], "person", 4, u("battery", "batteries"), "essential", { q: "aa batteries", note: "Check sizes for your lights and radio." }),
-  it("Power bank", "power", ["emergency", "camping", "roadtrip", "vacation", "tailgate", "beach", "heat"], "adult", 1, u("power bank"), "useful", { asin: "B0D5CLSMFB" }),
+  it("Power bank", "power", ["emergency", "camping", "roadtrip", "vacation", "tailgate", "beach", "heat"], "adult", 1, u("power bank"), "useful"),
   it("Car phone charger", "power", ["roadtrip", "emergency"], "group", 2, u("charger"), "useful", { q: "usb c car charger" }),
   it("Charging cables", "power", ["vacation", "roadtrip", "camping", "sleepover"], "group", 2, u("cable"), "useful", { q: "usb c charging cable" }),
   it("Power strip", "power", ["vacation", "hosting", "sleepover"], "group", 1, u("strip"), "extra", { q: "travel power strip" }),
   it("Travel plug adapter", "power", ["vacation"], "group", 1, u("adapter"), "extra", { q: "universal travel adapter", note: "Only for trips abroad." }),
-  it("Portable power station", "power", ["emergency", "camping"], "group", 1, u("station"), "extra", { asin: "B0D7PPG25F" }),
-  it("Generator", "power", ["emergency"], "group", 1, u("generator"), "extra", { asin: "B099KPDJBD", note: "Outdoors only, far from windows. Ready.gov warns about carbon monoxide." }),
+  it("Portable power station", "power", ["emergency", "camping"], "group", 1, u("station"), "extra"),
+  it("Generator", "power", ["emergency"], "group", 1, u("generator"), "extra", { note: "Outdoors only, far from windows. Ready.gov warns about carbon monoxide." }),
   it("Battery string lights", "power", ["camping", "party", "sleepover"], "group", 1, u("string"), "extra", { q: "battery string lights" }),
   it("Glow sticks", "power", ["sleepover", "camping", "party"], "kid", 3, u("glow stick"), "extra", { needs: "kids", pack: 100 }),
   it("Night light", "power", ["sleepover", "hosting"], "group", 1, u("night light"), "extra", { q: "plug in night light" }),
@@ -302,8 +302,8 @@ const base: CatalogItem[] = [
   it("Pillows", "sleep", ["camping", "sleepover", "hosting"], "person", 1, u("pillow"), "useful", { q: "camping pillow" }),
   it("Extra blankets", "sleep", ["hosting", "sleepover", "emergency", "camping"], "person", 1, u("blanket"), "useful", { q: "fleece blanket" }),
   it("Guest sheets", "sleep", ["hosting"], "person", 0.5, u("set"), "extra", { q: "sheet set" }),
-  it("Emergency blankets", "sleep", ["emergency", "roadtrip", "camping"], "person", 1, u("blanket"), "useful", { asin: "B01LYNWRLA", pack: 4 }),
-  it("Hand warmers", "sleep", ["emergency", "camping", "tailgate"], "personDay", 1, u("pair"), "extra", { asin: "B077RXSZN3", pack: 10 }),
+  it("Emergency blankets", "sleep", ["emergency", "roadtrip", "camping"], "person", 1, u("blanket"), "useful", { pack: 4 }),
+  it("Hand warmers", "sleep", ["emergency", "camping", "tailgate"], "personDay", 1, u("pair"), "extra", { pack: 10 }),
   it("Tarp", "sleep", ["camping", "emergency"], "group", 1, u("tarp"), "useful", { q: "waterproof tarp" }),
   it("Rain ponchos", "sleep", ["camping", "tailgate", "emergency", "picnic", "vacation"], "person", 1, u("poncho"), "useful"),
   it("Warm layers", "sleep", ["camping", "emergency", "tailgate"], "person", 1, u("layer"), "useful", { q: "fleece jacket", note: "Ready.gov lists a change of clothes and warm layers." }),
@@ -392,7 +392,7 @@ const base: CatalogItem[] = [
 
   // ── Bags and travel ──────────────────────────────────────────────────────
   it("Go-bag", "travel", ["emergency"], "person", 1, u("bag"), "essential", { q: "emergency backpack", note: "Red Cross: a 3-day supply to take with you." }),
-  it("72-hour kit", "travel", ["emergency"], "person", 0.5, u("kit"), "extra", { asin: "B000FJQQVI", note: "This kit covers two people." }),
+  it("72-hour kit", "travel", ["emergency"], "person", 0.5, u("kit"), "extra", { note: "This kit covers two people." }),
   it("Suitcases", "travel", ["vacation"], "person", 0.5, u("suitcase"), "useful", { note: "Our rule: one checked bag for two people." }),
   it("Carry-on bag", "travel", ["vacation"], "person", 1, u("bag"), "useful", { q: "carry on backpack" }),
   it("Packing cubes", "travel", ["vacation", "roadtrip"], "person", 1, u("set"), "extra"),
@@ -401,17 +401,17 @@ const base: CatalogItem[] = [
   it("Luggage tags", "travel", ["vacation"], "person", 0.5, u("tag"), "extra"),
   it("Car trash can", "travel", ["roadtrip"], "group", 1, u("can"), "extra", { q: "car trash can" }),
   it("Car seat organizer", "travel", ["roadtrip"], "kid", 0.5, u("organizer"), "extra", { needs: "kids", q: "back seat organizer" }),
-  it("Car emergency kit", "travel", ["roadtrip", "emergency"], "group", 1, u("kit"), "useful", { asin: "B01C96AFWU" }),
+  it("Car emergency kit", "travel", ["roadtrip", "emergency"], "group", 1, u("kit"), "useful"),
   it("Tire inflator", "travel", ["roadtrip"], "group", 1, u("inflator"), "extra", { q: "portable tire inflator" }),
   it("Sunshade for car", "travel", ["roadtrip", "beach"], "group", 1, u("shade"), "extra", { q: "windshield sun shade" }),
 
   // ── Safety and documents ─────────────────────────────────────────────────
-  it("Weather radio", "safety", ["emergency", "camping"], "group", 1, u("radio"), "essential", { asin: "B015QIC1PW", note: "Ready.gov lists a battery-powered or hand-crank radio with NOAA alerts." }),
-  it("Document bag", "safety", ["emergency", "vacation"], "group", 1, u("bag"), "useful", { asin: "B07SPZ93V5", note: "Copies of IDs, insurance and medical papers." }),
-  it("Fireproof safe", "safety", ["home"], "group", 1, u("safe"), "extra", { asin: "B005P12C5A" }),
+  it("Weather radio", "safety", ["emergency", "camping"], "group", 1, u("radio"), "essential", { note: "Ready.gov lists a battery-powered or hand-crank radio with NOAA alerts." }),
+  it("Document bag", "safety", ["emergency", "vacation"], "group", 1, u("bag"), "useful", { note: "Copies of IDs, insurance and medical papers." }),
+  it("Fireproof safe", "safety", ["home"], "group", 1, u("safe"), "extra"),
   it("Cash in small bills", "safety", ["emergency", "roadtrip", "vacation"], "group", 1, u("envelope"), "useful", { q: "cash envelope wallet", note: "Ready.gov: card readers and ATMs may be down." }),
-  it("Fire extinguisher", "safety", ["home", "camping", "tailgate"], "group", 1, u("extinguisher"), "useful", { asin: "B01LTICQYE" }),
-  it("Smoke and CO alarm", "safety", ["home", "emergency"], "group", 1, u("alarm"), "useful", { asin: "B0CLVRPNZX", note: "Test monthly. Add one per floor and outside sleeping areas." }),
+  it("Fire extinguisher", "safety", ["home", "camping", "tailgate"], "group", 1, u("extinguisher"), "useful"),
+  it("Smoke and CO alarm", "safety", ["home", "emergency"], "group", 1, u("alarm"), "useful", { note: "Test monthly. Add one per floor and outside sleeping areas." }),
   it("Spare keys", "safety", ["emergency", "vacation"], "group", 1, u("set"), "extra", { q: "key organizer" }),
   it("Printed contact list", "safety", ["emergency", "sleepover", "vacation"], "group", 1, u("list"), "useful", { q: "waterproof id card holder", note: "Phone numbers on paper, plus parents' numbers for a sleepover." }),
   it("Allergy and emergency info card", "safety", ["sleepover", "party", "vacation"], "kid", 1, u("card"), "useful", { needs: "kids", q: "medical alert card holder", note: "Ask each family about allergies before you shop." }),

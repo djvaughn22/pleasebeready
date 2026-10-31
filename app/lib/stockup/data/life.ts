@@ -134,7 +134,7 @@ Pet crate for home ; pet ; pet:1 ; crate ; x ; need=pets ; q=dog crate
 Collapsible pet crate ; eme,hur,wil ; pet:1 ; crate ; u ; need=pets ; q=collapsible dog crate | n=Ready.gov says many shelters require pets in carriers.
 Cat litter box, disposable ; eme,rdt,vac ; pet:1 ; box/boxes ; x ; need=pets ; q=disposable litter box
 Litter scoop and bags ; pet ; g:1 ; set ; x ; need=pets
-Puppy pads ; pet,rdt,crg ; petd:1 ; pad ; x ; need=pets ; pack=100 ; q=puppy pads
+Puppy pads ; pet,rdt,crg ; petd:2 ; pad ; x ; need=pets ; pack=100 ; q=puppy pads | n=Our rule: two a day while house training.
 Pet shampoo ; pet ; g:1 ; bottle ; x ; need=pets
 Pet brush ; pet ; pet:1 ; brush/brushes ; x ; need=pets
 Pet nail clippers ; pet ; g:1 ; clipper ; x ; need=pets

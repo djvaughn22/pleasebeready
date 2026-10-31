@@ -180,7 +180,7 @@ export default function Suggestions({ plan, api, suggestions, onList }: {
         </details>
       )}
 
-      <div className="mt-8"><GoodToKnow> “Buy on Amazon” opens a product we checked; “Find on Amazon” opens search results. Each opens one item; there is no combined cart.</GoodToKnow></div>
+      <div className="mt-8"><GoodToKnow> “Shop on Amazon” opens one exact product we picked; “Search Amazon” opens search results. Each opens one item; there is no combined cart.</GoodToKnow></div>
 
       <div className="sticky bottom-0 z-30 -mx-4 mt-6 border-t border-[#26324c] bg-[#0b1220] px-4 py-3 sm:mx-0 sm:rounded-t-xl sm:border-x print:hidden">
         <p className="mb-2 min-h-4 text-xs font-bold text-[#e8edf5]" role="status" aria-live="polite">{note}</p>

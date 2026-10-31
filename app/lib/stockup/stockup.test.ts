@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { AMAZON_TAG } from "../gear";
-import { catalog, categories, gearFor, itemById, occasions } from "./catalog";
+import { catalog, categories, itemById, occasions } from "./catalog";
 import { clampPlan, lineQty, suggest, suggestionsFor, toBuy } from "./calc";
 import { listText, shopLink } from "./shop";
 import { decodePlan, encodePlan, newPlan, parseStore } from "./storage";
@@ -13,9 +13,6 @@ describe("catalog", () => {
   it("has one entry per id and per name", () => {
     expect(new Set(catalog.map((c) => c.id)).size).toBe(catalog.length);
     expect(new Set(catalog.map((c) => c.name.toLowerCase())).size).toBe(catalog.length);
-  });
-  it("only uses ASINs that readiness.ts gear already holds", () => {
-    for (const c of catalog) if (c.asin) expect(gearFor(c.asin), c.id).toBeDefined();
   });
   it("gives every occasion a broad list in several categories", () => {
     for (const o of occasions) {

@@ -1,17 +1,17 @@
 // Shopping links. There is no multi-item Amazon cart here: each item opens
-// one page — the title-verified product when readiness.ts has one, otherwise
-// a tagged Amazon search. Both carry the Associates tag from gear.ts.
+// one page — our exact product when picks.ts has one, otherwise a tagged
+// Amazon search, labelled as a search. Both carry the Associates tag from gear.ts.
 
 import { amazonSearchUrl, amazonUrl } from "../gear";
-import { gearFor } from "./catalog";
+import { primaryPick, type Pick as Product } from "../shop/picks";
 import { toBuy, unitWord } from "./calc";
 import type { CatalogItem, Plan, Suggestion } from "./types";
 
-export type ShopLink = { url: string; kind: "product" | "search"; label: string };
+export type ShopLink = { url: string; kind: "product" | "search"; label: string; pick?: Product };
 
 export function shopLink(item: CatalogItem): ShopLink {
-  const gear = item.asin ? gearFor(item.asin) : undefined;
-  if (gear) return { url: amazonUrl(gear.asin), kind: "product", label: gear.name };
+  const pick = primaryPick(item.id);
+  if (pick) return { url: amazonUrl(pick.asin), kind: "product", label: pick.name, pick };
   const q = item.q ?? item.name;
   return { url: amazonSearchUrl(q), kind: "search", label: `Amazon search: “${q}”` };
 }
