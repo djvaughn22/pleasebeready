@@ -1,5 +1,7 @@
 # PleaseBeReady promotion plan (revised Oct 28, 2026)
 
+> **Oct 30, 2026:** the planner is now My Ready Lists at `/lists` (`/planner` redirects, `?start=` still works), and posts should link to kit and guide pages instead. The launch calendar, bios, handles and brand images are in `social/SOCIAL-LAUNCH.md`; measurement is in `MEASUREMENT.md`. The rules and tests below still apply.
+
 Materials only. **Nothing here has been posted, sent or paid for, and the plan spends $0.** Any paid step is a *proposal for DJ to approve*. Rules, sources and evidence grades are in `STOCKUP-RESEARCH.md`.
 
 ## What we know, and how well
