@@ -62,7 +62,8 @@ export function parseIntent(query: string): Intent {
 
 const STOP = new Set(["a", "an", "the", "for", "of", "with", "and", "or", "to", "in", "on", "at", "my", "our", "your", "we", "i", "me", "need",
   "what", "how", "much", "many", "do", "is", "are", "be", "get", "buy", "list", "kit", "kits", "stuff", "things", "supplies", "without",
-  "people", "person", "days", "day", "weeks", "week", "month", "months", "night", "nights", "ready", "prepare", "prep", "going", "about"]);
+  "people", "person", "days", "day", "weeks", "week", "month", "months", "night", "nights", "ready", "prepare", "prep", "going", "about",
+  "new", "first", "our", "some", "all", "just"]);
 
 /** Words that mean the same thing for product matching. */
 const SYN: Record<string, string[]> = {

@@ -2,7 +2,7 @@
 // fields (category, situation, who it serves) plus a few hand-picked ids, so
 // one item can sit in several lanes without a second copy of it.
 
-import { catalog } from "../stockup/catalog";
+import { catalog, occasions } from "../stockup/catalog";
 import type { CatalogItem, CategoryId, Need, OccasionId } from "../stockup/types";
 
 export type LaneId =
@@ -75,6 +75,8 @@ export function inLane(item: CatalogItem, lane: Lane): boolean {
   if (lane.cats.includes(item.cat)) return true;
   if (lane.ids?.includes(item.id)) return true;
   if (lane.needs && item.needs && lane.needs.includes(item.needs)) return true;
+  // Items suggested for (nearly) every situation, like trash bags or diapers, belong to their own category's lane only.
+  if (item.occ.length >= occasions.length - 2) return false;
   return item.pri !== "extra" && item.occ.some((o) => lane.occs.includes(o));
 }
 

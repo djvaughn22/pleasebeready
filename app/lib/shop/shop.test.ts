@@ -5,11 +5,11 @@ import { describe, expect, it } from "vitest";
 import { catalog, gearFor, itemById, occasions } from "../stockup/catalog";
 import { NOTE_MAX, decodePlan, encodePlan, parseStore } from "../stockup/storage";
 import { guideForKit, guides } from "./guides";
-import { kitNumbers, kitPlan, kitRows } from "./kitPlan";
+import { kitNumbers, kitPlan, kitRows, numbersFromQuery } from "./kitPlan";
 import { kitBySlug, kits, kitsInLane } from "./kits";
 import { laneItems, lanes } from "./lanes";
 import { pickForItem, picks } from "./picks";
-import { kitHref, parseIntent, searchItems, searchKits } from "./search";
+import { kitHref, parseIntent, searchItems, searchKits, searchLanes } from "./search";
 
 describe("kits", () => {
   it("has at least 20 kits with unique slugs", () => {
@@ -68,6 +68,13 @@ describe("lanes", () => {
       expect(laneItems(l).length, l.id).toBeGreaterThan(10);
       for (const id of l.ids ?? []) expect(itemById(id), `${l.id}: ${id}`).toBeDefined();
     }
+  });
+
+  it("keeps catch-all items in their own category's lane", () => {
+    const pets = lanes.find((l) => l.id === "pets")!;
+    expect(laneItems(pets).map((i) => i.id)).not.toContain("diapers");
+    expect(laneItems(pets).map((i) => i.id)).toContain("pet-food");
+    expect(searchLanes("new puppy").map((l) => l.id)).not.toContain("moving");
   });
 
   it("puts every catalog product in at least one lane", () => {
@@ -187,6 +194,18 @@ describe("kit amounts", () => {
     expect(kitPlan(kitBySlug("weekend-camping")!)).toMatchObject({ days: 3, nights: 2 });
     expect(kitPlan(kitBySlug("holiday-dinner")!)).toMatchObject({ days: 1, nights: 0, meals: 1, people: 12 });
     expect(kitPlan(kitBySlug("aging-parent")!).needs).toEqual(["older", "mobility"]);
+  });
+
+  it("reads numbers from a kit link without zeroing what the link leaves out", () => {
+    const puppy = kitNumbers(kitBySlug("new-puppy")!);
+    const family = kitNumbers(kitBySlug("family-emergency-kit")!);
+    expect(numbersFromQuery("", puppy)).toEqual(puppy);
+    expect(numbersFromQuery("?utm_source=ig", puppy).pets).toBe(1);
+    expect(numbersFromQuery("?days=5", family)).toMatchObject({ kids: 2, people: 4, days: 5 });
+    expect(numbersFromQuery("?pets=2", puppy).pets).toBe(2);
+    expect(numbersFromQuery("?kids=0", family).kids).toBe(0);
+    expect(numbersFromQuery("?people=0&days=9999&pets=x", puppy)).toEqual(puppy);
+    expect(numbersFromQuery("?kids=7", family).people).toBe(7);
   });
 
   it("works out water from the official rule: 1 gallon per person per day", () => {

@@ -6,7 +6,7 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { kitNumbers, kitPlan, kitRows, type KitNumbers } from "../../lib/shop/kitPlan";
+import { kitNumbers, kitPlan, kitRows, numbersFromQuery, type KitNumbers } from "../../lib/shop/kitPlan";
 import { kitBySlug, type Kit } from "../../lib/shop/kits";
 import { MAX_DAYS, MAX_PEOPLE, durationLabel } from "../../lib/stockup/calc";
 import { itemById } from "../../lib/stockup/catalog";
@@ -24,24 +24,9 @@ export default function KitView({ slug }: { slug: string }) {
 
   // Numbers from a search link. Read after the first render so the page can be built ahead of time.
   useEffect(() => {
-    const q = new URLSearchParams(window.location.search);
-    const num = (k: string, lo: number, hi: number) => {
-      const v = Number(q.get(k));
-      return Number.isInteger(v) && v >= lo && v <= hi ? v : undefined;
-    };
-    const people = num("people", 1, MAX_PEOPLE);
-    const kids = num("kids", 0, MAX_PEOPLE);
-    const pets = num("pets", 0, 50);
-    const days = num("days", 1, MAX_DAYS);
-    if (people || kids !== undefined || pets !== undefined || days) {
-      const t = setTimeout(() => setN((cur) => {
-        const next = { ...cur, ...(people ? { people } : {}), ...(pets !== undefined ? { pets } : {}), ...(days ? { days } : {}) };
-        if (kids !== undefined) next.kids = kids;
-        next.people = Math.max(next.people, next.kids + next.babies);
-        return next;
-      }), 0);
-      return () => clearTimeout(t);
-    }
+    if (!window.location.search) return;
+    const t = setTimeout(() => setN((cur) => numbersFromQuery(window.location.search, cur)), 0);
+    return () => clearTimeout(t);
   }, []);
 
   return (
@@ -79,7 +64,7 @@ function KitBody({ kit, n, setN }: { kit: Kit; n: KitNumbers; setN: (fn: (n: Kit
       <section aria-label="Your group and how long" className={`${inset} flex flex-col gap-4 p-4`}>
         {kit.ask.length > 0 && (
           <div className="flex flex-wrap gap-x-6 gap-y-3">
-            {kit.ask.includes("people") && <Stepper compact id="kit-people" text="People" value={n.people} min={1} max={MAX_PEOPLE} onChange={(v) => set({ people: v, kids: Math.min(n.kids, v - n.babies) })} />}
+            {kit.ask.includes("people") && <Stepper compact id="kit-people" text="People" value={n.people} min={1} max={MAX_PEOPLE} onChange={(v) => set({ people: v, kids: Math.max(0, Math.min(n.kids, v - n.babies)) })} />}
             {kit.ask.includes("kids") && <Stepper compact id="kit-kids" text="Kids" value={n.kids} min={0} max={MAX_PEOPLE} onChange={(v) => set({ kids: v })} />}
             {kit.ask.includes("pets") && <Stepper compact id="kit-pets" text="Pets" value={n.pets} min={0} max={50} onChange={(v) => set({ pets: v })} />}
             {kit.ask.includes("days") && <Stepper compact id="kit-days" text="Days" value={n.days} min={1} max={MAX_DAYS} onChange={(v) => set({ days: v })} />}
