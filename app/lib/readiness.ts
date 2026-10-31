@@ -21,7 +21,7 @@ export const areas: Area[] = [
     id: "water", emoji: "💧", title: "Water", href: "https://www.ready.gov/water", source: "Ready.gov",
     details: [
       "1 gallon per person per day (drinking + sanitation); don't forget pets.",
-      "Store a 3-day minimum; aim for 2 weeks. Rotate store-bought every 6–12 months.",
+      "Store a 3-day minimum; aim for 2 weeks. Keep store-bought water sealed; replace water you bottle yourself every 6 months.",
       "Backup purification: a filter, 1/8 teaspoon of unscented bleach per gallon (wait 30 minutes), or a rolling boil for 1 minute.",
     ],
     gear: [
@@ -32,7 +32,7 @@ export const areas: Area[] = [
   {
     id: "food", emoji: "🥫", title: "Food", href: "https://www.ready.gov/food", source: "Ready.gov",
     details: [
-      "2-week supply of non-perishable, no-cook food — roughly 2,000 calories/person/day.",
+      "2-week supply of non-perishable, no-cook food your household will actually eat.",
       "Canned meat/beans/veg, peanut butter, nuts, dried fruit, crackers, shelf-stable milk.",
       "Keep a manual can opener. Rotate by expiration date.",
     ],

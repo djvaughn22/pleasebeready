@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import JsonLd, { SITE, breadcrumbs } from "../../components/JsonLd";
 import KitView from "../../components/shop/KitView";
 import { KitCard } from "../../components/shop/Tiles";
+import { guideForKit } from "../../lib/shop/guides";
 import { kitBySlug, kits, kitsInLane } from "../../lib/shop/kits";
 import { laneById } from "../../lib/shop/lanes";
 import { itemById } from "../../lib/stockup/catalog";
@@ -27,6 +28,7 @@ export default async function KitPage({ params }: { params: Promise<{ slug: stri
   if (!kit) notFound();
   const lane = laneById(kit.lane)!;
   const related = kitsInLane(kit.lane).filter((k) => k.slug !== kit.slug).slice(0, 4);
+  const guide = guideForKit(kit.slug);
 
   return (
     <main className="min-h-screen bg-[#0b1220] text-[#e8edf5]">
@@ -37,6 +39,11 @@ export default async function KitPage({ params }: { params: Promise<{ slug: stri
         </nav>
         <h1 className="text-3xl font-black leading-tight sm:text-4xl"><span aria-hidden>{kit.emoji} </span>{kit.title}</h1>
         <p className="mt-2 max-w-2xl text-base font-semibold leading-7 text-[#94a3b8]">{kit.intro}</p>
+        {guide && (
+          <p className="mt-2 text-sm font-bold">
+            <Link href={`/guides/${guide.slug}`} className="underline pbr-accent">📖 Read the guide: {guide.title.toLowerCase()}</Link>
+          </p>
+        )}
 
         <div className="mt-6"><KitView slug={kit.slug} /></div>
 

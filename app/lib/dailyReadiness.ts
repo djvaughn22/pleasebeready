@@ -46,9 +46,9 @@ export const READINESS_TASKS: ReadinessTask[] = [
   { emoji: "💧", area: "Water", title: "Count your water tonight", detail: "One gallon per person per day, three days minimum. Count what's actually on the shelf — most homes are surprised.", gear: { name: "Reliance Aqua-Tainer 7-gallon container", asin: "B001QC31G6" } },
   { emoji: "💧", area: "Water", title: "Fill one container", detail: "Don't plan it — do it. One filled 7-gallon container covers one person for a week of drinking water." },
   { emoji: "💧", area: "Water", title: "Put a filter in your go-bag", detail: "A personal straw filter turns almost any water source into drinking water. It weighs two ounces.", gear: { name: "LifeStraw personal water filter", asin: "B006QF3TW4" } },
-  { emoji: "💧", area: "Water", title: "Date your stored water", detail: "Write today's date on every container with a marker. Rotate store-bought every 6–12 months." },
+  { emoji: "💧", area: "Water", title: "Date your stored water", detail: "Write today's date on every container with a marker. Replace water you bottled yourself every 6 months." },
   // 🥫 Food
-  { emoji: "🥫", area: "Food", title: "Count your shelf calories", detail: "Two weeks of no-cook food is the goal — roughly 2,000 calories per person per day. Count what you have." },
+  { emoji: "🥫", area: "Food", title: "Count your shelf food", detail: "Two weeks of no-cook food is the goal. Count how many days of meals you have for each person." },
   { emoji: "🥫", area: "Food", title: "Find your manual can opener", detail: "A shelf of cans and no way to open them is a bad day. If you can't find one in a minute, that's the gap.", gear: { name: "Heavy-duty manual can opener", asin: "B09HKDZ3CV" } },
   { emoji: "🥫", area: "Food", title: "Check five expiration dates", detail: "Pull five cans, check the dates, move the oldest to the front. Two minutes, real progress." },
   { emoji: "🥫", area: "Food", title: "Add one no-cook meal", detail: "Every grocery run, add one shelf-stable meal to the emergency shelf. It compounds fast.", gear: { name: "Mountain House 3-day food supply", asin: "B0898QSCNG" } },

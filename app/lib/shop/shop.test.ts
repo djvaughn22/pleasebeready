@@ -4,6 +4,7 @@
 import { describe, expect, it } from "vitest";
 import { catalog, gearFor, itemById, occasions } from "../stockup/catalog";
 import { NOTE_MAX, decodePlan, encodePlan, parseStore } from "../stockup/storage";
+import { guideForKit, guides } from "./guides";
 import { kitNumbers, kitPlan, kitRows } from "./kitPlan";
 import { kitBySlug, kits, kitsInLane } from "./kits";
 import { laneItems, lanes } from "./lanes";
@@ -193,5 +194,25 @@ describe("kit amounts", () => {
     const [water] = kitRows(["water"], kitPlan(kit, { ...kitNumbers(kit), people: 4, days: 3 }));
     expect(water.qty).toBe(12);
     expect(water.item.source).toBe("rg-water");
+  });
+});
+
+describe("guides", () => {
+  it("each leads to a real kit, cites its own sources, and stays plain", () => {
+    expect(guides.length).toBeGreaterThanOrEqual(6);
+    expect(new Set(guides.map((g) => g.slug)).size).toBe(guides.length);
+    for (const g of guides) {
+      expect(kitBySlug(g.kit), g.slug).toBeDefined();
+      expect(guideForKit(g.kit)?.slug).toBe(g.slug);
+      const ids = new Set(g.sources.map((s) => s.id));
+      for (const s of g.sources) {
+        expect(s.href).toMatch(/^https:\/\/www\.(ready\.gov|redcross\.org|cdc\.gov)\//);
+        expect(s.read).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+      }
+      for (const sec of g.sections) {
+        for (const id of sec.from ?? []) expect(ids.has(id), `${g.slug}: ${id}`).toBe(true);
+        for (const p of sec.points) expect(p, g.slug).not.toMatch(/\$\d|best seller|guarantee|\bfree\b/i);
+      }
+    }
   });
 });

@@ -88,6 +88,7 @@ export default function Home() {
 
             <nav aria-label="More from PleaseBeReady" className="mb-10 flex flex-col gap-2">
               {[
+                { href: "/guides", text: "📖 Guides: how much to buy, how to store it" },
                 { href: "/checklist", text: "✅ Emergency checklist: eleven areas with official guide links" },
                 { href: "/today", text: "📅 Daily Readiness Check: one small task a day" },
                 { href: "/books", text: "📚 Preparedness Bookshelf" },
