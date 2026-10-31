@@ -25,6 +25,9 @@ export function usePlans({ importLinks = false }: { importLinks?: boolean } = {}
   const [saved, setSaved] = useState<"idle" | "saved" | "failed">("idle");
   const [imported, setImported] = useState<string | null>(null);
   const loaded = useRef(false);
+  // The store last read from another tab: never written back, so tabs don't echo each other
+  // (an echo from a tab running older code would drop fields that code doesn't know).
+  const remote = useRef<Store | null>(null);
 
   useEffect(() => {
     const t = setTimeout(() => {
@@ -72,11 +75,15 @@ export function usePlans({ importLinks = false }: { importLinks?: boolean } = {}
     const onStorage = (e: StorageEvent) => {
       if (e.key !== STORAGE_KEY || !loaded.current) return;
       const next = parseStore(e.newValue);
-      setStore((cur) => ({
-        plans: next.plans,
-        activeId: next.plans.some((p) => p.id === cur.activeId) ? cur.activeId : null,
-        targetId: next.targetId ?? null,
-      }));
+      setStore((cur) => {
+        const s = {
+          plans: next.plans,
+          activeId: next.plans.some((p) => p.id === cur.activeId) ? cur.activeId : null,
+          targetId: next.targetId ?? null,
+        };
+        remote.current = s;
+        return s;
+      });
     };
     window.addEventListener("storage", onStorage);
     return () => window.removeEventListener("storage", onStorage);
@@ -84,6 +91,7 @@ export function usePlans({ importLinks = false }: { importLinks?: boolean } = {}
 
   useEffect(() => {
     if (!loaded.current) return;
+    if (remote.current === store) return;
     setSaved(saveStore(store) ? "saved" : "failed");
   }, [store]);
 
