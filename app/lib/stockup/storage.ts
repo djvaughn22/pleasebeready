@@ -47,6 +47,7 @@ export function parsePlan(v: unknown): Plan | null {
       const qty = typeof l.qty === "number" && l.qty >= 0 ? Math.round(l.qty) : null;
       const line: Line = { qty, have: typeof l.have === "number" && l.have > 0 ? Math.round(l.have) : 0, got: l.got === true };
       if (typeof l.bought === "number" && l.bought > 0) line.bought = Math.min(100000, Math.round(l.bought));
+      if (typeof l.filled === "number" && l.filled > 0) line.filled = Math.min(100000, Math.round(l.filled));
       if (l.ready === true) line.ready = true;
       if (l.restock === true) line.restock = true;
       if (typeof l.note === "string" && l.note.trim()) line.note = l.note.slice(0, NOTE_MAX);

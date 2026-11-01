@@ -7,7 +7,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { amazonUrl } from "../../lib/gear";
-import { STATE_TEXT, amountText, readiness, waterHint, type Entry, type PlanItem, type Readiness, type Step } from "../../lib/ready/engine";
+import { STATE_TEXT, amountText, readiness, type Entry, type PlanItem, type Readiness, type Step } from "../../lib/ready/engine";
 import { picksFor, roleText } from "../../lib/shop/picks";
 import { durationLabel, planSummary, unitWord } from "../../lib/stockup/calc";
 import { itemById } from "../../lib/stockup/catalog";
@@ -15,6 +15,7 @@ import { sources } from "../../lib/stockup/sources";
 import { encodePlan } from "../../lib/stockup/storage";
 import type { Line, Plan } from "../../lib/stockup/types";
 import { ProductArt } from "../shop/Art";
+import { FoodCard, WaterCard } from "./Supplies";
 import { useLists } from "../shop/ListsProvider";
 import ShopButton from "../stockup/ShopButton";
 import { Stepper, btn, btnSmall, card, inset, label, muted } from "../stockup/ui";
@@ -24,7 +25,7 @@ const pct = (x: number) => `${Math.floor(x * 100)}%`;
 const n = (x: number) => x.toLocaleString("en-US");
 /** Things bought through a doctor or pharmacy: no store link. */
 const NO_SHOP = new Set(["meds", "diabetes-supplies", "pet-medicines"]);
-const TIER_TEXT = { critical: "First", essential: "Essential", recommended: "Recommended", upgrade: "Upgrade" } as const;
+const TIER_TEXT = { critical: "First", essential: "Essential", recommended: "Recommended", upgrade: "Upgrade", way: "Counts toward water or food" } as const;
 
 function when(step: Step, today: string, every: number): string {
   if (step.date <= today) return "Now";
@@ -63,7 +64,14 @@ export default function ReadyPlan({ plan, onEdit, onNew }: { plan: Plan; onEdit:
     try { await navigator.clipboard.writeText(url); setShared("copied"); } catch { setShared(url); }
   };
 
-  const step = r.steps[0];
+  // Water and food have their own cards; the step lists everything else.
+  const CARDS = r.kind === "emergency" ? ["water", "shelf-food"] : [];
+  const gapFor = (id: string) => {
+    const e = r.steps[0]?.entries.find((x) => x.id === id);
+    const i = r.items.find((x) => x.item.id === id);
+    return e ? e.buy : i ? Math.max(0, Math.ceil(i.need - i.covered - 1e-9)) : 0;
+  };
+  const step = r.steps.map((s) => ({ ...s, entries: s.entries.filter((e) => !CARDS.includes(e.id)) })).find((s) => s.entries.length);
   const every = plan.guide?.every ?? 7;
   const essentialsLeft = r.items.filter((i) => (i.tier === "critical" || i.tier === "essential") && i.covered < i.need).length;
 
@@ -101,13 +109,20 @@ export default function ReadyPlan({ plan, onEdit, onNew }: { plan: Plan; onEdit:
         </section>
       )}
 
+      {r.kind === "emergency" && (
+        <>
+          <WaterCard plan={plan} r={r} gap={gapFor("water")} setLine={setLine} add={add} />
+          <FoodCard plan={plan} r={r} gap={gapFor("shelf-food")} setLine={setLine} add={add} />
+        </>
+      )}
+
       <Progress r={r} plan={plan} />
 
       {step ? (
         <section aria-labelledby="next-title" className={`${card} overflow-hidden`}>
           <div className="flex flex-wrap items-baseline justify-between gap-2 border-b border-[#26324c] px-4 py-3">
             <h3 id="next-title" className="pbr-display text-lg font-black">
-              <span className="pbr-accent">Next:</span> step {step.n} of {r.steps.length} · {when(step, today, every)}
+              <span className="pbr-accent">Next:</span> {r.stages.find((x) => x.id === step.entries[0].stage)?.title ?? "Shopping"} <span className={muted}>· step {step.n} of {r.steps.length} · {when(step, today, every)}</span>
             </h3>
             <button type="button" className={`${btnSmall} print:hidden`} onClick={() => saveStep(step)}
               disabled={step.entries.every((e) => plan.list[e.id])}>
@@ -191,8 +206,6 @@ function paceText(plan: Plan): string {
 
 function Progress({ r, plan }: { r: Readiness; plan: Plan }) {
   const counted = r.items.filter((i) => i.tier === "critical" || i.tier === "essential");
-  const water = r.items.find((i) => i.item.id === "water");
-  const hint = water ? waterHint(water.need) : null;
   return (
     <section aria-labelledby="progress-title" className={`${card} p-4 sm:p-5`}>
       <div className="flex flex-wrap items-end gap-x-6 gap-y-2">
@@ -206,7 +219,7 @@ function Progress({ r, plan }: { r: Readiness; plan: Plan }) {
             <p className="pbr-display text-2xl font-black leading-none">{pct(r.base)}</p>
           </div>
         )}
-        <p className={`basis-full ${muted}`}>Counted by amount: half of what you need counts as half done. {counted.length} essentials; recommended items and upgrades aren’t in this number.</p>
+
       </div>
       <ul className="mt-4 grid gap-x-6 gap-y-2.5 sm:grid-cols-2">
         {r.stages.map((s) => {
@@ -228,13 +241,6 @@ function Progress({ r, plan }: { r: Readiness; plan: Plan }) {
           );
         })}
       </ul>
-      {hint && <p className={`mt-3 ${muted}`}>{hint}</p>}
-      {r.items.some((i) => i.item.id === "shelf-food") && (
-        <p className={`mt-2 ${muted}`}>
-          Food is counted in person-days: a day of food for one person. Needs differ with age, size, health, pregnancy and activity, so a count of
-          cans can’t promise enough nutrition. Choose food your household eats, include any special diets, and check dates.
-        </p>
-      )}
     </section>
   );
 }

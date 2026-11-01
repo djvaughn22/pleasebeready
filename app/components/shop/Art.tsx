@@ -118,7 +118,7 @@ const BY_ITEM: Record<string, Name> = {
   "first-aid-kit-for-the-car": "aid", whistle: "whistle", masks: "mask", "smoke-and-co-alarm": "alarm", "carbon-monoxide-alarm": "alarm",
   "fire-extinguisher": "extinguisher", lantern: "lantern", "rechargeable-lantern": "lantern", headlamps: "headlamp",
   "portable-jump-starter": "bolt", "jumper-cables": "bolt", "dash-camera": "camera", "cordless-drill": "drill",
-  "reusable-water-bottles": "bottle", "kids-water-bottles": "bottle", "personal-water-filter": "filter", "gravity-water-filter": "filter",
+  "bottled-water": "bottle", "water-purification-tablets": "filter", "reusable-water-bottles": "bottle", "kids-water-bottles": "bottle", "personal-water-filter": "filter", "gravity-water-filter": "filter",
   "basic-tool-kit": "toolbox", "document-bag": "folder", "plastic-sheeting": "tarp", tarp: "tarp", "duct-tape": "tape", "packing-tape": "tape",
   "paper-road-map": "map", "emergency-blankets": "blanket", "extra-blankets": "blanket", "car-blanket": "blanket",
   "trash-bags": "bag", "kitchen-trash-bags-13-gallon": "bag", "go-bag": "backpack", "car-emergency-kit": "backpack",

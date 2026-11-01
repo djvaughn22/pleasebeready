@@ -11,6 +11,8 @@ import { memo } from "react";
 import { amazonUrl } from "../../lib/gear";
 import { lanesFor } from "../../lib/shop/lanes";
 import { checkedOn, picksFor, roleText } from "../../lib/shop/picks";
+import { foodMix, waterOptions } from "../../lib/ready/supplies";
+import { itemById } from "../../lib/stockup/catalog";
 import { unitWord } from "../../lib/stockup/calc";
 import type { CatalogItem, Per, Suggestion } from "../../lib/stockup/types";
 import ShopButton from "../stockup/ShopButton";
@@ -84,6 +86,7 @@ function ItemCard({ item, s, compact, minor }: { item: CatalogItem; s?: Suggesti
             </p>
           )}
           {s && !varies && !compact && <p className={muted}>{s.how}{item.source ? " · official amount" : ""}</p>}
+          {s && !compact && <SupplyHint id={item.id} qty={s.qty} />}
           {rule && !compact && <p className={muted}>{rule}</p>}
           {main && item.note && !compact && <p className={`mt-1 ${muted}`}>{item.note}</p>}
           {!main && item.q && item.q.toLowerCase() !== item.name.toLowerCase() && (
@@ -120,3 +123,17 @@ function ItemCard({ item, s, compact, minor }: { item: CatalogItem; s?: Suggesti
 }
 
 export default memo(ItemCard);
+
+/** Water and food as practical buys (lib/ready/supplies.ts): cases, jugs or containers; a grocery mix. */
+function SupplyHint({ id, qty }: { id: string; qty: number }) {
+  const n = (x: number) => x.toLocaleString("en-US");
+  if (id === "water") {
+    const o = waterOptions(qty);
+    return <p className="text-xs font-bold pbr-accent">= {n(o.cases)} cases of 24 bottles, {n(o.jugs)} gallon jugs, or {n(o.containers)} seven-gallon containers you fill</p>;
+  }
+  if (id === "shelf-food") {
+    const mix = foodMix(qty).slice(0, 4).map((m) => `${n(m.qty)} ${m.qty === 1 ? itemById(m.id)!.unit.one : itemById(m.id)!.unit.many} (${m.group.toLowerCase()})`);
+    return <p className="text-xs font-bold pbr-accent">A mix like {mix.join(", ")} and more</p>;
+  }
+  return null;
+}

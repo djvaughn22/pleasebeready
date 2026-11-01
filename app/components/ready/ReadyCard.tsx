@@ -16,12 +16,20 @@ export default function ReadyCard() {
   const r = useMemo(() => (plan ? readiness(plan) : null), [plan]);
   const next = r?.next;
   const item = next ? itemById(next.id) : null;
+  // Water first, then food, then the next thing on the plan: the same numbers as the plan page.
+  const left = (id: string) => {
+    const i = r?.items.find((x) => x.item.id === id && x.tier !== "way");
+    return i ? Math.max(0, Math.ceil(i.need - i.covered - 1e-9)) : 0;
+  };
+  const nextLine = left("water") ? `Water: ${left("water").toLocaleString("en-US")} gallons remaining`
+    : left("shelf-food") ? `Food: ${left("shelf-food").toLocaleString("en-US")} person-days remaining`
+    : item && next ? `Next: ${item.name}${next.task ? "" : `, ${amountText(item, next.buy)}`}` : "Every essential is covered";
   const body = !api.ready ? null : plan && r ? (
     <>
       <span className="min-w-0 flex-1">
         <span className="block text-sm font-black text-[#e8edf5]">Continue my plan · <span className="pbr-accent">{Math.floor(r.ready * 100)}% ready</span></span>
         <span className="block truncate text-xs font-bold text-[#94a3b8]">
-          {item && next ? `Next: ${item.name}${next.task ? "" : `, ${amountText(item, next.buy)}`}` : "Every essential is covered"}
+          {nextLine}
         </span>
       </span>
       <span aria-hidden className="pbr-accent shrink-0 text-lg font-black">→</span>

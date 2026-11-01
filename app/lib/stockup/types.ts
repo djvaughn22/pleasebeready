@@ -110,6 +110,8 @@ export type Line = {
   got: boolean;
   /** Bought so far when only part is bought (got means all of it). */
   bought?: number;
+  /** Water containers: how many are filled. Only filled ones count as water (lib/ready/supplies.ts). */
+  filled?: number;
   /** Bought and put where it belongs (the kit is packed, the shelf is stocked). */
   ready?: boolean;
   /** Used up or expired: needs buying again. */

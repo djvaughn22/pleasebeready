@@ -50,7 +50,7 @@ describe("readiness plan", () => {
   it("eight people for a month: 240 gallons with a storage note; upgrades are never scheduled", () => {
     const r = readiness(plan({ people: 8, days: 30, pace: "monthly" }), TODAY);
     expect(item(r, "water")!.need).toBe(240);
-    expect(waterHint(240)).toMatch(/35 seven-gallon/);
+    expect(waterHint(240)).toMatch(/about 35 seven-gallon/);
     const all = r.steps.flatMap((s) => s.entries);
     expect(all.some((e) => e.tier === "upgrade")).toBe(false);
     expect(all.some((e) => e.stage === "extras")).toBe(false);
@@ -109,13 +109,42 @@ describe("readiness plan", () => {
     expect(item(readiness(longer, TODAY), "water")!.need).toBe(60);
   });
 
-  it("partial buys, filled containers and 3-day food kits count toward the amounts", () => {
-    const r = readiness(plan({ people: 4, days: 14, list: {
-      water: line({ bought: 10 }), "water-storage-container": line({ got: true }), "3-day-emergency-food-supply": line({ have: 4 }),
+  it("counts real water only: stored, bought, bottles and filled containers, never empty ones", () => {
+    const empty = readiness(plan({ people: 4, days: 7, list: { "water-storage-container": line({ have: 2 }) } }), TODAY);
+    expect(item(empty, "water")!.covered).toBe(0);
+    const r = readiness(plan({ people: 4, days: 7, list: {
+      water: line({ have: 5, bought: 3 }), "bottled-water": line({ have: 48 }), "water-storage-container": line({ have: 2, filled: 1 }),
     } }), TODAY);
     const w = item(r, "water")!;
-    expect([w.bought, w.extra, w.covered, w.state]).toEqual([10, 14, 24, "saved"]);
-    expect(item(r, "shelf-food")!.covered).toBe(12);
+    expect(w.need).toBe(28);
+    expect(w.covered).toBeCloseTo(5 + 3 + 48 * 16.9 / 128 + 7, 5);
+    // Containers, bottles and the mix are ways to fill water and food, never steps of their own.
+    expect(r.steps.flatMap((s) => s.entries).some((e) => ["bottled-water", "water-storage-container", "canned-beans"].includes(e.id))).toBe(false);
+  });
+
+  it("counts food by kind: each kind fills only its share, ration packs by their calories", () => {
+    const r = readiness(plan({ people: 4, days: 7, list: {
+      "shelf-food": line({ have: 4 }), "canned-soups-and-stews": line({ have: 10 }), "canned-beans": line({ have: 100 }), "3-day-emergency-food-supply": line({ have: 2 }),
+    } }), TODAY);
+    const f = item(r, "shelf-food")!;
+    expect(f.need).toBe(28);
+    // 4 in the house + 10 cans of soup (3 person-days) + 100 cans of beans (capped at 10% = 2.8) + 2 rations (3.6).
+    expect(f.covered).toBeCloseTo(4 + 3 + 2.8 + 3.6, 5);
+  });
+
+  it("partial buys and a household that changes size keep what was counted", () => {
+    const p = plan({ people: 2, days: 7, list: { water: line({ bought: 10 }) } });
+    expect(item(readiness(p, TODAY), "water")!.state).toBe("saved");
+    const bigger = readiness({ ...p, people: 6 }, TODAY);
+    expect([item(bigger, "water")!.need, item(bigger, "water")!.covered]).toEqual([42, 10]);
+    const longer = readiness(withDays(p, 30), TODAY);
+    expect([item(longer, "water")!.need, item(longer, "water")!.covered]).toEqual([60, 10]);
+  });
+
+  it("pets and children: pet water and food, kids' medicine; the mix scales to everyone", () => {
+    const r = readiness(plan({ people: 4, kids: 2, pets: 1, days: 7 }), TODAY);
+    for (const id of ["pet-water", "pet-food", "children-s-pain-and-fever-reliever"]) expect(item(r, id), id).toBeTruthy();
+    expect(item(r, "shelf-food")!.need).toBe(28);
   });
 
   it("an upgrade never counts as missing and marking one doesn't move readiness", () => {

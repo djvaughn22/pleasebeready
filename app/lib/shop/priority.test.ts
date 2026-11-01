@@ -19,8 +19,11 @@ describe("one preparedness ranking", () => {
   it("Essentials: water and food lead, then light, power and first aid", () => {
     const ess = findsTabs(NOW).essentials.map((p) => p.item);
     expect(ess).toEqual(CORE);
-    expect(tiers(ess.slice(0, 4))).toEqual([0, 0, 1, 1]);
-    expect(ess.slice(4, 8)).toEqual(["flashlights", "batteries", "power-bank", "first-aid-kit"]);
+    expect(tiers(ess.slice(0, 5))).toEqual([0, 0, 1, 1, 1]);
+    // Drinking water before an empty container; everyday food before ration kits.
+    expect(ess[0]).toBe("bottled-water");
+    expect(ess.slice(2, 4)).toEqual(["canned-soups-and-stews", "peanut-butter"]);
+    expect(ess.slice(5, 9)).toEqual(["flashlights", "batteries", "power-bank", "first-aid-kit"]);
     expect(nonDecreasing(tiers(ess))).toBe(true);
   });
 

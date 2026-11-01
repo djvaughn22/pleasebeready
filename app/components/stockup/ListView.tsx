@@ -14,6 +14,7 @@ import { listText, statusText, type TextRow } from "../../lib/stockup/shop";
 import { LIST_NOTE_MAX, NOTE_MAX, encodePlan } from "../../lib/stockup/storage";
 import type { Line, Plan } from "../../lib/stockup/types";
 import { primaryPick, roleText } from "../../lib/shop/picks";
+import { readiness } from "../../lib/ready/engine";
 import { listRows, type Row } from "./resolve";
 import ShopButton from "./ShopButton";
 import type { PlansApi } from "./usePlans";
@@ -23,6 +24,16 @@ type SetLine = (id: string, patch: Partial<Line>) => void;
 
 export default function ListView({ plan, api, onIdeas }: { plan: Plan; api: PlansApi; onIdeas: () => void }) {
   const rows = useMemo(() => listRows(plan), [plan]);
+  // A Get Ready plan counts water and food from bottles, filled containers and groceries too (lib/ready/supplies.ts):
+  // the same totals as the plan page.
+  const supplies = useMemo(() => {
+    if (!plan.guide) return [];
+    const r = readiness(plan);
+    return ([["water", "Water", "gallons"], ["shelf-food", "Food", "person-days"]] as const).flatMap(([id, name, unit]) => {
+      const i = r.items.find((x) => x.item.id === id);
+      return i ? [`${name}: ${Math.floor(i.covered + 1e-9).toLocaleString("en-US")} of ${i.need.toLocaleString("en-US")} ${unit} ready`] : [];
+    });
+  }, [plan]);
   const [msg, setMsg] = useState("");
   const [showReady, setShowReady] = useState(false);
   const setLine: SetLine = (id, patch) =>
@@ -84,6 +95,11 @@ export default function ListView({ plan, api, onIdeas }: { plan: Plan; api: Plan
               {left.length === 0 ? "Everything is bought. 🎉" : `${left.length} to buy`}
               <span className="text-sm text-[#94a3b8]"> · {bought.length} bought · {ready.length} ready{restocks ? ` · ${restocks} to restock` : ""}</span>
             </p>
+            {supplies.length > 0 && (
+              <p className="mt-1 text-sm font-black pbr-accent">
+                {supplies.join(" · ")} <a href="/ready" className="text-xs underline">Get Ready</a>
+              </p>
+            )}
             {products.length > 0 && (
               <div className="mt-2 h-2 overflow-hidden rounded-full bg-[#0c1220]" aria-hidden>
                 <div className="h-full bg-[#F97316]" style={{ width: `${doneShare}%` }} />

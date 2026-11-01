@@ -23,18 +23,18 @@ export const EMERGENCY_KINDS: OccasionId[] = ["emergency", "outage", "winter", "
 export const isEmergencyKind = (o: OccasionId) => EMERGENCY_KINDS.includes(o);
 
 /**
- * Home's Essentials, in order. `CORE` is the first row of the store: one or two of each
- * necessity, water and food first. `MORE` follows in the same tier order. Every id needs
+ * Home's Essentials, in order. `CORE` is the first row of the store: drinking water before
+ * containers, everyday food before ration kits, then one of each other necessity. `MORE` follows in the same tier order. Every id needs
  * an exact product in picks.ts (tested).
  */
 export const CORE = [
-  "water-storage-container", "water-bricks", "3-day-emergency-food-supply", "manual-can-opener",
-  "flashlights", "batteries", "power-bank", "first-aid-kit",
-  "weather-radio", "toilet-paper", "trash-bags", "smoke-and-co-alarm",
+  "bottled-water", "water-storage-container", "canned-soups-and-stews", "peanut-butter", "manual-can-opener",
+  "flashlights", "batteries", "power-bank", "first-aid-kit", "weather-radio", "toilet-paper", "smoke-and-co-alarm",
 ];
 export const MORE = [
-  "personal-water-filter", "freeze-dried-meals", "headlamps", "lantern", "hand-crank-weather-radio-with-charger", "masks",
-  "whistle", "hand-sanitizer", "wet-wipes", "carbon-monoxide-alarm", "fire-extinguisher", "emergency-blankets", "rain-ponchos",
+  "water-bricks", "water-purification-tablets", "canned-tuna-or-chicken", "canned-vegetables", "shelf-stable-milk",
+  "3-day-emergency-food-supply", "freeze-dried-meals", "headlamps", "lantern", "hand-crank-weather-radio-with-charger", "masks",
+  "whistle", "trash-bags", "hand-sanitizer", "wet-wipes", "carbon-monoxide-alarm", "fire-extinguisher", "emergency-blankets", "rain-ponchos",
   "tarp", "multi-tool", "duct-tape", "document-bag",
 ];
 export const ESSENTIALS = [...CORE, ...MORE];
@@ -48,7 +48,7 @@ const BY_CAT: Record<CatalogItem["cat"], number> = {
 
 const BY_ID: Record<string, number> = {
   "pet-water": 0, "water-pouches-for-the-car": 0,
-  "pet-food": 1, "baby-food-and-formula": 1, "emergency-food-bars-for-the-car": 1, "canned-pet-food": 1,
+  "pet-food": 1, "baby-food-and-formula": 1, "shelf-stable-milk": 1, "emergency-food-bars-for-the-car": 1, "canned-pet-food": 1,
   "first-aid-kit-for-the-car": 4, masks: 4, meds: 4, "pet-first-aid-kit": 4,
   "weather-radio": 5, "hand-crank-weather-radio-with-charger": 5, "two-way-radios": 5, whistle: 5, "printed-contact-list": 5, "large-button-phone": 5,
   "smoke-and-co-alarm": 7, "carbon-monoxide-alarm": 7, "fire-extinguisher": 7, "escape-ladder": 7, "fire-blanket": 7,

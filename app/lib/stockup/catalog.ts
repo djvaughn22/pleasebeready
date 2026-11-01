@@ -99,12 +99,12 @@ const base: CatalogItem[] = [
   it("Drinking and cleaning water", "water", PREP, "personDay", 1, u("gallon"), "essential", {
     id: "water", source: "rg-water", q: "gallon drinking water",
     note: "1 gallon per person per day is the Red Cross and Ready.gov amount. Hot weather, nursing and illness can need more." }),
-  it("Bottled water", "water", [...OUT, "party", "roadtrip", "sleepover", "hosting", "vacation", "heat"], "personDay", 3, u("bottle"), "essential", {
+  it("Bottled water", "water", [...OUT, "party", "roadtrip", "sleepover", "hosting", "vacation", "heat", "emergency"], "personDay", 3, u("bottle"), "essential", {
     pack: 24, q: "bottled water 16.9 oz 24 pack", note: "Our rule: about three 16.9 oz bottles per person per day out and about." }),
   it("Camp water jug", "water", ["camping", "tailgate"], "group", 1, u("jug"), "useful", {
     q: "camping water jug with spigot", note: "One refillable jug for washing and cooking." }),
   it("Water storage container", "water", PREP, "group", 2, u("container"), "useful", {
-    note: "For filling your own water. Two 7-gallon containers hold about 14 gallons." }),
+    note: "Empty until you fill it. Two 7-gallon containers hold 14 gallons of tap water; refill every 6 months." }),
   it("55-gallon water barrel", "water", ["emergency"], "group", 1, u("barrel"), "extra", {
     note: "For long plans with space to store it." }),
   it("Personal water filter", "water", ["emergency", "camping"], "person", 0.25, u("filter"), "useful", {
@@ -120,7 +120,7 @@ const base: CatalogItem[] = [
   // ── Food ─────────────────────────────────────────────────────────────────
   it("Non-perishable food", "food", PREP, "personDay", 1, u("person-day"), "essential", {
     id: "shelf-food", q: "non perishable food", note: "One person-day is a day of food for one person. Pick food your household already eats." }),
-  it("3-day emergency food supply", "food", ["emergency"], "person", 1, u("kit"), "useful", { note: "A ready-made option; one kit per person." }),
+  it("3-day emergency food supply", "food", ["emergency"], "person", 1, u("kit"), "useful", { note: "A backup ration, not a full diet. Check the calories on the label." }),
   it("30-day food supply", "food", ["emergency"], "person", 1, u("kit"), "extra"),
   it("Canned soups and stews", "food", ["home", "emergency", "camping"], "personDay", 0.5, u("can"), "useful", { note: "Our rule: half a can per person per day." }),
   it("Canned vegetables", "food", PREP, "personDay", 0.5, u("can"), "useful"),
@@ -180,7 +180,7 @@ const base: CatalogItem[] = [
   it("Instant coffee or tea", "drinks", ["emergency", "camping"], "adult", 1, u("pack"), "extra"),
   it("Hot cocoa", "drinks", ["sleepover", "camping", "hosting"], "person", 1, u("packet"), "extra", { pack: 12 }),
   it("Milk", "drinks", ["sleepover", "hosting", "home"], "personDay", 0.15, u("gallon"), "useful", { q: "shelf stable milk" }),
-  it("Shelf-stable milk", "drinks", ["emergency"], "personDay", 0.25, u("carton"), "extra", { q: "shelf stable milk boxes" }),
+  it("Shelf-stable milk", "drinks", ["emergency"], "personDay", 1, u("8-oz box", "8-oz boxes"), "useful", { q: "shelf stable milk boxes", pack: 12, note: "No fridge until opened." }),
   it("Ice", "drinks", [...OUT, "party", "roadtrip", "hosting", "heat"], "personDay", 1, u("pound"), "useful", { q: "bagged ice", note: "Our rule: about a pound per person per day for drinks; more if the cooler holds food." }),
 
   // ── Plates, cups and serving ─────────────────────────────────────────────

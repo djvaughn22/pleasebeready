@@ -27,7 +27,7 @@ const fresh = (): Line => ({ qty: null, have: 0, got: false });
 
 type Answers = {
   occasion: OccasionId; people: number; kids: number; babies: number; pets: number; needs: Need[]; climate: Climate[];
-  days: number; pace: Pace; every: number; size: number; water: number; foodDays: number; owned: string[];
+  days: number; pace: Pace; every: number; size: number; water: number; containers: number; foodDays: number; owned: string[];
 };
 
 function draftOf(a: Answers, base?: Plan): Plan {
@@ -37,12 +37,12 @@ function draftOf(a: Answers, base?: Plan): Plan {
 }
 
 function answersOf(p: Plan | null): Answers {
-  if (!p) return { occasion: "emergency", people: 4, kids: 0, babies: 0, pets: 0, needs: [], climate: [], days: 14, pace: "weekly", every: 7, size: 6, water: 0, foodDays: 0, owned: [] };
+  if (!p) return { occasion: "emergency", people: 4, kids: 0, babies: 0, pets: 0, needs: [], climate: [], days: 14, pace: "weekly", every: 7, size: 6, water: 0, containers: 0, foodDays: 0, owned: [] };
   const owned = ASK_HAVE.filter((id) => { const i = itemById(id); const l = p.list[id]; return i && l && (i.kind === "task" ? l.got : l.have >= needAt(i, p)); });
   return {
     occasion: p.occasion, people: p.people, kids: p.kids, babies: p.babies, pets: p.pets, needs: p.needs, climate: p.climate, days: p.days,
     pace: p.guide?.pace ?? "weekly", every: p.guide?.every ?? 7, size: p.guide?.size ?? 6,
-    water: p.list.water?.have ?? 0, foodDays: Math.floor((p.list["shelf-food"]?.have ?? 0) / Math.max(1, p.people)), owned,
+    water: p.list.water?.have ?? 0, containers: p.list["water-storage-container"]?.have ?? 0, foodDays: Math.floor((p.list["shelf-food"]?.have ?? 0) / Math.max(1, p.people)), owned,
   };
 }
 
@@ -66,6 +66,7 @@ export default function ReadySetup({ plan, onDone, onCancel }: { plan: Plan | nu
     if (emergency) {
       const was = answersOf(plan);
       if (a.water !== was.water) put("water", a.water);
+      if (a.containers !== was.containers) put("water-storage-container", a.containers);
       if (a.foodDays !== was.foodDays) put("shelf-food", a.foodDays * a.people);
     }
     for (const id of askHave) {
@@ -163,8 +164,9 @@ export default function ReadySetup({ plan, onDone, onCancel }: { plan: Plan | nu
       <Question n={5} title="What do you already have?" hint="Skip anything you’re not sure about. You can mark more on the plan.">
         {emergency && (
           <div className="mb-4 flex flex-wrap gap-x-6 gap-y-3">
-            <Stepper compact id="ready-water" text="Gallons of water stored" value={a.water} min={0} max={100000} onChange={(v) => set({ water: v })} />
-            <Stepper compact id="ready-food" text="Days of food for everyone" value={a.foodDays} min={0} max={MAX_DAYS} onChange={(v) => set({ foodDays: v })} />
+            <Stepper compact id="ready-water" text="Gallons of drinking water stored" value={a.water} min={0} max={100000} onChange={(v) => set({ water: v })} />
+            <Stepper compact id="ready-containers" text="Empty water containers" value={a.containers} min={0} max={1000} onChange={(v) => set({ containers: v })} />
+            <Stepper compact id="ready-food" text="Days of food for everyone already" value={a.foodDays} min={0} max={MAX_DAYS} onChange={(v) => set({ foodDays: v })} />
           </div>
         )}
         <div className="grid gap-2 sm:grid-cols-3">

@@ -19,13 +19,15 @@
 import { durationLabel, fitsClimate, fitsPeople, suggest, suggestionsFor, unitWord, withDays } from "../stockup/calc";
 import { EMERGENCY_KINDS, isEmergencyKind, prepRank } from "../shop/priority";
 import { categoryById, itemById } from "../stockup/catalog";
+import { FOOD_MIX, SUPPLY_WAYS, foodParts, total, waterParts, type Part } from "./supplies";
 import type { CatalogItem, Guide, Line, OccasionId, Pace, Plan, SourceId } from "../stockup/types";
 
 export type StageId = string;
 export type Stage = { id: StageId; title: string; emoji: string };
 
-/** critical: in the first step whatever the pace. essential: counts toward Ready. recommended: worth having, scheduled after. upgrade: optional, never counted as missing. */
-export type Tier = "critical" | "essential" | "recommended" | "upgrade";
+/** critical: in the first step whatever the pace. essential: counts toward Ready. recommended: worth having, scheduled after. upgrade: optional, never counted as missing.
+ *  way: a way to fill water or food (bottles, containers, canned food); counted through those two, never on its own. */
+export type Tier = "critical" | "essential" | "recommended" | "upgrade" | "way";
 
 export type State = "needed" | "have" | "saved" | "bought" | "ready" | "restock";
 
@@ -86,11 +88,13 @@ type K = [id: string, stage: StageId, tier: Tier];
 // Ready.gov Build a Kit, in shopping order. Need-specific rows only show when the plan has that need (catalog `needs`).
 const KIT: K[] = [
   ["water", "water", "essential"], ["pet-water", "water", "essential"],
-  ["water-storage-container", "water", "recommended"], ["water-purification-tablets", "water", "recommended"], ["unscented-household-bleach", "water", "recommended"],
-  ["55-gallon-water-barrel", "water", "upgrade"], ["water-bricks", "water", "upgrade"], ["gravity-water-filter", "water", "upgrade"], ["personal-water-filter", "water", "upgrade"],
+  ["bottled-water", "water", "way"], ["water-storage-container", "water", "way"], ["water-bricks", "water", "way"], ["55-gallon-water-barrel", "water", "way"],
+  ["water-purification-tablets", "water", "recommended"], ["unscented-household-bleach", "water", "recommended"],
+  ["gravity-water-filter", "water", "upgrade"], ["personal-water-filter", "water", "upgrade"],
   ["baby-food-and-formula", "food", "critical"], ["shelf-food", "food", "essential"], ["manual-can-opener", "food", "essential"], ["pet-food", "food", "essential"],
+  ...FOOD_MIX.map((m): K => [m.id, "food", "way"]), ["3-day-emergency-food-supply", "food", "way"],
   ["special-diet-foods", "food", "recommended"], ["lighter-or-matches", "food", "recommended"], ["fridge-and-freezer-thermometers", "food", "recommended"],
-  ["3-day-emergency-food-supply", "food", "upgrade"], ["30-day-food-supply", "food", "upgrade"], ["camp-stove", "food", "upgrade"],
+  ["30-day-food-supply", "food", "upgrade"], ["camp-stove", "food", "upgrade"],
   ["medical-device-backup-batteries", "power", "critical"], ["flashlights", "power", "essential"], ["batteries", "power", "essential"], ["power-bank", "power", "essential"],
   ["lantern", "power", "recommended"], ["car-phone-charger", "power", "recommended"],
   ["portable-power-station", "power", "upgrade"], ["generator", "power", "upgrade"], ["rechargeable-lantern", "power", "upgrade"],
@@ -121,14 +125,6 @@ const STAGE_BY_CAT: Partial<Record<CatalogItem["cat"], StageId>> = {
   paper: "sanitation", cleaning: "sanitation", toiletries: "sanitation", safety: "shelter", sleep: "shelter", weather: "shelter",
   outdoors: "shelter", travel: "shelter", tools: "shelter", car: "shelter", pets: "shelter", tasks: "shelter",
   dining: "extras", party: "extras", fun: "extras", drinks: "extras", school: "extras", moving: "extras",
-};
-
-/** Items that fill another item's amount: a filled 7-gallon container is 7 gallons of water. */
-const COUNTS_TOWARD: Record<string, { to: string; each: number }> = {
-  "water-storage-container": { to: "water", each: 7 },
-  "55-gallon-water-barrel": { to: "water", each: 55 },
-  "3-day-emergency-food-supply": { to: "shelf-food", each: 3 },
-  "30-day-food-supply": { to: "shelf-food", each: 30 },
 };
 
 /** Bought together: food that comes in cans needs the opener; flashlights need batteries. */
@@ -174,7 +170,7 @@ function hazards(plan: Plan): { urgent: Urgent[]; promote: Map<string, Tier> } {
   return { urgent, promote };
 }
 
-const rank: Record<Tier, number> = { critical: 0, essential: 1, recommended: 2, upgrade: 3 };
+const rank: Record<Tier, number> = { critical: 0, essential: 1, recommended: 2, upgrade: 3, way: 4 };
 
 /** The items a plan works through, with stage and tier. */
 export function planItems(plan: Plan): { stages: Stage[]; rows: { item: CatalogItem; stage: StageId; tier: Tier }[]; urgent: Urgent[] } {
@@ -202,7 +198,7 @@ export function planItems(plan: Plan): { stages: Stage[]; rows: { item: CatalogI
     for (const s of suggestionsFor(plan)) {
       if (rows.has(s.item.id)) continue;
       const stage = STAGE_BY_CAT[s.item.cat] ?? "extras";
-      const tier: Tier = stage === "extras" || s.item.pri === "extra" || ALSO.has(s.item.id) ? "upgrade" : s.item.pri === "essential" ? "essential" : "recommended";
+      const tier: Tier = SUPPLY_WAYS.has(s.item.id) ? "way" : stage === "extras" || s.item.pri === "extra" || ALSO.has(s.item.id) ? "upgrade" : s.item.pri === "essential" ? "essential" : "recommended";
       rows.set(s.item.id, { item: s.item, stage, tier });
     }
   }
@@ -250,11 +246,13 @@ export function readiness(plan: Plan, today = new Date().toISOString().slice(0, 
     if (item.kind === "task") return line.got ? 1 : 0;
     return line.got ? Math.max(need, line.have) : line.have + (line.bought ?? 0);
   };
+  // Water and food also count what other lines hold: bottles, filled containers, the grocery mix (supplies.ts).
+  const ledger = (ps: Part[], id: string) => total(ps.filter((p) => p.id !== id));
   const extraFor = new Map<string, number>();
-  for (const [id, c] of Object.entries(COUNTS_TOWARD)) {
-    const item = itemById(id);
-    if (!item || !plan.list[id]) continue;
-    extraFor.set(c.to, (extraFor.get(c.to) ?? 0) + own(item, needAt(item, plan)) * c.each);
+  if (kind === "emergency") {
+    extraFor.set("water", ledger(waterParts(plan), "water"));
+    const food = itemById("shelf-food");
+    if (food) extraFor.set("shelf-food", ledger(foodParts(plan, needAt(food, plan)), "shelf-food"));
   }
   const items: PlanItem[] = rows.map(({ item, stage, tier }) => {
     const line = plan.list[item.id];
@@ -313,11 +311,11 @@ export function schedule(plan: Plan, items: PlanItem[], kind: Readiness["kind"],
   const upto = new Map<string, number>();
   const push = (i: PlanItem, to: number, why: string) => {
     const from = Math.max(i.covered, upto.get(i.item.id) ?? 0);
-    if (to <= from) return;
+    if (to <= from + 1e-9) return;
     upto.set(i.item.id, to);
-    queue.push({ id: i.item.id, upto: to, buy: to - from, why, tier: i.tier, stage: i.stage, task: i.item.kind === "task" });
+    queue.push({ id: i.item.id, upto: to, buy: Math.ceil(to - from - 1e-9), why, tier: i.tier, stage: i.stage, task: i.item.kind === "task" });
   };
-  const live = items.filter((i) => i.tier !== "upgrade" && i.state !== "ready");
+  const live = items.filter((i) => i.tier !== "upgrade" && i.tier !== "way" && i.state !== "ready");
   const core = live.filter((i) => i.tier === "critical" || i.tier === "essential");
   const crit = core.filter((i) => i.tier === "critical");
   const ess = core.filter((i) => i.tier === "essential");
@@ -397,7 +395,7 @@ export function entryText(e: Entry): string {
 /** Water storage sense check for big amounts. */
 export function waterHint(gallons: number): string | null {
   if (gallons < 50) return null;
-  return `${n(gallons)} gallons is a lot to store: about ${n(Math.ceil(gallons / 7))} seven-gallon containers or ${n(Math.ceil(gallons / 55))} 55-gallon barrels. Store it somewhere cool and dark, and refill on a schedule.`;
+  return `${n(gallons)} gallons fills about ${n(Math.ceil(gallons / 7))} seven-gallon containers or ${n(Math.ceil(gallons / 55))} 55-gallon barrels. Store it cool and dark.`;
 }
 
 export const STATE_TEXT: Record<State, string> = {
@@ -412,5 +410,5 @@ export function currentGuided(plans: Plan[]): Plan | null {
 /** Catalog ids from a kit or page that the plan still needs (essential or recommended). */
 export function gaps(r: Readiness, ids: string[]): string[] {
   const want = new Set(ids);
-  return r.items.filter((i) => want.has(i.item.id) && i.tier !== "upgrade" && i.covered < i.need && i.state !== "saved").map((i) => i.item.id);
+  return r.items.filter((i) => want.has(i.item.id) && i.tier !== "upgrade" && i.tier !== "way" && i.covered < i.need && i.state !== "saved").map((i) => i.item.id);
 }
