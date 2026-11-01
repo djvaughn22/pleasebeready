@@ -30,7 +30,7 @@ export default function ReadyCard() {
     <>
       <span className="min-w-0 flex-1">
         <span className="block text-sm font-black text-[#e8edf5]">Get Ready</span>
-        <span className="block truncate text-xs font-bold text-[#94a3b8]">Water and food first, at your own pace</span>
+        <span className="block truncate text-xs font-bold text-[#94a3b8]">Start with what you need most.</span>
       </span>
       <span className="pbr-edge shrink-0 rounded-lg border-2 bg-[#F97316] px-3 py-1.5 text-xs font-black text-[#0b1220]">Start</span>
     </>

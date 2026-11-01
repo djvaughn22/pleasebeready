@@ -17,6 +17,7 @@
 // amounts covered, not checkboxes.
 
 import { durationLabel, fitsClimate, fitsPeople, suggest, suggestionsFor, unitWord, withDays } from "../stockup/calc";
+import { EMERGENCY_KINDS, isEmergencyKind, prepRank } from "../shop/priority";
 import { categoryById, itemById } from "../stockup/catalog";
 import type { CatalogItem, Guide, Line, OccasionId, Pace, Plan, SourceId } from "../stockup/types";
 
@@ -79,8 +80,7 @@ export const EMERGENCY_STAGES: Stage[] = [
   { id: "extras", title: "Extras and upgrades", emoji: "➕" },
 ];
 
-/** Situations that use the emergency order. */
-export const EMERGENCY_KINDS: OccasionId[] = ["emergency", "outage", "winter", "hurricane", "heat", "wildfire", "flood"];
+export { EMERGENCY_KINDS, isEmergencyKind };
 
 type K = [id: string, stage: StageId, tier: Tier];
 // Ready.gov Build a Kit, in shopping order. Need-specific rows only show when the plan has that need (catalog `needs`).
@@ -143,7 +143,6 @@ const DAILY = new Set(["personDay", "kidDay", "babyDay", "petDay", "personMeal",
 const HAZARD_EVAC: OccasionId[] = ["wildfire", "hurricane", "flood"];
 const MILESTONES = [3, 7, 14, 30, 90, 180, 365];
 
-export const isEmergencyKind = (o: OccasionId) => EMERGENCY_KINDS.includes(o);
 
 /** Hazard rules: what moves to the front, and the notes shown above the plan. */
 function hazards(plan: Plan): { urgent: Urgent[]; promote: Map<string, Tier> } {
@@ -214,7 +213,8 @@ export function planItems(plan: Plan): { stages: Stage[]; rows: { item: CatalogI
     if (item && fits(item)) rows.set(id, { item, stage: STAGE_BY_CAT[item.cat] ?? "shelter", tier });
   }
   const order = new Map(EMERGENCY_STAGES.map((s, i) => [s.id, i]));
-  const list = [...rows.values()].sort((a, b) => order.get(a.stage)! - order.get(b.stage)!);
+  // Within a stage, the store's shared preparedness ranking (lib/shop/priority.ts).
+  const list = [...rows.values()].sort((a, b) => order.get(a.stage)! - order.get(b.stage)! || prepRank(a.item) - prepRank(b.item));
   return { stages: EMERGENCY_STAGES, rows: list, urgent };
 }
 

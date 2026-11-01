@@ -1,3 +1,4 @@
+import { CONVENIENCE_TIER, prepTier } from "./priority";
 import { describe, expect, it } from "vitest";
 import { itemById } from "../stockup/catalog";
 import { SECONDARY, laneById, laneFeatured, laneItems, laneSort, lanes } from "./lanes";
@@ -13,15 +14,17 @@ describe("department relevance", () => {
     }
   });
 
-  it("puts emergency essentials first, in Ready.gov's basic kit order", () => {
+  it("puts emergency essentials first, in the shared preparedness order", () => {
     const e = laneById("emergency")!;
     const feat = laneFeatured(e, hasPick).map((i) => i.cat);
-    expect(feat.slice(0, 2)).toEqual(["water", "food"]);
+    expect(feat.slice(0, 4)).toEqual(["water", "water", "food", "cooking"]);
     expect(feat).toEqual(expect.arrayContaining(["power", "health"]));
     // Party plates, cups and games sit at the very end of the Emergency department.
     const sorted = laneSort(e, laneItems(e), hasPick);
     const firstSecondary = sorted.findIndex((i) => SECONDARY.includes(i.cat));
-    expect(firstSecondary === -1 || firstSecondary > sorted.length * 0.8).toBe(true);
+    // After the first convenience item come only more convenience items and upgrades.
+    expect(sorted.slice(firstSecondary).every((i) => prepTier(i) >= CONVENIENCE_TIER)).toBe(true);
+    expect(firstSecondary).toBeGreaterThan(sorted.length * 0.5);
     expect(sorted.slice(0, 40).map((i) => i.id)).not.toEqual(expect.arrayContaining(["paper-plates"]));
   });
 

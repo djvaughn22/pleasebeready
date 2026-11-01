@@ -8,6 +8,7 @@ import { hasPick, picksFor } from "./picks";
 import type { CatalogItem } from "../stockup/types";
 import { kits, type Kit } from "./kits";
 import { lanes, type Lane } from "./lanes";
+import { byPrep, isEmergencyKind, spread } from "./priority";
 
 export type Intent = { people?: number; kids?: number; pets?: number; days?: number; nights?: number };
 
@@ -67,6 +68,11 @@ const STOP = new Set(["a", "an", "the", "for", "of", "with", "and", "or", "to", 
   "new", "first", "our", "some", "all", "just"]);
 
 const DISASTER = new Set(["emergency", "disaster", "earthquake", "flood", "flooding", "evacuation", "evacuate", "evacuating", "landslide", "tsunami"]);
+/** Words that ask for readiness in general, not one product. A search made only of these (and its kit's
+ * own words) lists that kit in the store's shared preparedness order: water and food first. */
+const BROAD = new Set([...DISASTER, "emergencies", "disasters", "preparedness", "prepared", "preparing", "survival", "essentials",
+  "essential", "basics", "basic", "household", "home", "house", "family", "storm", "storms", "hurricane", "tornado", "outage",
+  "blackout", "wildfire", "winter", "shelter", "place"]);
 
 /** Words that mean the same thing for product matching. */
 const SYN: Record<string, string[]> = {
@@ -131,13 +137,16 @@ export function searchItems(query: string, limit = 40): CatalogItem[] {
   // then its upgrades and easy-to-forget items, even when their names share no word with the search.
   const top = scoreKits(query)[0];
   // A disaster with no kit of its own ("earthquake", "flood") gets the basic emergency kit's ranking.
-  const kit = top?.phrase ? top.k : words.some((w) => DISASTER.has(w)) ? kits.find((k) => k.slug === "five-day-emergency") : undefined;
+  const general = groups.every((g) => BROAD.has(g[0]));
+  const kit = top?.phrase ? top.k : words.some((w) => DISASTER.has(w)) || general ? kits.find((k) => k.slug === "five-day-emergency") : undefined;
+  const kitWords = new Set(kit ? normalize([...kit.terms, kit.title].join(" ")).split(" ") : []);
+  const broad = !!kit && isEmergencyKind(kit.base) && groups.every((g) => BROAD.has(g[0]) || kitWords.has(g[0]));
   const boost = new Map<string, number>([
     ...(kit?.forget ?? []).map((id) => [id, 1] as const),
     ...(kit?.upgrades ?? []).map((id) => [id, 1.5] as const),
     ...(kit?.essentials ?? []).map((id) => [id, 3] as const),
   ]);
-  const scored: { item: CatalogItem; score: number; all: boolean }[] = [];
+  const scored: { item: CatalogItem; score: number; all: boolean; kitBoost: number }[] = [];
   for (const item of catalog) {
     if (item.kind === "task" || avoid.has(item.id)) continue;
     const h = haystack(item);
@@ -161,11 +170,19 @@ export function searchItems(query: string, limit = 40): CatalogItem[] {
     if (groups.some((g) => g.slice(0, 2).some((w) => h.heads.includes(stem(w))))) score += 1;
     score += item.pri === "essential" ? 1.5 : item.pri === "useful" ? 0.5 : 0;
     if (hasPick(item.id)) score += 0.75;
-    scored.push({ item, score, all });
+    scored.push({ item, score, all, kitBoost });
   }
+  // A broad readiness search: the kit's must-haves, then its other items, each in preparedness order.
   // When enough items match every word, the partial matches are noise ("grab bar" → not "granola bars").
   const full = scored.filter((s) => s.all);
   const pool = groups.length > 1 && full.length >= 3 ? full : scored;
+  // Each necessity once first (spread), so a short list covers water, food, light, power, first aid and a radio.
+  if (broad) {
+    const must = spread(scored.filter((s) => s.kitBoost >= 3).map((s) => s.item));
+    const more = byPrep(scored.filter((s) => s.kitBoost > 0 && s.kitBoost < 3).map((s) => s.item));
+    const other = pool.filter((s) => !s.kitBoost).sort((a, b) => b.score - a.score).map((s) => s.item);
+    return [...must, ...more, ...other].slice(0, limit);
+  }
   return pool.sort((a, b) => b.score - a.score || a.item.name.localeCompare(b.item.name)).slice(0, limit).map((s) => s.item);
 }
 

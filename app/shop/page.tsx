@@ -15,7 +15,6 @@ export default function ShopPage() {
     <main className="min-h-screen bg-[#0b1220] text-[#e8edf5]">
       <div className="mx-auto max-w-3xl px-4 py-8 sm:px-5 sm:py-12">
         <h1 className="text-3xl font-black leading-tight sm:text-4xl">Shop by need</h1>
-        <p className="mt-2 max-w-2xl text-base font-semibold leading-7 text-[#94a3b8]">Each lane has its kits and everything else that fits it.</p>
         <ul className="mt-8 grid gap-3 sm:grid-cols-2">
           {lanes.map((l) => (
             <li key={l.id}>

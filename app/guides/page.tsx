@@ -15,7 +15,7 @@ export default function GuidesPage() {
       <div className="mx-auto max-w-3xl px-4 py-8 sm:px-5 sm:py-12">
         <h1 className="text-3xl font-black leading-tight sm:text-4xl">Guides</h1>
         <p className="mt-2 max-w-2xl text-base font-semibold leading-7 text-[#94a3b8]">
-          What you need, how much, how to choose and how to store it. Each one is based on official guidance and ends in a kit you can shop.
+          Based on official guidance.
         </p>
         <ul className="mt-8 grid gap-3 sm:grid-cols-2">
           {guides.map((g) => (

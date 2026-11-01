@@ -6,7 +6,7 @@ import { formatDate, sources } from "../lib/stockup/sources";
 export const metadata: Metadata = {
   title: "Get Ready",
   description:
-    "A readiness plan for your household, step by step: water and food first, amounts for your people and days, at your own pace. Saved on your device; no account.",
+    "A readiness plan for your household: what to stock first, amounts for your people and days. Saved on your device; no account.",
   alternates: { canonical: "/ready" },
 };
 

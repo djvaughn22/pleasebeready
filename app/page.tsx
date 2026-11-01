@@ -7,21 +7,22 @@ import ReadyCard from "./components/ready/ReadyCard";
 import ListsTeaser from "./components/shop/ListsTeaser";
 import Saver from "./components/shop/Saver";
 import SaveToast, { ListPicker } from "./components/shop/SaveBar";
-import { FindsTabs, ProductTile } from "./components/shop/Store";
+import { FindsTabs } from "./components/shop/Store";
 import { KitCard } from "./components/shop/Tiles";
 import { activeDeals } from "./lib/shop/deals";
 import { findsTabs } from "./lib/shop/finds";
 import { guides } from "./lib/shop/guides";
 import { POPULAR, kitBySlug, kits, kitsForMonth } from "./lib/shop/kits";
-import { laneById, laneFeatured, lanes } from "./lib/shop/lanes";
-import { hasPick, pickByAsin, primaryPick } from "./lib/shop/picks";
+import { lanes } from "./lib/shop/lanes";
+import { pickByAsin } from "./lib/shop/picks";
 
 // Home is a storefront: wordmark and search, Get Ready (or Continue my plan), departments, then products.
-// No headline or pitch: the name says what the store is. Order: departments,
-// Ready Finds in tabs (New, Everyday, Budget picks, Upgrades, and Verified
-// deals only when deals.ts has one), Emergency essentials, kits, the visitor's
-// lists, this month. No product shows twice. Rebuilt daily so the seasonal
-// kits, weekly finds and deals follow the date.
+// No headline or pitch: the name says what the store is. Ready Finds opens on
+// Essentials (what a household should stock first, in the shared order from
+// lib/shop/priority.ts), then New, Everyday, Budget picks, Upgrades, and
+// Verified deals only when deals.ts has one. Then kits, the visitor's lists,
+// this month. No product shows twice. Rebuilt daily so new and weekly finds,
+// seasonal kits and deals follow the date.
 export const revalidate = 86400;
 
 export const metadata: Metadata = {
@@ -39,7 +40,6 @@ const SHORT: Record<string, string> = {
   tools: "Tools", everyday: "Everyday",
 };
 
-const grid = "grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4";
 const rail = "-mx-4 flex snap-x scroll-px-4 gap-3 overflow-x-auto px-4 pb-2 sm:mx-0 sm:px-0";
 
 function Head({ id, title, href, more }: { id: string; title: string; href?: string; more?: string }) {
@@ -57,10 +57,8 @@ export default function Home() {
   const monthName = now.toLocaleString("en-US", { month: "long", timeZone: "UTC" });
   const seasonal = kitsForMonth(now.getUTCMonth() + 1).sort((a, b) => (a.months?.length ?? 12) - (b.months?.length ?? 12)).slice(0, 4);
   const deals = activeDeals(today);
-  // The Emergency department's own first eight, in Ready.gov basic-kit order.
-  const emergency = laneFeatured(laneById("emergency")!, hasPick, 8);
-  const finds = findsTabs(now, emergency.map((i) => i.id));
-  const shown = new Set([...emergency, ...finds.new, ...finds.everyday].map((x) => ("asin" in x ? x.asin : primaryPick(x.id)!.asin)));
+  const finds = findsTabs(now);
+  const shown = new Set([...finds.essentials, ...finds.new, ...finds.everyday].map((p) => p.asin));
 
   return (
     <main className="min-h-screen bg-[#0b1220] text-[#e8edf5]">
@@ -99,8 +97,9 @@ export default function Home() {
             </nav>
 
             <section aria-labelledby="finds-title" className="mb-10">
-              <Head id="finds-title" title="Ready Finds" />
+              <Head id="finds-title" title="Ready Finds" href="/shop/emergency" more="Emergency store" />
               <FindsTabs tabs={[
+                { key: "essentials", label: "Essentials", picks: finds.essentials },
                 { key: "new", label: "New", picks: finds.new, tag: "New" },
                 { key: "everyday", label: "Everyday", picks: finds.everyday },
                 { key: "budget", label: "Budget picks", picks: finds.budget.filter((p) => !shown.has(p.asin)) },
@@ -108,11 +107,6 @@ export default function Home() {
                 // Only discounts verified from an allowed source, with a date they end (deals.ts).
                 { key: "deals", label: "Verified deals", picks: deals.map((d) => pickByAsin(d.asin)!) },
               ]} />
-            </section>
-
-            <section aria-labelledby="emergency-title" className="mb-10">
-              <Head id="emergency-title" title="Emergency essentials" href="/shop/emergency" more="Emergency store" />
-              <ul className={grid}>{emergency.map((i) => <ProductTile key={i.id} pick={primaryPick(i.id)!} tag={i.pri === "essential" ? "Must-have" : undefined} />)}</ul>
             </section>
 
             <section aria-labelledby="kits-title" className="mb-10">

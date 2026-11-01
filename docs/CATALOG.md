@@ -20,7 +20,7 @@ Every link carries the `pleasebeready-20` tag. `npm test` checks the ids, the ta
 - **Catalog item:** a type of thing (e.g. "Weather radio") with a planning rule for amounts, situations, priority and search words. One record, no copies.
 - **Lane:** a rule over catalog fields (category, situation, who it's for, plus a few hand-picked ids). An item shows in every lane its fields match, so cross-listing never duplicates a record.
 - **Kit:** a hand-picked list of catalog ids (must-haves, upgrades, cheaper swaps, easy to forget, things to do) with a starting group size and length. Amounts come from the catalog rules.
-- **Pick:** one exact Amazon product for a catalog item, by ASIN: a role (`pick`, `value`, `upgrade`, `alt`), our name for it, one plain reason, what it suits, how it was checked (`via`), the words that matched (`seen`, never shown) and the date (`checked`). Catalog items carry no ASIN; `shopLink()` uses an item's first pick, else a search. The checklist's gear lines (`readiness.ts`, `dailyReadiness.ts`) may only use ASINs that are in `picks.ts` (tested).
+- **Pick:** one exact Amazon product for a catalog item, by ASIN: a role (`pick`, `value`, `upgrade`, `alt`), our name for it, one plain reason, what it suits, how it was checked (`via`), the words that matched (`seen`, never shown), the date (`checked`) and the day it joined the store (`added`, which drives Ready Finds "New"). Catalog items carry no ASIN; `shopLink()` uses an item's first pick, else a search. The checklist's gear lines (`readiness.ts`, `dailyReadiness.ts`) may only use ASINs that are in `picks.ts` (tested).
 - **Guide:** sections that restate an official page in our words, each ending at a kit.
 
 ## Adding exact products (the review and import workflow)

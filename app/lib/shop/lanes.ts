@@ -2,6 +2,7 @@
 // fields (category, situation, who it serves) plus a few hand-picked ids, so
 // one item can sit in several lanes without a second copy of it.
 
+import { CONVENIENCE_TIER, ESSENTIALS, byPrep, prepTier } from "./priority";
 import { catalog, occasions } from "../stockup/catalog";
 import type { CatalogItem, CategoryId, Need, OccasionId } from "../stockup/types";
 
@@ -28,6 +29,8 @@ export type Lane = {
   ids?: string[];
   /** Items the rules would pull in that don't belong here (they still sit in another lane). */
   exclude?: string[];
+  /** Rank with the shared preparedness order (priority.ts) instead of categories. */
+  prep?: boolean;
   /** Categories in order of importance here, when the lane's own `cats` order isn't enough. */
   order?: CategoryId[];
   /** Hand-ranked products to lead the lane with (always in the lane). */
@@ -37,14 +40,10 @@ export type Lane = {
 export const lanes: Lane[] = [
   { id: "emergency", emoji: "🔦", title: "Emergency preparedness", blurb: "Water, light, power, first aid and a go-bag for storms and outages.", color: "#F97316",
     cats: ["safety", "power"], occs: ["emergency", "outage", "hurricane", "wildfire", "flood"],
-    // Ready.gov's basic kit order: water, food, light and power (radio included), first aid,
-    // sanitation, warmth and shelter, documents and safety, go-bags; convenience last.
-    order: ["water", "food", "power", "health", "toiletries", "cleaning", "paper", "weather", "sleep", "safety", "travel", "tools", "outdoors", "cooking"],
-    // Ready.gov "Build A Kit" (basic kit), in that order: water, food and a can opener, light,
-    // batteries and charging, radio, first aid, whistle and masks, sanitation, shelter, tools, maps.
-    featured: ["water-storage-container", "3-day-emergency-food-supply", "manual-can-opener", "flashlights", "batteries", "power-bank",
-      "weather-radio", "first-aid-kit", "whistle", "masks", "wet-wipes", "trash-bags", "plastic-sheeting", "duct-tape", "pliers",
-      "paper-road-map", "emergency-blankets", "document-bag"] },
+    // The store's shared preparedness order (priority.ts): its Essentials lead, everything else by tier.
+    // Category sections follow the same tiers.
+    prep: true, featured: ESSENTIALS,
+    order: ["water", "food", "cooking", "power", "health", "toiletries", "paper", "cleaning", "safety", "sleep", "weather", "tools", "outdoors", "car", "travel"] },
   { id: "food-and-water", emoji: "💧", title: "Food and water", blurb: "Drinking water, storage and a pantry that lasts.", color: "#38BDF8",
     cats: ["water", "food", "drinks"], occs: [] },
   { id: "home", emoji: "🏠", title: "Home essentials", blurb: "The things every house runs out of.", color: "#60A5FA",
@@ -127,10 +126,14 @@ export function catRank(lane: Lane, cat: CategoryId): number {
 }
 
 /** Is this a convenience item in this lane (not one of the things the lane is about)? */
-export const isSecondary = (item: CatalogItem, lane: Lane) => catRank(lane, item.cat) >= 200;
+export const isSecondary = (item: CatalogItem, lane: Lane) =>
+  lane.prep ? prepTier(item) >= CONVENIENCE_TIER : catRank(lane, item.cat) >= 200;
 
 /** Lane order: most important category first, then must-haves, then exact products before searches. */
 export function laneSort(lane: Lane, items: CatalogItem[], hasPick: (id: string) => boolean): CatalogItem[] {
+  if (lane.prep) return byPrep(items).map((x, i, all) => ({ x, i, all })).sort((a, b) =>
+    // Same tier: exact products before searches; otherwise the shared order.
+    prepTier(a.x) - prepTier(b.x) || (hasPick(a.x.id) ? 0 : 1) - (hasPick(b.x.id) ? 0 : 1) || a.i - b.i).map((e) => e.x);
   const key = (i: CatalogItem) => catRank(lane, i.cat) * 10 + PRI[i.pri] * 2 + (hasPick(i.id) ? 0 : 1);
   return [...items].sort((a, b) => key(a) - key(b));
 }

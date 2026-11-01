@@ -4,7 +4,7 @@
 //   npm run picks -- add <rows.tsv> [--dry] append reviewed rows, then run `npm test`, which checks every rule
 //
 // rows.tsv: a header row, then one tab-separated row per product; lines starting with # are skipped.
-// Columns: item role asin name why use via seen [checked]. `checked` defaults to today.
+// Columns: item role asin name why use via seen [checked]. `checked` defaults to today; `added` is always today.
 
 import { readFileSync, writeFileSync } from "node:fs";
 
@@ -38,7 +38,7 @@ if (cmd === "due") {
     if (entries.some((e) => e.item === r.item && (e.role === r.role || e.asin === r.asin))) problems.push(`${where}: already has that role or ASIN`);
     const checked = r.checked || today;
     const fields = ["item", "role", "asin", "name", "why", "use", "via", "seen"].map((k) => `${k}: ${JSON.stringify(r[k])}`);
-    return `  { ${fields.join(", ")}${checked === CHECKED ? "" : `, checked: ${JSON.stringify(checked)}`} },`;
+    return `  { ${fields.join(", ")}${checked === CHECKED ? "" : `, checked: ${JSON.stringify(checked)}`}, added: ${JSON.stringify(today)} },`;
   });
   if (problems.length) {
     console.error(problems.join("\n"));

@@ -14,6 +14,7 @@ const s = { stroke: INK, strokeWidth: 3, strokeLinecap: "round" as const, stroke
 
 export const D = {
   jug: (c) => <><path d="M24 10h16v6l6 6v30a4 4 0 0 1-4 4H22a4 4 0 0 1-4-4V22l6-6z" fill={c} {...s} /><path d="M24 10h16" {...s} /><path d="M24 30h16M24 38h16" stroke={HI} strokeWidth="3" strokeLinecap="round" /></>,
+  bricks: (c) => <><rect x="10" y="34" width="22" height="20" rx="3" fill={c} {...s} /><rect x="32" y="34" width="22" height="20" rx="3" fill={c} {...s} /><rect x="21" y="14" width="22" height="20" rx="3" fill={c} {...s} /><rect x="28" y="9" width="8" height="5" rx="1" fill={INK} /><path d="M16 44h10M38 44h10M27 24h10" stroke={HI} strokeWidth="3" strokeLinecap="round" /></>,
   can: (c) => <><rect x="16" y="14" width="32" height="40" rx="5" fill={c} {...s} /><path d="M16 22h32M16 46h32" {...s} /><rect x="22" y="28" width="20" height="12" rx="2" fill={HI} /></>,
   bucket: (c) => <><path d="M14 18h36l-4 36H18z" fill={c} {...s} /><rect x="12" y="12" width="40" height="8" rx="3" fill={c} {...s} /><rect x="22" y="28" width="20" height="14" rx="2" fill={HI} /><path d="M26 33h12M26 37h8" {...s} strokeWidth="2" /></>,
   juice: (c) => <><path d="M18 18l4-6h20l4 6v38H18z" fill={c} {...s} /><path d="M38 12l4-6" {...s} /><rect x="24" y="28" width="16" height="16" rx="3" fill={HI} /></>,
@@ -109,7 +110,7 @@ const BY_ITEM: Record<string, Name> = {
   "adhesive-bandages": "bandage", "elastic-bandage-wraps": "bandage", cups: "cup", tent: "tent", "tire-pressure-gauge": "gauge",
   hangers: "hanger", "handheld-shower-head": "shower", plunger: "plunger", "car-trunk-organizer": "box", "shower-caddy": "bag",
   "pots-and-pans-starter-set": "pan", "camp-cookware-set": "pan",
-  "water-storage-container": "jug", water: "jug", "water-bricks": "jug", "55-gallon-water-barrel": "jug",
+  "water-storage-container": "jug", water: "jug", "water-bricks": "bricks", "55-gallon-water-barrel": "jug",
   "3-day-emergency-food-supply": "bucket", "30-day-food-supply": "bucket", "manual-can-opener": "opener",
   flashlights: "flashlight", "work-flashlight-with-magnet": "flashlight", batteries: "battery", "aaa-batteries": "battery",
   "power-bank": "powerbank", "large-power-bank-20-000-mah": "powerbank", "portable-power-station": "station", generator: "station",

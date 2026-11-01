@@ -17,9 +17,6 @@ export default function KitsPage() {
     <main className="min-h-screen bg-[#0b1220] text-[#e8edf5]">
       <div className="mx-auto max-w-3xl px-4 py-8 sm:px-5 sm:py-12">
         <h1 className="text-3xl font-black leading-tight sm:text-4xl">Ready-made kits</h1>
-        <p className="mt-2 max-w-2xl text-base font-semibold leading-7 text-[#94a3b8]">
-          Pick a kit, set how many people and how long, then save it as a list or shop it item by item.
-        </p>
         <div className="mt-8 flex flex-col gap-8">
           {groups.map(({ l, list }) => (
             <section key={l.id} aria-labelledby={`kits-${l.id}`}>

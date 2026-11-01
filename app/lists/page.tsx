@@ -21,7 +21,7 @@ export default function ListsPage() {
         <div className="print:hidden">
           <h1 className="text-2xl font-black leading-tight sm:text-4xl">My Ready Lists</h1>
           <p className="mt-1 max-w-2xl text-sm font-semibold leading-6 text-[#94a3b8] sm:text-base">
-            Saved on this device. Open a list to shop it, tick off what you bought and mark what’s ready. No account needed.
+            Saved on this device. No account needed.
           </p>
         </div>
 

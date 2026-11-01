@@ -156,7 +156,7 @@ describe("readiness plan", () => {
 
   it("a kit only adds what the plan still needs, once", () => {
     const r = readiness(plan({ list: { flashlights: line({ have: 4 }), batteries: line() } }), TODAY);
-    expect(gaps(r, ["flashlights", "batteries", "power-bank", "lantern", "portable-power-station", "paper-plates"])).toEqual(["power-bank", "lantern"]);
+    expect(gaps(r, ["flashlights", "batteries", "power-bank", "lantern", "portable-power-station", "paper-plates"])).toEqual(["lantern", "power-bank"]);
   });
 
   it("a plan survives save, share and restore with its pace and partial buys", () => {

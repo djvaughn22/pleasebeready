@@ -11,6 +11,7 @@
 
 import type { Climate, Need, OccasionId } from "../stockup/types";
 import type { LaneId } from "./lanes";
+import { byPrep, isEmergencyKind } from "./priority";
 
 export type KitPreset = {
   people: number; kids?: number; babies?: number; pets?: number;
@@ -47,7 +48,7 @@ export type Kit = {
 
 const READY_KIT = { label: "Ready.gov: Build a Kit", href: "https://www.ready.gov/kit" };
 
-export const kits: Kit[] = [
+const written: Kit[] = [
   {
     slug: "five-day-emergency", emoji: "🔦", title: "Five-day emergency supplies", short: "Ready.gov's basic kit, for five days",
     intro: "Water, food, light, a radio and first aid for five days at home, built from Ready.gov's basic kit list.",
@@ -435,6 +436,9 @@ export const kits: Kit[] = [
     terms: ["home maintenance", "tool kit", "toolkit", "tools", "homeowner", "fix it", "repairs", "repair", "handyman", "new homeowner", "basic tools", "diy"],
   },
 ];
+
+/** Emergency kits list their must-haves and upgrades in the store's shared preparedness order (priority.ts). */
+export const kits: Kit[] = written.map((k) => isEmergencyKind(k.base) ? { ...k, essentials: byPrep(k.essentials), upgrades: byPrep(k.upgrades) } : k);
 
 export const kitBySlug = (slug: string) => kits.find((k) => k.slug === slug);
 
