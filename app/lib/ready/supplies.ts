@@ -52,10 +52,10 @@ export const CALORIES_PER_DAY = 2000;
 /** Ways that are part of water or food, not separate essentials. */
 export const SUPPLY_WAYS = new Set([...WATER_WAYS.map((w) => w.id), ...FOOD_MIX.map((f) => f.id), ...FOOD_KITS.map((k) => k.id)]);
 
-/** Units a line holds: what you had plus what you bought (all of it when ticked bought). Restock means used up. */
-function units(line: Line | undefined, need: number): number {
+/** Units a line holds: what you had plus what you bought (all of it, the list's amount, when ticked bought). Restock means used up. */
+export function units(line: Line | undefined, need: number): number {
   if (!line || line.restock) return 0;
-  return line.got ? Math.max(need, line.have) : line.have + (line.bought ?? 0);
+  return line.got ? Math.max(line.qty ?? need, line.have) : line.have + (line.bought ?? 0);
 }
 
 export type Part = { id: string; label: string; amount: number };

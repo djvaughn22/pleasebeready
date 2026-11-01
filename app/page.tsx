@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Mark, Wordmark } from "./components/Brand";
 import JsonLd, { SITE } from "./components/JsonLd";
 import ListsProvider from "./components/shop/ListsProvider";
+import FoodWaterPicker from "./components/ready/FoodWaterPicker";
 import ReadyCard from "./components/ready/ReadyCard";
 import ListsTeaser from "./components/shop/ListsTeaser";
 import Saver from "./components/shop/Saver";
@@ -16,7 +17,8 @@ import { POPULAR, kitBySlug, kits, kitsForMonth } from "./lib/shop/kits";
 import { lanes } from "./lib/shop/lanes";
 import { pickByAsin } from "./lib/shop/picks";
 
-// Home is a storefront: wordmark and search, Get Ready (or Continue my plan), departments, then products.
+// Home is a storefront: wordmark and search, Food & Water (two choices, one Shop button), Get Ready (or
+// Continue my plan), departments, then products.
 // No headline or pitch: the name says what the store is. Ready Finds opens on
 // Essentials (what a household should stock first, in the shared order from
 // lib/shop/priority.ts), then New, Everyday, Budget picks, Upgrades, and
@@ -80,6 +82,7 @@ export default function Home() {
               </form>
             </header>
             <ListPicker className="-mt-3 mb-3" />
+            <div className="mb-3"><FoodWaterPicker /></div>
             <div className="mb-6"><ReadyCard /></div>
 
             <nav aria-label="Departments" className="mb-8">

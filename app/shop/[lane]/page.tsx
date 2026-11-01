@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import JsonLd, { SITE, breadcrumbs } from "../../components/JsonLd";
+import FoodWaterPicker from "../../components/ready/FoodWaterPicker";
 import LaneShop from "../../components/shop/LaneShop";
 import { KitCard } from "../../components/shop/Tiles";
 import { guides } from "../../lib/shop/guides";
@@ -35,6 +36,8 @@ export default async function LanePage({ params }: { params: Promise<{ lane: str
         </nav>
         <h1 className="pbr-display text-2xl font-black leading-tight sm:text-4xl"><span aria-hidden>{lane.emoji} </span>{lane.title}</h1>
         <p className="mt-1 text-sm font-semibold text-[#94a3b8]">{lane.blurb}</p>
+
+        {(lane.id === "emergency" || lane.id === "food-and-water") && <div className="mt-4"><FoodWaterPicker /></div>}
 
         <LaneShop laneId={lane.id}>
           {laneKits.length > 0 && (

@@ -211,7 +211,17 @@ export function usePlans({ importLinks = false }: { importLinks?: boolean } = {}
     return { id: p.id, name: p.name, added: ids.length, existing: false };
   }, [store.plans, saveItems]);
 
-  return { store, ready, saved, imported, active, target, open, create, update, duplicate, remove, setTarget, makeList, saveItems, unsave, kitList, saveKit };
+  /** Add a whole list, or replace the one with its id (Food & Water's Save entire bundle). It becomes the Save target. */
+  const putPlan = useCallback((plan: Plan) => {
+    const p = clampPlan(plan);
+    measure(store.plans.some((x) => x.id === p.id) ? "plan_add" : "plan_start", `bundle-${p.occasion}`);
+    setStore((s) => {
+      const known = s.plans.some((x) => x.id === p.id);
+      return { ...s, targetId: p.id, plans: known ? s.plans.map((x) => (x.id === p.id ? p : x)) : [p, ...s.plans] };
+    });
+  }, [store.plans]);
+
+  return { store, ready, saved, imported, active, target, open, create, update, duplicate, remove, setTarget, makeList, saveItems, unsave, kitList, saveKit, putPlan };
 }
 
 export type PlansApi = ReturnType<typeof usePlans>;

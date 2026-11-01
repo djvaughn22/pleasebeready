@@ -14,6 +14,7 @@ import { listText, statusText, type TextRow } from "../../lib/stockup/shop";
 import { LIST_NOTE_MAX, NOTE_MAX, encodePlan } from "../../lib/stockup/storage";
 import type { Line, Plan } from "../../lib/stockup/types";
 import { primaryPick, roleText } from "../../lib/shop/picks";
+import { FOOD_WATER } from "../../lib/ready/bundle";
 import { readiness } from "../../lib/ready/engine";
 import { listRows, type Row } from "./resolve";
 import ShopButton from "./ShopButton";
@@ -24,10 +25,10 @@ type SetLine = (id: string, patch: Partial<Line>) => void;
 
 export default function ListView({ plan, api, onIdeas }: { plan: Plan; api: PlansApi; onIdeas: () => void }) {
   const rows = useMemo(() => listRows(plan), [plan]);
-  // A Get Ready plan counts water and food from bottles, filled containers and groceries too (lib/ready/supplies.ts):
-  // the same totals as the plan page.
+  // A Get Ready plan or the Food & Water list counts water and food from bottles, filled containers and groceries
+  // too (lib/ready/supplies.ts): the same totals as the plan page and the bundle.
   const supplies = useMemo(() => {
-    if (!plan.guide) return [];
+    if (!plan.guide && plan.kit !== FOOD_WATER) return [];
     const r = readiness(plan);
     return ([["water", "Water", "gallons"], ["shelf-food", "Food", "person-days"]] as const).flatMap(([id, name, unit]) => {
       const i = r.items.find((x) => x.item.id === id);
