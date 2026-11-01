@@ -128,8 +128,8 @@ describe("readiness plan", () => {
     } }), TODAY);
     const f = item(r, "shelf-food")!;
     expect(f.need).toBe(28);
-    // 4 in the house + 10 cans of soup (3 person-days) + 100 cans of beans (capped at 10% = 2.8) + 2 rations (3.6).
-    expect(f.covered).toBeCloseTo(4 + 3 + 2.8 + 3.6, 5);
+    // 4 in the house + 10 cans of soup (340 cal each = 1.7 person-days) + 100 cans of beans (capped at 10% = 2.8) + 2 rations (3.6).
+    expect(f.covered).toBeCloseTo(4 + 1.7 + 2.8 + 3.6, 5);
   });
 
   it("partial buys and a household that changes size keep what was counted", () => {

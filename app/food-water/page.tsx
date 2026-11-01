@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import FoodWaterBundle from "../components/ready/FoodWaterBundle";
 import ListsProvider from "../components/shop/ListsProvider";
-import { parseDays, parseOnly, parsePeople } from "../lib/ready/bundle";
+import { parseDays, parseOnly, parsePeople, parseWay } from "../lib/ready/bundle";
 
 export const metadata: Metadata = {
   title: "Food & Water",
@@ -20,7 +20,7 @@ export default async function FoodWaterPage({ searchParams }: { searchParams: Pr
           <Link href="/" className="hover:underline">Home</Link> › <Link href="/shop/emergency" className="hover:underline">Emergency</Link>
         </nav>
         <ListsProvider>
-          <FoodWaterBundle people={parsePeople(one("people"))} days={parseDays(one("days"))} only={parseOnly(one("only"))} />
+          <FoodWaterBundle people={parsePeople(one("people"))} days={parseDays(one("days"))} only={parseOnly(one("only"))} way={parseWay(one("water"))} />
         </ListsProvider>
         <p className="mx-auto mt-10 max-w-xl text-center text-xs font-semibold leading-6 text-[#94a3b8]">
           As an Amazon Associate, PleaseBeReady earns from qualifying purchases. “Search Amazon” opens search results, not one chosen product.

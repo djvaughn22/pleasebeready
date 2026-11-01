@@ -6,13 +6,18 @@
 // bottle, and a storage container counts only once it is filled (`filled`).
 // An empty container is never water, and a filter or tablets never are.
 //
-// Food is counted in person-days (a day of food for one person) on the
-// `shelf-food` line: food already in the house (have) and food bought. The
-// grocery mix below fills the rest; each kind of food can fill only its own
-// share, so 40 cans of beans never count as a week of food. A ration pack
-// counts by the calories on its label. Nothing here claims complete nutrition.
+// Food is counted in person-days (a day of food for one person: 2,000
+// calories, nutrition.ts) on the `shelf-food` line: food already in the house
+// (have) and food bought. The grocery mix below fills the rest, counted by the
+// calories on each pick's label; each kind of food can fill only its own share
+// of the calories, so 40 cans of beans never count as a week of food. A ration
+// pack counts by the calories on its label. Nothing here claims complete
+// nutrition.
 
 import type { Line, Plan } from "../stockup/types";
+import { CALORIES_PER_DAY, labelFor } from "./nutrition";
+
+export { CALORIES_PER_DAY };
 
 export const GALLON_OZ = 128;
 
@@ -24,30 +29,33 @@ export const WATER_WAYS: { id: string; gallons: number; fill?: boolean; where: s
   { id: "55-gallon-water-barrel", gallons: 55, fill: true, where: "in a filled barrel" },
 ];
 
-export type Prep = "Ready to eat" | "Better heated" | "Refrigerate after opening" | "Needs hot water";
+export type Prep = "Ready to eat" | "Heat if you can" | "Refrigerate after opening" | "Needs hot water";
 
 /**
- * A practical shelf-stable mix, per person-day (our planning rule, built from Ready.gov's food list:
- * canned meats, fruit and vegetables, protein bars, cereal, peanut butter, shelf-stable milk).
- * `share` is the part of the food each kind fills; shares add up to 1.
+ * A practical shelf-stable mix (our planning rule, built from Ready.gov's food list: canned meats, fruit and
+ * vegetables, protein bars, cereal, peanut butter, shelf-stable milk). `share` is the part of the day's calories
+ * each kind fills; shares add up to 1. With our picks' labels a day of the mix has about 2,000 calories and
+ * more than 50 g of protein (tested). None of it needs water or cooking.
  */
-export const FOOD_MIX: { id: string; group: string; perDay: number; share: number; prep: Prep }[] = [
-  { id: "canned-soups-and-stews", group: "Canned meals", perDay: 1, share: 0.3, prep: "Better heated" },
-  { id: "canned-tuna-or-chicken", group: "Proteins", perDay: 0.3, share: 0.1, prep: "Ready to eat" },
-  { id: "canned-beans", group: "Beans", perDay: 0.3, share: 0.1, prep: "Ready to eat" },
-  { id: "canned-vegetables", group: "Vegetables", perDay: 0.5, share: 0.1, prep: "Ready to eat" },
-  { id: "canned-fruit", group: "Fruit", perDay: 0.3, share: 0.05, prep: "Ready to eat" },
-  { id: "shelf-stable-milk", group: "Shelf-stable milk", perDay: 1, share: 0.05, prep: "Refrigerate after opening" },
-  { id: "peanut-butter", group: "Peanut butter", perDay: 0.07, share: 0.1, prep: "Ready to eat" },
-  { id: "pretzels-and-crackers", group: "Crackers and cereal", perDay: 0.1, share: 0.1, prep: "Ready to eat" },
-  { id: "granola-or-protein-bars", group: "Bars", perDay: 2, share: 0.1, prep: "Ready to eat" },
+export const FOOD_MIX: { id: string; group: string; share: number; prep: Prep }[] = [
+  { id: "canned-soups-and-stews", group: "Canned meals", share: 0.26, prep: "Heat if you can" },
+  { id: "peanut-butter", group: "Peanut butter", share: 0.2, prep: "Ready to eat" },
+  { id: "granola-or-protein-bars", group: "Bars", share: 0.12, prep: "Ready to eat" },
+  { id: "pretzels-and-crackers", group: "Crackers", share: 0.1, prep: "Ready to eat" },
+  { id: "canned-beans", group: "Beans", share: 0.1, prep: "Ready to eat" },
+  { id: "shelf-stable-milk", group: "Shelf-stable milk", share: 0.08, prep: "Refrigerate after opening" },
+  { id: "canned-fruit", group: "Fruit", share: 0.08, prep: "Ready to eat" },
+  { id: "canned-tuna-or-chicken", group: "Tuna", share: 0.04, prep: "Ready to eat" },
+  { id: "canned-vegetables", group: "Vegetables", share: 0.02, prep: "Ready to eat" },
 ];
+
+/** Person-days in one unit of a mix food, by its label's calories. */
+export const daysPerUnit = (id: string) => (labelFor(id)?.kcal ?? 0) / CALORIES_PER_DAY;
 
 /** Packaged food that counts by its label: a 3,600-calorie ration is 1.8 person-days at 2,000 calories a day. */
 export const FOOD_KITS: { id: string; days: number; note: string }[] = [
-  { id: "3-day-emergency-food-supply", days: 1.8, note: "3,600 calories each, counted as 1.8 person-days" },
+  { id: "3-day-emergency-food-supply", days: 3600 / CALORIES_PER_DAY, note: "3,600 calories each, counted as 1.8 person-days" },
 ];
-export const CALORIES_PER_DAY = 2000;
 
 /** Ways that are part of water or food, not separate essentials. */
 export const SUPPLY_WAYS = new Set([...WATER_WAYS.map((w) => w.id), ...FOOD_MIX.map((f) => f.id), ...FOOD_KITS.map((k) => k.id)]);
@@ -87,7 +95,7 @@ export function foodParts(plan: Plan, target: number): Part[] {
   }
   for (const m of FOOD_MIX) {
     const n = units(plan.list[m.id], 0);
-    if (n > 0) parts.push({ id: m.id, label: `from ${m.group.toLowerCase()}`, amount: Math.min(m.share * target, (n * m.share) / m.perDay) });
+    if (n > 0) parts.push({ id: m.id, label: `from ${m.group.toLowerCase()}`, amount: Math.min(m.share * target, n * daysPerUnit(m.id)) });
   }
   for (const k of FOOD_KITS) {
     const n = units(plan.list[k.id], 0);
@@ -114,14 +122,14 @@ export function waterOptions(gallons: number) {
  */
 export function foodMix(days: number, plan?: Plan, target = days): { id: string; group: string; qty: number; prep: Prep }[] {
   const room = FOOD_MIX.map((m) => {
-    const had = plan ? Math.min(m.share * target, (units(plan.list[m.id], 0) * m.share) / m.perDay) : 0;
+    const had = plan ? Math.min(m.share * target, units(plan.list[m.id], 0) * daysPerUnit(m.id)) : 0;
     return Math.max(0, m.share * target - had);
   });
   const free = room.reduce((t, r) => t + r, 0);
   const gap = Math.min(Math.max(0, days), free);
   return FOOD_MIX.map((m, i) => {
     const pd = free ? (gap * room[i]) / free : 0;
-    return { id: m.id, group: m.group, prep: m.prep, qty: Math.ceil((pd * m.perDay) / m.share - 1e-9) };
+    return { id: m.id, group: m.group, prep: m.prep, qty: Math.ceil(pd / daysPerUnit(m.id) - 1e-9) };
   }).filter((m) => m.qty > 0);
 }
 

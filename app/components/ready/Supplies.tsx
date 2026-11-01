@@ -142,7 +142,7 @@ export function FoodCard({ plan, r, gap, setLine, add }: { plan: Plan; r: Readin
     <section aria-labelledby="food-title" className={`${card} p-4 sm:p-5`}>
       <h3 id="food-title" className="pbr-display text-lg font-black"><span aria-hidden>🥫</span> Food for {who(plan)}</h3>
       <Stats need={f.need} ready={ready} unit="person-days" />
-      <p className={`mt-2 ${muted}`}>A person-day is a day of food for one person.{ready > 0 ? ` Ready: ${partsText(foodParts(plan, f.need), "person-days")}` : ""}</p>
+      <p className={`mt-2 ${muted}`}>A person-day is a day of food for one person, counted as 2,000 calories.{ready > 0 ? ` Ready: ${partsText(foodParts(plan, f.need), "person-days")}` : ""}</p>
       {gap > 0 ? (
         <>
           <h4 className="mt-4 text-xs font-black uppercase tracking-wider text-[#94a3b8]">Shop food · {n(gap)} person-days</h4>
