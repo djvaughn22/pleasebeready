@@ -19,13 +19,20 @@ Make the Amazon store dependable, easy to shop, useful for stocking up over time
 - Tests: `app/lib/shop/audit.test.ts`.
 
 ## Checked after deploy
-First deploy, Nov 5 (commit 9e7ca1c): Vercel success, sweep of 69 pages found 0 problems (tags, notices, wording; our pages only). Search before/after: only "water", "gallon water" and "beans" moved, all for the better. Known wart, not from this work: "beans" also lists winter hats, last ("beanie" prefix match in search.ts).
+First deploy, Nov 5 (commit 9e7ca1c): Vercel success, sweep of 69 pages found 0 problems (tags, notices, wording; our pages only). Search before/after: only "water", "gallon water" and "beans" moved, all for the better.
 
-Second deploy, Nov 6 (commit 4e609bb, rollback tag live-before-store-audit2-20261106): Vercel success, sweep of 69 pages found 0 problems, none of the 23 removed listings is still linked, no untagged product links. Search top results did not move.
+Second deploy, Nov 6 (commit 4e609bb, rollback tag live-before-store-audit2-20261106): Vercel success, sweep of 69 pages found 0 problems, none of the 23 removed listings is still linked, no untagged product links. Top 6 results for all 28 test searches did not move (rechecked Nov 6; the first run's output had cut off the three water searches).
+
+Third deploy, Nov 6 (commit 4996ff2, rollback tag live-before-search-fix-20261106): search fix in `search.ts`.
+- `LOOKALIKES`: a whole word no longer finds a longer word that only starts the same ("bean"/"beanie", "lights"/"lighter", "pills"/"pillow", "water"/"waterproof"). The pairs came from checking every word in the catalog against a dictionary, read by eye. Add a pair when a new catalog word creates one.
+- `DESCRIBING`: an item that only matches a word like "dry", "black", "large" or "portable" is dropped once something matches the thing it describes. If nothing does, the describing word still searches ("stay dry").
+- Before and after on 2,194 searches (every item name and search word, kit term, lane title, plus common searches): no item's own name search got worse. Kit results changed only for "off grid", which now opens the power outage kit.
+- 170 tests, types, lint and build pass. Live: `/search` for beans, dry beans, lights and off grid show the right lists, no console errors on home or dry beans, sweep of 69 pages found 0 problems.
+- 17 test searches went from wrong products to "Nothing matched", with kit suggestions: wind, chain(s), french press, mess kit, sign(s), dress, doll(s), line, birth certificate, pass, route, star(s), slide.
 
 Not verified: live stock of anything (see Rules), a tap through to Amazon on a real phone, print preview of the new links.
 
 ## Next steps
 1. Owner steps: tap through `docs/audit/hand-check-links.md`; register the Creators API (the only automated way to see live stock).
 2. Optional: more bulk picks. Canned pasta has no catalog item (Chef Boyardee Overstuffed 12-pack B003XUJ3RK looked fine). Red Cross manual Revision 2025 may beat the 2021 edition.
-3. Optional: fix the search warts in `search.ts`. "beans" lists winter hats last, and "dry beans" lists quick-dry bath towels third.
+3. Optional: search gaps in `search.ts`, found while fixing the look-alikes and not touched. Words under four letters don't find their plurals: "hat" misses winter hats, "pot" and "pan" miss the pots and pans set. "bandaid" finds nothing ("band aid" works). "Mess kit", "french press" and "wind" could get a real answer from a synonym or kit term.
