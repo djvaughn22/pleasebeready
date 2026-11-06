@@ -73,7 +73,7 @@ export const areas: Area[] = [
     ],
     gear: [
       { name: "Swiss Safe mylar emergency blankets, 4-pack", asin: "B01LYNWRLA" },
-      { name: "HotHands hand warmers, 10 pair", asin: "B077RXSZN3" },
+      { name: "HotHands hand warmers, 10 pair", asin: "B0HHQRWNKN" },
     ],
   },
   {
@@ -168,7 +168,7 @@ export const levels: Level[] = [
     tag: "Level 3", title: "1 Month+",
     text: "Extended resilience for longer disruptions — build here once Levels 1–2 are solid.",
     gear: [
-      { name: "Westinghouse 12,500W dual-fuel generator (CO sensor)", asin: "B099KTHXMK" },
+      { name: "Champion 9,375W dual-fuel generator with CO Shield", asin: "B0D9R2B634" },
       { name: "Membrane Solutions 6-liter gravity water filter", asin: "B08ZYMXLMH" },
       { name: "SentrySafe fireproof + waterproof safe", asin: "B005P12C5A" },
     ],

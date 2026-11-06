@@ -57,6 +57,7 @@ export const BACKUP_Q: Record<string, string> = {
   tent: "4 person dome tent",
   "sleeping-bags": "20 degree sleeping bag",
   "crib-or-bassinet": "play yard with bassinet",
+  "dry-beans-and-lentils": "dried pinto beans 4 lb",
 };
 
 /** Search words for an item's backup link. Without the catalog handy, its id reads as words. */

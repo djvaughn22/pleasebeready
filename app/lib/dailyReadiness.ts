@@ -64,7 +64,7 @@ export const READINESS_TASKS: ReadinessTask[] = [
   // 🔥 Heat & Shelter
   { emoji: "🔥", area: "Heat & Shelter", title: "Mylar in every car", detail: "Emergency blankets reflect body heat and weigh next to nothing. One per glovebox, one per go-bag.", gear: { name: "Swiss Safe mylar blankets, 4-pack", asin: "B01LYNWRLA" } },
   { emoji: "🔥", area: "Heat & Shelter", title: "Test the CO detector", detail: "Carbon monoxide is invisible and kills quietly — especially when generators and heaters come out. Test it tonight.", gear: { name: "First Alert smoke + CO combo alarm", asin: "B0CLVRPNZX" } },
-  { emoji: "🔥", area: "Heat & Shelter", title: "Hand warmers in the bags", detail: "Cheap, light, and they turn a cold night survivable. A few pairs in each go-bag and car kit.", gear: { name: "HotHands hand warmers, 10 pair", asin: "B077RXSZN3" } },
+  { emoji: "🔥", area: "Heat & Shelter", title: "Hand warmers in the bags", detail: "Cheap, light, and they turn a cold night survivable. A few pairs in each go-bag and car kit.", gear: { name: "HotHands hand warmers, 10 pair", asin: "B0HHQRWNKN" } },
   // 📻 Communication
   { emoji: "📻", area: "Communication", title: "The paper contact card", detail: "Write your out-of-town contact's number on paper for every wallet. When networks jam, texts to one contact work." },
   { emoji: "📻", area: "Communication", title: "Pick two meeting spots", detail: "One near home, one outside the neighborhood. Text both to the whole family today — done in five minutes." },

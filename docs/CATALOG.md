@@ -7,8 +7,8 @@ How the shop's data fits together, how to add to it, and what is verified.
 | Thing | Count | Where |
 |---|---|---|
 | Catalog entries | 1,052 (957 products, 95 things to do) | `app/lib/stockup/catalog.ts` + `data/*.ts` |
-| Exact Amazon products | 231 ASINs (233 entries) for 212 catalog items: 210 "Our pick", 3 "Budget pick", 7 "Upgrade", 8 "Also good", 5 "Bigger pack". Button: **Shop on Amazon**, with a labelled search link beside it for when it's sold out | `app/lib/shop/picks.ts`, the only place ASINs live; `backups.ts` for the search words |
-| Products that open a tagged Amazon search | the other 745, button **Search Amazon** (outlined), with the search words shown | `amazonSearchUrl()` in `app/lib/gear.ts` |
+| Exact Amazon products | 233 ASINs (235 entries) for 213 catalog items: 211 "Our pick", 3 "Budget pick", 7 "Upgrade", 9 "Also good", 5 "Bigger pack". Button: **Shop on Amazon**, with a labelled search link beside it for when it's sold out | `app/lib/shop/picks.ts`, the only place ASINs live; `backups.ts` for the search words |
+| Products that open a tagged Amazon search | the other 744, button **Search Amazon** (outlined), with the search words shown | `amazonSearchUrl()` in `app/lib/gear.ts` |
 | Shopping lanes | 16 | `app/lib/shop/lanes.ts` |
 | Kits | 31 | `app/lib/shop/kits.ts` |
 | Guides | 7 | `app/lib/shop/guides.ts` |
@@ -58,7 +58,7 @@ There is no authorized product feed yet (see below), so exact products are revie
 
 The other 84 products featured at the top of departments were last checked Oct 30-31 by the same method and were not searched again this time.
 
-**Nov 5, 2026 audit:** 136 entries searched by ASIN, 23 store listings replaced or removed, 36 picks added (gallons, containers, multipacks, bulk food). Full table and what's left: `docs/AMAZON-AUDIT.md`. Every exact product now has a labelled search beside it (`BackupLink`), so a listing that dies between checks isn't a dead end.
+**Nov 5, 2026 audit:** every entry searched by ASIN, 46 store listings replaced or removed, 61 picks added (gallons, containers, multipacks, bulk food). Full table and what could not be verified: `docs/AMAZON-AUDIT.md`. Every exact product now has a labelled search beside it (`BackupLink`), so a listing that dies between checks isn't a dead end.
 
 ## Department order
 
