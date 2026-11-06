@@ -21,11 +21,11 @@ Make the Amazon store dependable, easy to shop, useful for stocking up over time
 ## Checked after deploy
 First deploy, Nov 5 (commit 9e7ca1c): Vercel success, sweep of 69 pages found 0 problems (tags, notices, wording; our pages only). Search before/after: only "water", "gallon water" and "beans" moved, all for the better. Known wart, not from this work: "beans" also lists winter hats, last ("beanie" prefix match in search.ts).
 
-Second deploy, the rest of the audit: see the last commit on main and `git log`.
+Second deploy, Nov 6 (commit 4e609bb, rollback tag live-before-store-audit2-20261106): Vercel success, sweep of 69 pages found 0 problems, none of the 23 removed listings is still linked, no untagged product links. Search top results did not move.
 
 Not verified: live stock of anything (see Rules), a tap through to Amazon on a real phone, print preview of the new links.
 
 ## Next steps
 1. Owner steps: tap through `docs/audit/hand-check-links.md`; register the Creators API (the only automated way to see live stock).
 2. Optional: more bulk picks. Canned pasta has no catalog item (Chef Boyardee Overstuffed 12-pack B003XUJ3RK looked fine). Red Cross manual Revision 2025 may beat the 2021 edition.
-3. Optional: fix the "beans" search wart in `search.ts`.
+3. Optional: fix the search warts in `search.ts`. "beans" lists winter hats last, and "dry beans" lists quick-dry bath towels third.
