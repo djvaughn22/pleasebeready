@@ -17,6 +17,11 @@ Make the Amazon store dependable, easy to shop, useful for stocking up over time
 - UI: `BackupLink`/`MoreChoices` on ItemCard, tiles, compare, Food & Water, Get Ready, Lists, Suggestions, teaser, checklist gear, Today. `packsText` on cards and rows. Gallon jugs are an exact row. `tripStages` + `?goal=` on Food & Water. "New to this? Start with 3 days" on the home picker. Associates notice added to `/ready`. CORE now leads with gallons.
 - Tests: `app/lib/shop/audit.test.ts`.
 
+## Checked after deploy
+Live Nov 5 (commit 9e7ca1c): Vercel success, sweep of 69 pages found 0 problems (tags, notices, wording; our pages only). Search before/after: only "water", "gallon water" and "beans" moved, all for the better. Known wart, not from this work: "beans" also lists winter hats, last ("beanie" prefix match in search.ts).
+
+Not verified: live stock of anything (see Rules), a tap through to Amazon on a real phone, print preview of the new links.
+
 ## Next steps
 1. Audit the 97 entries not re-checked: `npm run picks -- audit` lists them. Add TSV rows, set `checked`, replace anything unavailable. Then regenerate `docs/audit/hand-check-links.md` (`npm run picks -- review`) and update the counts in `docs/AMAZON-AUDIT.md` and `docs/CATALOG.md`.
 2. By ASIN, check picks found late: B09RLLWTG8 ladder, B0892SHSQC and B099KTHXMK generators, B0GWQ1J7LC power station, B08ZYMXLMH gravity filter.
