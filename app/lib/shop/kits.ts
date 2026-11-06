@@ -73,7 +73,7 @@ const written: Kit[] = [
     forget: ["d-batteries", "ice-packs", "extra-blankets", "cash-in-small-bills"],
     todo: ["charge-everything", "freeze-bottles", "fridge-coldest", "food-safety-outage", "label-breakers", "power-device-plan"],
     guide: { label: "Ready.gov: Power Outages", href: "https://www.ready.gov/power-outages" },
-    terms: ["power outage", "outage", "without power", "no power", "without electricity", "no electricity", "lost power", "blackout", "power cut", "power out", "power is out", "electricity out", "lights out", "grid down", "generator", "power", "flashlight", "flashlights"],
+    terms: ["power outage", "outage", "without power", "no power", "without electricity", "no electricity", "lost power", "blackout", "power cut", "power out", "power is out", "electricity out", "lights out", "grid down", "off grid", "generator", "power", "flashlight", "flashlights"],
     months: [6, 7, 8, 9, 11, 12, 1, 2],
   },
   {

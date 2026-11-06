@@ -65,7 +65,7 @@ export function parseIntent(query: string): Intent {
 const STOP = new Set(["a", "an", "the", "for", "of", "with", "and", "or", "to", "in", "on", "at", "my", "our", "your", "we", "i", "me", "need",
   "what", "how", "much", "many", "do", "is", "are", "be", "get", "buy", "list", "kit", "kits", "stuff", "things", "supplies", "without",
   "people", "person", "days", "day", "weeks", "week", "month", "months", "night", "nights", "ready", "prepare", "prep", "going", "about",
-  "new", "first", "our", "some", "all", "just"]);
+  "new", "first", "our", "some", "all", "just", "keep", "stay", "goods"]);
 
 const DISASTER = new Set(["emergency", "disaster", "earthquake", "flood", "flooding", "evacuation", "evacuate", "evacuating", "landslide", "tsunami"]);
 /** Words that ask for readiness in general, not one product. A search made only of these (and its kit's
@@ -87,7 +87,15 @@ const SYN: Record<string, string[]> = {
   medicine: ["medicine", "medicines", "reliever"], meds: ["medicines"], sick: ["cold", "flu", "fever"], flu: ["flu", "fever"],
   diapers: ["diapers"], tp: ["toilet"], camping: ["camp", "tent"], tent: ["tent"], hiking: ["hiking", "trail"],
   party: ["party", "plates"], birthday: ["birthday", "candles", "cake"], tools: ["tool"], tool: ["tool"],
+  beanies: ["beanie"], skin: ["lotion"],
 };
+
+/** Words that describe a thing without naming one. When a search also names a thing, an item that only
+ * matches these is noise ("dry beans" → beans, not a dry bag or a quick-dry towel). */
+const DESCRIBING = new Set(["dry", "dried", "wet", "portable",
+  "black", "white", "red", "blue", "green", "yellow", "orange", "pink", "purple", "brown", "gray", "grey", "clear", "silver",
+  "big", "bigger", "small", "smaller", "large", "larger", "medium", "mini", "little", "tiny", "huge", "giant", "long", "short", "tall", "wide", "heavy",
+  "best", "better", "good", "great", "top", "nice", "cheap", "cheapest", "affordable", "quick", "fast", "easy", "simple", "strong", "sturdy", "extra", "spare"]);
 
 const stem = (w: string) => (w.length > 4 && w.endsWith("ies") ? `${w.slice(0, -3)}y` : w.length > 3 && w.endsWith("s") && !w.endsWith("ss") ? w.slice(0, -1) : w);
 
@@ -115,9 +123,28 @@ function haystack(item: CatalogItem) {
   }
   return h;
 }
+/** Whole words that are also the start of a different word: "bean" isn't "beanie", "pill" isn't "pillow".
+ * Keyed by the shorter word's stem, listing how the longer words start. Typing on ("pillo") still finds them. */
+const LOOKALIKES = new Map<string, string[]>(Object.entries({
+  ball: ["balloon", "ballpoint"], bean: ["beanie"], birth: ["birthday"], black: ["blackout"], blue: ["bluetooth"], boot: ["booth"], brace: ["bracelet"],
+  break: ["breakfast"], brown: ["brownie"], cabin: ["cabinet"], card: ["cardigan"], care: ["careful"], cart: ["cartridge"], chain: ["chainsaw"],
+  clip: ["clipper"], cloth: ["clothe", "clothing"], compress: ["compression"], control: ["controller"], cook: ["cookie", "cookout"], cool: ["coolant"],
+  cord: ["cordless"], corn: ["corned", "corner", "cornhole"], cream: ["creamer"], doll: ["dolly"], dress: ["dresser", "dressing"], fire: ["fireworks"],
+  flame: ["flameless"], foot: ["footprint"], free: ["freeze"], fresh: ["freshener"], grad: ["grade"], grid: ["griddle"], hand: ["handle", "handy"],
+  high: ["highlighter"], home: ["homework"], jack: ["jacket"], lice: ["license"], light: ["lighter", "lightweight"], line: ["liner"], mess: ["messenger"],
+  must: ["mustard"], pain: ["paint"], pant: ["pantry"], paper: ["paperback"], part: ["party"], pass: ["passport"], pill: ["pillow"],
+  port: ["portable", "portion"], post: ["postpartum"], press: ["pressure"], prop: ["propane"], route: ["router"], safe: ["safety"], salt: ["saltine"],
+  sand: ["sandal", "sandwich"], sensor: ["sensory"], sharp: ["sharpie"], sign: ["signal", "signing"], slide: ["slider"], soft: ["softener"],
+  spark: ["sparkling"], stand: ["standard"], star: ["start"], suit: ["suitcase"], table: ["tablet"], tire: ["tired"], toilet: ["toiletr"],
+  treat: ["treatment"], wall: ["wallet"], water: ["waterproof"], wind: ["window", "windshield"], wire: ["wireless"],
+}));
 // Words of four letters or more also match the start of a longer word ("tent" → "tents"); short ones
 // must match whole, so "car" doesn't find "carbon" and "bar" doesn't find "barrel".
-const hasWord = (text: string, w: string) => ` ${text} `.includes(w.length >= 4 ? ` ${w}` : ` ${w} `);
+const hasWord = (text: string, w: string) => {
+  const others = w.length >= 4 ? LOOKALIKES.get(stem(w)) : undefined;
+  if (others) return text.split(" ").some((t) => t.startsWith(w) && !others.some((o) => t.startsWith(o)));
+  return ` ${text} `.includes(w.length >= 4 ? ` ${w}` : ` ${w} `);
+};
 
 /** Items a word finds by accident, unless another word in the search asks for them. */
 const AVOID: Record<string, { ids: string[]; unless: string }> = {
@@ -146,12 +173,13 @@ export function searchItems(query: string, limit = 40): CatalogItem[] {
     ...(kit?.upgrades ?? []).map((id) => [id, 1.5] as const),
     ...(kit?.essentials ?? []).map((id) => [id, 3] as const),
   ]);
-  const scored: { item: CatalogItem; score: number; all: boolean; kitBoost: number }[] = [];
+  const scored: { item: CatalogItem; score: number; all: boolean; kitBoost: number; named: boolean }[] = [];
   for (const item of catalog) {
     if (item.kind === "task" || avoid.has(item.id)) continue;
     const h = haystack(item);
     let score = 0;
     let matched = 0;
+    let named = false;
     for (const g of groups) {
       // g[0] and g[1] are the typed word and its stem; the rest are synonyms, worth a little less.
       const own = g.slice(0, 2);
@@ -159,7 +187,7 @@ export function searchItems(query: string, limit = 40): CatalogItem[] {
       const s = own.some((w) => hasWord(h.name, w)) ? 3 : syn.some((w) => hasWord(h.name, w)) ? 2
         : own.some((w) => ` ${h.brand} `.includes(` ${w} `)) ? 2
         : own.some((w) => hasWord(h.rest, w)) ? 1 : syn.some((w) => hasWord(h.rest, w)) ? 0.5 : 0;
-      if (s) { score += s; matched++; }
+      if (s) { score += s; matched++; named ||= !DESCRIBING.has(g[0]); }
     }
     const kitBoost = boost.get(item.id) ?? 0;
     if (!matched && !kitBoost) continue;
@@ -170,12 +198,14 @@ export function searchItems(query: string, limit = 40): CatalogItem[] {
     if (groups.some((g) => g.slice(0, 2).some((w) => h.heads.includes(stem(w))))) score += 1;
     score += item.pri === "essential" ? 1.5 : item.pri === "useful" ? 0.5 : 0;
     if (hasPick(item.id)) score += 0.75;
-    scored.push({ item, score, all, kitBoost });
+    scored.push({ item, score, all, kitBoost, named });
   }
   // A broad readiness search: the kit's must-haves, then its other items, each in preparedness order.
   // When enough items match every word, the partial matches are noise ("grab bar" → not "granola bars").
+  // So are items that only match a describing word, once something matches the thing it describes.
   const full = scored.filter((s) => s.all);
-  const pool = groups.length > 1 && full.length >= 3 ? full : scored;
+  const things = scored.filter((s) => s.named || s.kitBoost);
+  const pool = groups.length < 2 ? scored : full.length >= 3 ? full : things.length ? things : scored;
   // Each necessity once first (spread), so a short list covers water, food, light, power, first aid and a radio.
   if (broad) {
     const must = spread(scored.filter((s) => s.kitBoost >= 3).map((s) => s.item));

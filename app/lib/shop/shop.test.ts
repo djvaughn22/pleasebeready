@@ -190,6 +190,58 @@ describe("search", () => {
     expect(searchKits("diapers")[0]?.slug).toBe("new-baby");
   });
 
+  it("doesn't take a word for a longer one that starts the same", () => {
+    const ids = (q: string) => searchItems(q, 30).map((i) => i.id);
+    expect(ids("beans").slice(0, 2)).toEqual(["canned-beans", "dry-beans-and-lentils"]);
+    expect(ids("beans")).not.toContain("winter-hats");
+    expect(ids("bean")).not.toContain("winter-hats");
+    expect(ids("beanie")).toEqual(["winter-hats"]);
+    expect(ids("beanies")).toEqual(["winter-hats"]);
+    expect(ids("lights")).not.toContain("lighter-or-matches");
+    expect(ids("lighter")[0]).toBe("lighter-or-matches");
+    expect(ids("pills")).not.toContain("pillows");
+    expect(ids("pillows")).toContain("pillows");
+    expect(ids("salt")).not.toContain("saltine-crackers");
+    expect(ids("water")).not.toContain("waterproof-mattress-protector");
+    expect(ids("waterproof")).toContain("waterproof-mattress-protector");
+    // A plural can be the start of the other word too ("chains", "chainsaw").
+    expect(ids("tire chains")).not.toContain("chainsaw-safety-gear");
+    expect(ids("chainsaw")).toContain("chainsaw-safety-gear");
+    // Part of a word still finds it while typing, and plurals and joined words still match.
+    expect(ids("pillo")).toContain("pillows");
+    expect(ids("flash")).toContain("flashlights");
+    expect(ids("batter")).toContain("batteries");
+    expect(ids("tooth")).toContain("toothpaste");
+    expect(ids("tent")).toContain("tent");
+    expect(ids("sand")).toContain("sandbags");
+    // A word that is also a name every object inherits is still just a word.
+    expect(ids("constructors")).toEqual([]);
+  });
+
+  it("doesn't let a describing word alone make a match", () => {
+    const ids = (q: string) => searchItems(q, 30).map((i) => i.id);
+    const dryBeans = ids("dry beans");
+    expect(dryBeans.slice(0, 2)).toEqual(["dry-beans-and-lentils", "canned-beans"]);
+    for (const id of ["bath-towels", "dry-bag", "dry-shampoo", "dry-erase-board", "wet-dry-shop-vacuum"]) expect(dryBeans).not.toContain(id);
+    expect(ids("dried beans")[0]).toBe("dry-beans-and-lentils");
+    expect(ids("black beans")[0]).toBe("canned-beans");
+    expect(ids("black beans")).not.toContain("duct-tape");
+    expect(ids("green beans")[0]).toBe("canned-vegetables");
+    expect(ids("portable toilet").slice(0, 2)).toEqual(expect.arrayContaining(["portable-toilet-bags", "portable-toilet-bucket"]));
+    expect(ids("portable toilet")).not.toContain("portable-grill");
+    expect(ids("spare tire")).not.toContain("spare-keys");
+    // When the describing word is what's left, it still searches.
+    expect(ids("dry bag")[0]).toBe("dry-bag");
+    expect(ids("dry")).toContain("dry-bag");
+    expect(ids("keep dry")).toContain("dry-bag");
+    expect(ids("dry zzqx")).toContain("dry-bag");
+    expect(ids("dry goods")[0]).toBe("dry-beans-and-lentils");
+    // "Off grid" is a power-outage search, not griddles or a shut-off wrench.
+    expect(searchKits("off grid")[0]?.slug).toBe("power-outage");
+    expect(ids("off grid")).not.toEqual(expect.arrayContaining(["electric-griddle"]));
+    expect(ids("off grid")).toEqual(expect.arrayContaining(["flashlights", "water"]));
+  });
+
   it("carries the numbers into the kit link", () => {
     const outage = searchKits("five days without electricity")[0];
     expect(kitHref(outage, parseIntent("five days without electricity for 6 people"))).toBe("/kits/power-outage?people=6&days=5");

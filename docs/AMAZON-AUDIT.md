@@ -79,7 +79,7 @@ Replacements for food in the mix got new label calories in `nutrition.ts`. Goya 
 
 ## Added: gallons, containers, multipacks, bulk
 
-Pure Life 6 × 1-gallon jugs and a single jug (water had no exact product). Reliance Aqua-Tainer 2-pack, Aqua-Pak 5-gallon, Fold-A-Carrier collapsible. Mahatma rice 5 lb and 20 lb, Barilla 8-pack, Quaker oats 2-pack, Hormel chili 12-pack, Swanson chicken 6-pack, Del Monte green beans 12-pack. New role **Bigger pack** (`bulk`), which a test keeps larger than the item's first pick. Iberia pinto beans 4 lb gave the dry beans item its first exact product.
+Pure Life 6 × 1-gallon jugs and a single jug (water had no exact product). Reliance Aqua-Tainer 2-pack, Aqua-Pak 5-gallon, Fold-A-Carrier collapsible. Mahatma rice 5 lb and 20 lb, Barilla 8-pack, Quaker oats 2-pack, Hormel chili 12-pack, Swanson chicken 6-pack, Del Monte green beans 12-pack. New role **Bigger pack** (`bulk`), which a test keeps larger than the item's first pick. Iberia dried pinto beans 4 lb gave the dry beans item its first exact product.
 
 Looked for and not added because the copies seen were unavailable: Mahatma 10 lb, Goya lentils 4 lb, Goya pinto 4 lb 6-pack, Chef Boyardee 12-pack, Swanson regular 6-pack, Amazon Grocery 96-pack water. Crystal Geyser and Alkaline88 gallon cases too (no offers or unavailable). Chef Boyardee Overstuffed 12-pack (B003XUJ3RK) looks fine, but the catalog has no canned pasta item.
 
