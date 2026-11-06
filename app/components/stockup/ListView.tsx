@@ -10,12 +10,13 @@ import { useMemo, useState } from "react";
 import { measure } from "../../lib/measure";
 import { durationLabel, isDone, lineQty, toBuy, unitWord } from "../../lib/stockup/calc";
 import { categories } from "../../lib/stockup/catalog";
-import { listText, statusText, type TextRow } from "../../lib/stockup/shop";
+import { listText, packsText, statusText, type TextRow } from "../../lib/stockup/shop";
 import { LIST_NOTE_MAX, NOTE_MAX, encodePlan } from "../../lib/stockup/storage";
 import type { Line, Plan } from "../../lib/stockup/types";
 import { primaryPick, roleText } from "../../lib/shop/picks";
 import { FOOD_WATER } from "../../lib/ready/bundle";
 import { readiness } from "../../lib/ready/engine";
+import { MoreChoices } from "./BackupLink";
 import { listRows, type Row } from "./resolve";
 import ShopButton from "./ShopButton";
 import type { PlansApi } from "./usePlans";
@@ -234,6 +235,7 @@ function BuyRow({ r, setLine, remove }: { r: Row; setLine: SetLine; remove: (id:
       <div className="flex flex-wrap items-end justify-between gap-3">
         <Stepper compact sr={s.item.name} id={`qty-${id}`} text={`Amount (${s.item.unit.many})`} value={qty} min={0} max={99999} onChange={(n) => setLine(id, { qty: n })} />
         {!pick && s.item.pack && s.item.pack > 1 && need > 0 && <p className={`${muted} self-center`}>{Math.ceil(need / s.item.pack)} × {s.item.pack}-pack</p>}
+        {packsText(s.item, need) && <p className={`${muted} self-center`}>{packsText(s.item, need)}</p>}
       </div>
       <div className="flex flex-wrap items-center gap-2">
         <ShopButton item={s.item} big />
@@ -242,6 +244,7 @@ function BuyRow({ r, setLine, remove }: { r: Row; setLine: SetLine; remove: (id:
           Bought<span className="sr-only">: {s.item.name}</span>
         </label>
       </div>
+      <MoreChoices item={s.item} />
       <NoteField id={id} name={s.item.name} line={line} setLine={setLine} />
       {need === 0 && !line.got && <p className={muted}>Amount is 0, so there is nothing to buy.</p>}
       <span className="sr-only">{need} {unitWord(s.item, need)} to buy</span>

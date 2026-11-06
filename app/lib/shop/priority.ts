@@ -23,18 +23,18 @@ export const EMERGENCY_KINDS: OccasionId[] = ["emergency", "outage", "winter", "
 export const isEmergencyKind = (o: OccasionId) => EMERGENCY_KINDS.includes(o);
 
 /**
- * Home's Essentials, in order. `CORE` is the first row of the store: drinking water before
- * containers, everyday food before ration kits, then one of each other necessity. `MORE` follows in the same tier order. Every id needs
+ * Home's Essentials, in order. `CORE` is the first row of the store: drinking water (gallons, then
+ * bottles) before containers, everyday food before ration kits, then one of each other necessity. `MORE` follows in the same tier order. Every id needs
  * an exact product in picks.ts (tested).
  */
 export const CORE = [
-  "bottled-water", "water-storage-container", "canned-soups-and-stews", "peanut-butter", "manual-can-opener",
-  "flashlights", "batteries", "power-bank", "first-aid-kit", "weather-radio", "toilet-paper", "smoke-and-co-alarm",
+  "water", "bottled-water", "water-storage-container", "canned-soups-and-stews", "peanut-butter", "manual-can-opener",
+  "flashlights", "batteries", "power-bank", "first-aid-kit", "weather-radio", "toilet-paper",
 ];
 export const MORE = [
   "water-bricks", "water-purification-tablets", "canned-tuna-or-chicken", "canned-vegetables", "shelf-stable-milk",
   "3-day-emergency-food-supply", "freeze-dried-meals", "headlamps", "lantern", "hand-crank-weather-radio-with-charger", "masks",
-  "whistle", "trash-bags", "hand-sanitizer", "wet-wipes", "carbon-monoxide-alarm", "fire-extinguisher", "emergency-blankets", "rain-ponchos",
+  "whistle", "trash-bags", "hand-sanitizer", "wet-wipes", "smoke-and-co-alarm", "carbon-monoxide-alarm", "fire-extinguisher", "emergency-blankets", "rain-ponchos",
   "tarp", "multi-tool", "duct-tape", "document-bag",
 ];
 export const ESSENTIALS = [...CORE, ...MORE];

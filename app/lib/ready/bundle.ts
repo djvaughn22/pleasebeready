@@ -54,6 +54,8 @@ export type Bundle = {
     need: number; have: number; gap: number; rows: Row[];
     /** The whole gap as one-gallon jugs, or as cases of bottles. */
     jugs: number; cases: number;
+    /** The same gap as gallon jugs: a choice beside the rows, not added to them. */
+    jugRow: Row;
     /** Gallons bought in bottles and gallons to store from the tap. */
     bottled: number; stored: number;
     /** Containers the household has, empty, to fill from the tap (not bought again). */
@@ -150,10 +152,13 @@ export function bundle(people: number, days: number, plans: Plan[] = [], way: Wa
 
   return {
     people, days, source, way,
-    water: { need: w.need, have: w.covered, gap: wGap, rows: water, jugs: Math.ceil(wGap - 1e-9), cases: Math.ceil(wGap / BOTTLE / 24 - 1e-9), bottled, stored, fill },
+    water: { need: w.need, have: w.covered, gap: wGap, rows: water, jugs: Math.ceil(wGap - 1e-9), cases: Math.ceil(wGap / BOTTLE / 24 - 1e-9), jugRow: row("water", "Or gallon jugs", Math.ceil(wGap - 1e-9)), bottled, stored, fill },
     food: { need: f.need, have: f.covered, gap: fGap, rows: food },
   };
 }
+
+/** Stages toward a long goal, one shopping trip each: 3 days, then a week, two weeks, a month, ending at the goal. */
+export const tripStages = (days: number) => [...[3, 7, 14, 30].filter((d) => d < days), days];
 
 export const rowsFor = (b: Bundle, only: Only) => [...(only === "food" ? [] : b.water.rows), ...(only === "water" ? [] : b.food.rows)];
 
@@ -203,6 +208,7 @@ export function shoppingText(b: Bundle, only: Only): string {
   };
   if (only !== "food") {
     add(`Water: ${Math.ceil(b.water.gap - 1e-9)} gallons`, b.water.rows);
+    if (b.water.rows.length) lines.push(`Or ${b.water.jugs} one-gallon ${b.water.jugs === 1 ? "jug" : "jugs"} from any store.`, "");
     if (b.water.fill) lines.push(`[ ] Fill ${b.water.fill} water containers you have from the tap`, "");
   }
   if (only !== "water") add(`Food: ${Math.ceil(b.food.gap - 1e-9)} person-days (2,000 calories each)`, b.food.rows);

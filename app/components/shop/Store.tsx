@@ -11,6 +11,7 @@ import { amazonUrl } from "../../lib/gear";
 import { lanesFor } from "../../lib/shop/lanes";
 import { picksFor, roleText, type Pick, type Role } from "../../lib/shop/picks";
 import { itemById } from "../../lib/stockup/catalog";
+import BackupLink from "../stockup/BackupLink";
 import ShopButton from "../stockup/ShopButton";
 import { ProductArt } from "./Art";
 import { useSaver } from "./Saver";
@@ -67,13 +68,14 @@ export function ProductTile({ pick, tag }: { pick: Pick; tag?: string }) {
               Shop on Amazon
             </a>
           ) : <ShopButton item={item} tile />}
+          <div className="mt-1 text-center"><BackupLink item={item} short /></div>
         </div>
       </div>
     </li>
   );
 }
 
-const ORDER: Role[] = ["value", "pick", "alt", "upgrade"];
+const ORDER: Role[] = ["value", "pick", "alt", "bulk", "upgrade"];
 
 /** Every exact product for one item, cheapest role first. */
 export function CompareCard({ id }: { id: string }) {
@@ -105,6 +107,7 @@ export function CompareCard({ id }: { id: string }) {
           </li>
         ))}
       </ul>
+      <p className="border-t border-[#26324c] px-4 py-1.5"><BackupLink item={item} /></p>
     </li>
   );
 }

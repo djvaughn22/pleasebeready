@@ -14,7 +14,9 @@ import { checkedOn, picksFor, roleText } from "../../lib/shop/picks";
 import { foodMix, waterOptions } from "../../lib/ready/supplies";
 import { itemById } from "../../lib/stockup/catalog";
 import { unitWord } from "../../lib/stockup/calc";
+import { packsText } from "../../lib/stockup/shop";
 import type { CatalogItem, Per, Suggestion } from "../../lib/stockup/types";
+import BackupLink from "../stockup/BackupLink";
 import ShopButton from "../stockup/ShopButton";
 import { btnSmall, muted } from "../stockup/ui";
 import { ProductArt } from "./Art";
@@ -81,8 +83,9 @@ function ItemCard({ item, s, compact, minor }: { item: CatalogItem; s?: Suggesti
           {s && (
             <p className="mt-1.5 text-sm font-bold tabular-nums text-[#e8edf5]">
               {varies ? "Amount varies" : <>Get about {s.qty.toLocaleString("en-US")} {unitWord(item, s.qty)}</>}
-              {/* The catalog's pack size is a typical one; an exact product states its own count in its name. */}
+              {/* The catalog's pack size is a typical one; an exact product's own count gives the real package math. */}
               {s.packs !== null && item.pack! > 1 && !varies && !main && <span className="text-[#94a3b8]"> ({s.packs} × {item.pack}-pack)</span>}
+              {!varies && packsText(item, s.qty) && <span className="text-[#94a3b8]"> ({packsText(item, s.qty)})</span>}
             </p>
           )}
           {s && !varies && !compact && <p className={muted}>{s.how}{item.source ? " · official amount" : ""}</p>}
@@ -102,6 +105,7 @@ function ItemCard({ item, s, compact, minor }: { item: CatalogItem; s?: Suggesti
           {saved ? "✓ Saved" : "☆ Save"}
         </button>
       </div>
+      <BackupLink item={item} short={compact} />
       {!compact && others.length > 0 && (
         <ul aria-label={`Other choices for ${item.name}`} className="flex flex-col gap-2 border-t border-[#26324c] pt-2.5 print:hidden">
           {others.map((o) => (
@@ -117,7 +121,7 @@ function ItemCard({ item, s, compact, minor }: { item: CatalogItem; s?: Suggesti
           ))}
         </ul>
       )}
-      {main && !compact && <p className="-mt-1 text-[0.7rem] font-semibold text-[#94a3b8]">Product link checked {dateText(checkedOn(main))}</p>}
+      {main && !compact && <p className="-mt-1 text-[0.7rem] font-semibold text-[#94a3b8]">Listing checked {dateText(checkedOn(main))}. Amazon shows today’s price and stock.</p>}
     </li>
   );
 }

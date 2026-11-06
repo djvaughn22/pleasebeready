@@ -101,6 +101,11 @@ export default function FoodWaterPicker({ people: p0, days: d0, only, live, head
           </div>
         </div>
       )}
+      {!live && days > 3 && (
+        <p className="mt-2 text-sm font-bold text-[#94a3b8]">
+          New to this? <Link href={`${bundleHref(people, 3)}&goal=${days}`} className="font-black underline pbr-accent">Start with 3 days</Link> and build up one trip at a time.
+        </p>
+      )}
     </section>
   );
 }

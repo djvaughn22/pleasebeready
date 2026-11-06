@@ -1,0 +1,63 @@
+// The way out when an exact product is sold out, gone, or not quite right: a
+// tagged Amazon search for the same kind of thing, labelled as a search. We
+// can't see live stock, so one of these sits beside every exact product. The
+// words here beat the catalog's own (`q`, else its name) where a plainer or
+// bulkier search finds the practical size. Same rules as all public copy.
+
+export const BACKUP_Q: Record<string, string> = {
+  water: "1 gallon drinking water jugs",
+  "bottled-water": "bottled water 16.9 oz 24 pack",
+  "water-storage-container": "7 gallon water storage container",
+  "water-bricks": "stackable water storage bricks",
+  "55-gallon-water-barrel": "55 gallon water storage barrel",
+  "5-gallon-water-jug": "5 gallon water storage container",
+  "collapsible-water-containers": "collapsible water container 5 gallon",
+  "water-purification-tablets": "water purification tablets",
+  "personal-water-filter": "personal water filter",
+  "gravity-water-filter": "gravity water filter",
+  "3-day-emergency-food-supply": "3 day emergency food ration",
+  "30-day-food-supply": "30 day emergency food supply",
+  "freeze-dried-meals": "freeze dried meals bucket",
+  "canned-soups-and-stews": "canned soup 12 pack",
+  "canned-tuna-or-chicken": "canned tuna 12 pack",
+  "canned-beans": "canned black beans 12 pack",
+  "canned-vegetables": "canned vegetables 12 pack",
+  "canned-fruit": "canned fruit in juice 12 pack",
+  "canned-chili": "canned chili 12 pack",
+  "peanut-butter": "peanut butter 40 oz",
+  "pretzels-and-crackers": "saltine crackers 16 oz",
+  "granola-or-protein-bars": "granola bars 48 count",
+  "shelf-stable-milk": "shelf stable milk boxes",
+  rice: "white rice 5 lb bag",
+  pasta: "spaghetti pasta 8 pack",
+  oatmeal: "old fashioned oats 42 oz",
+  "manual-can-opener": "manual can opener",
+  flashlights: "led flashlight 2 pack",
+  headlamps: "led headlamp 2 pack",
+  lantern: "battery led lantern",
+  batteries: "aa batteries 48 pack",
+  "aaa-batteries": "aaa batteries 36 pack",
+  "d-batteries": "d batteries 8 pack",
+  "power-bank": "10000mah power bank",
+  "portable-power-station": "portable power station 300wh",
+  generator: "portable inverter generator co sensor",
+  "weather-radio": "noaa hand crank weather radio",
+  "hand-crank-weather-radio-with-charger": "hand crank noaa radio",
+  "first-aid-kit": "first aid kit for home",
+  "toilet-paper": "toilet paper mega rolls",
+  "trash-bags": "30 gallon drawstring trash bags",
+  "smoke-and-co-alarm": "smoke and carbon monoxide alarm battery",
+  "carbon-monoxide-alarm": "plug in carbon monoxide alarm battery backup",
+  "fire-extinguisher": "home fire extinguisher",
+  "escape-ladder": "two story fire escape ladder",
+  masks: "niosh n95 masks 20 pack",
+  whistle: "pealess safety whistle",
+  "duct-tape": "heavy duty duct tape",
+  tarp: "heavy duty tarp 8 x 10",
+  tent: "4 person dome tent",
+  "sleeping-bags": "20 degree sleeping bag",
+  "crib-or-bassinet": "play yard with bassinet",
+};
+
+/** Search words for an item's backup link. Without the catalog handy, its id reads as words. */
+export const backupQuery = (itemId: string, catalogWords?: string) => BACKUP_Q[itemId] ?? catalogWords ?? itemId.replace(/-/g, " ");

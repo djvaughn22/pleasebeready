@@ -80,11 +80,11 @@ describe("Food & Water bundle", () => {
       "bottled-water": [213, 9, 216],
       "canned-soups-and-stews": [43, 4, 48],
       "canned-tuna-or-chicken": [25, 3, 36],
-      "canned-beans": [17, 2, 24],
+      "canned-beans": [13, 2, 16],
       "canned-vegetables": [23, 4, 24],
       "canned-fruit": [22, 2, 24],
       "shelf-stable-milk": [30, 3, 36],
-      "peanut-butter": [2, 2, 2],
+      "peanut-butter": [2, 1, 2],
       "pretzels-and-crackers": [3, 1, 3],
       "granola-or-protein-bars": [71, 2, 96],
       "manual-can-opener": [1, 1, 1],
@@ -156,7 +156,8 @@ describe("Food & Water bundle", () => {
     expect(t).toContain("[ ] Bottled water: 9 cases of 24 (216 bottles)");
     expect(t).toContain("Food: 28 person-days (2,000 calories each)");
     expect(t).toContain("[ ] Canned meals: 4 packs of 12 (48 cans)");
-    expect(t).toContain("[ ] Peanut butter: 2 jars");
+    expect(t).toContain("[ ] Peanut butter: 1 pack of 2 (2 jars)");
+    expect(t).toContain("Or 28 one-gallon jugs from any store.");
     expect(t).not.toMatch(/\$|price|free|best/i);
     const long = shoppingText(bundle(4, 30), "water");
     expect(long).toContain("[ ] Store tap water: 16 containers");

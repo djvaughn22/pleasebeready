@@ -1,0 +1,187 @@
+asin	item	role	title_match	stock_signal	notes	action
+B07V8LP11V	bottled-water	pick	yes	fresh	Happy Belly 24 x 16.91 oz; snapshot shows Amazon Fresh style "Not Added" with no buy box text	review
+B000T9SZOU	bottled-water	alt	yes	fresh	DASANI 24 x 16.9; snapshot shows Fresh style "Not Added", "Select delivery location", "See All Buying Options"	review
+B001QC31G6	water-storage-container	pick	yes	none	Reliance Aqua-Tainer 7 gal single, blue	keep
+B09HKDZ3CV	manual-can-opener	pick	yes	none	Mebotem heavy duty, color Aqua Sky	keep
+B0014EW4L4	canned-soups-and-stews	pick	yes	buy	Campbell's Chunky Creamy Chicken & Dumplings 18.8 oz, case of 12, Number of Items 12	keep
+B0014EOUU2	canned-soups-and-stews	alt	yes	buy	Chunky Savory Vegetable 18.8 oz, case of 12	keep
+B000R2Z2S6	peanut-butter	pick	yes	out	Jif 40 oz: snapshot says Currently unavailable	replace
+B000069EYA	first-aid-kit	pick	yes	buy	First Aid Only 298 piece, FAO-442	keep
+B0DBLB2TS5	flashlights	pick	yes	buy	GearLight S1000 2-pack rechargeable, USB-C, IPX4	keep
+B00MNV8E0C	batteries	pick	yes	buy	Amazon Basics 48-pack AA	keep
+B07QJ5NCBP	canned-tuna-or-chicken	pick	yes	none	StarKist chunk light in water 5 oz, pack of 12; other pack sizes on page	keep
+B08WJW4DBS	canned-vegetables	pick	yes	none	Del Monte Fresh Cut green beans + corn, 6-pack	keep
+B07TD93FXL	shelf-stable-milk	pick	yes	buy	Horizon whole milk boxes 12 x 8 fl oz; listing shelf life 75 days	keep
+B003WT31QQ	canned-tuna-or-chicken	alt	yes	buy	StarKist chunk light in water 5 oz, 48 count	keep
+B00VJQLR2O	water-bricks	pick	no	none	Listing now sells a 12-pack, tan (1833-0003-12); store said one 3.5-gal container	replace
+B015QIC1PW	weather-radio	pick	yes	out	Midland ER310: snapshot says currently unavailable	replace
+B0FX3GFYJP	weather-radio	upgrade	yes	none	Midland ER310PRO, 10,000 mAh battery, Bluetooth	keep
+B0D5CLSMFB	power-bank	pick	yes	none	Anker PowerCore Slim 10000, model A1229	keep
+B09YKYG6W8	toilet-paper	pick	yes	no-offers	Charmin Ultra Strong 18 Family Mega: snapshot "No featured offers available"	replace
+B01BZ0N69U	trash-bags	pick	yes	buy	Hefty Strong 30 gal 74 count	keep
+B0CLVRPNZX	smoke-and-co-alarm	pick	yes	buy	First Alert battery combo; listing shows both SMCO100 and SMICO100 as model	keep, drop model in name
+B000MXJ498	smoke-and-co-alarm	alt	not-found	none	No listing for this ASIN in search; SCO5CN appears only under other ASINs	replace
+B0BF4CFT62	granola-or-protein-bars	pick	yes	buy	Nature Valley Crunchy variety 48 bars, 24 pouches	keep
+B002UM3M6K	pretzels-and-crackers	pick	yes	none	Premium Original Saltines 16 oz, pack of 3	keep
+B01N1O1TF8	canned-beans	pick	yes	out	Bush's black 12 x 15 oz: one snapshot says currently unavailable, another shows an offer	replace
+B0025UCJ8O	canned-fruit	pick	yes	out	Del Monte fruit cocktail 12 x 15 oz: snapshot says currently unavailable	replace
+B07YSZ68GV	55-gallon-water-barrel	pick	yes	out	Augason Farms 55-gal barrel: snapshot says currently unavailable	replace
+B07DTYVDJ6	peanut-butter	candidate	yes	buy	SKIPPY Creamy 40 oz, 2 pack; add-to-cart in snapshot	use as new pick
+B015QICDD2	weather-radio	candidate	yes	none	Midland ER210, not discontinued per listing, no unavailable text; not SAME programmed	use as new pick
+B0053GVRWQ	water-bricks	candidate	yes	none	WaterBrick 1833-0001 single, blue, 3.5 gal, listing says BPA free and food grade	use as new pick
+B0BCL2LLP5	toilet-paper	candidate	yes	fresh	Charmin Ultra Strong 18 Mega Rolls, 242 sheets; Not Added cart label, recent purchases	use as new pick
+B006OW4FVI	55-gallon-water-barrel	candidate	yes	none	Augason Farms kit: 55-gal BPA-free drum, 6 ft siphon with pump, treatment drops, drum opener	use as new pick
+B0025UCL64	canned-fruit	candidate	yes	fresh	Del Monte sliced peaches in 100% juice 15 oz, pack of 12; Not Added label, not discontinued	use as new pick
+B0B6FB8G8V	water	candidate	yes	no-offers	Crystal Geyser 1 gal 6/carton: no featured offers, other sellers only	do not use as pick
+B00FGG45BI	water	candidate	yes	out	Alkaline88 1 gal 4 pack: snapshot says currently unavailable	do not use
+B07VC5RZHM	water	candidate	yes	out	Amazon Grocery purified 1 gal: currently unavailable (known since Oct 31)	do not use
+B07V8LPP36	bottled-water	candidate	yes	out	Happy Belly 24 alternate listing: currently unavailable	do not use
+B0HKPVWJCB	water-storage-container	candidate	yes	none	Reliance Aqua-Tainer 7 gal 2-pack, BPA-free in title; no food-grade wording on this page	bigger pack option
+B00WDWP8CI	bottled-water	candidate	yes	out	Deer Park 24 x 16.9: snapshot says currently unavailable	do not use
+B0C1KNMDFS	water	candidate	yes	out	Pure Life distilled 1 gal 6-pack: Currently Unavailable	do not use
+B008BRLK08	canned-beans	candidate	yes	no-offers	Goya black beans 24 x 15.5 oz: Currently Unavailable label, no featured offers	do not use
+B0BYPFWB3D	canned-beans	candidate	yes	buy	Goya organic low sodium black beans 8 x 15.5 oz; snapshot shows a Subscribe & Save offer; label 130 cal per 1/2 cup, 3.5 servings, 8 g protein	option
+B01M0RRW2L	water	candidate	yes	fresh	Pure Life purified 1 gal, 6 pack, BlueTriton; Not Added cart label, no unavailable text	use as new pick
+B0851WXNBQ	water	candidate	yes	none	Pure Life purified 1 gal single jug; no unavailable text	use as alt
+B07CQ8JVC7	first-aid-kit	upgrade	yes	buy	Surviveware Comprehensive, 238 piece	keep
+B072WHQFJ7	flashlights	value	yes	buy	GearLight S1000 2-pack, 3 AAA each, batteries not included	keep
+B092RHC2FY	headlamps	pick	yes	out	Energizer Headlamp PRO 2-pack: snapshot says currently unavailable	replace
+B0GG9WK5RB	carbon-monoxide-alarm	pick	yes	buy	First Alert plug-in with battery backup, pack of 3; listing shows model CO606 and part CO605	keep
+B004QIY6MK	whistle	pick	not-found	none	No listing for this ASIN in search	replace
+B00MH97XVG	wet-wipes	pick	yes	buy	Wet Ones Fresh Scent 40 ct, 6 pack	keep
+B00U2KYU7C	hand-sanitizer	pick	yes	buy	Purell Advanced 8 oz pump, pack of 4	keep
+B07SPZ93V5	document-bag	pick	yes	buy	Flypal fireproof bag with lock, X Large, 16 x 12.5 x 6.5 in	keep
+B0DDQV6TYX	headlamps	candidate	yes	out	Energizer PRO 2-pack alt listing: currently unavailable	do not use
+B0DDQL8T6Z	headlamps	candidate	yes	buy	Energizer LED Headlamp PRO 2-pack, 6 AAA included, IPX4 in features; listed for sale	use as new pick
+B004FG7G52	whistle	candidate	yes	none	Fox 40 Classic Safety with Breakaway Lanyard, yellow; not discontinued	use as new pick
+B0H1R5446C	headlamps	upgrade	yes	buy	Black Diamond Spot 400 AAA, Octane color; sold by Black Diamond	keep
+B01C5QSENQ	lantern	pick	yes	buy	Etekcity 4 lanterns with 12 AA batteries	keep
+B01MFCFKG5	hand-crank-weather-radio-with-charger	pick	yes	buy	RunningSnail MD-088s, NOAA, 2000 mAh; a newer version exists	keep
+B008MCUZZS	masks	pick	yes	buy	3M 8210 N95, pack of 20, NIOSH approved; sold by Amazon.com	keep
+B0096M017A	tarp	pick	yes	none	Kotap TRS-0810 8 x 10 ft nominal, finished 7 ft 4 x 9 ft 6, grommets every 18 in	keep, note finished size
+B01LTICQYE	fire-extinguisher	pick	yes	none	First Alert HOME1, UL 1-A:10-B:C, recharge by a certified pro	keep
+B0CTJHBHHY	rain-ponchos	pick	yes	none	Frogg Toggs Ultra-Lite2; other Ultra-Lite2 listings show unavailable, this one does not	keep
+B00N150YS4	duct-tape	pick	partial	none	Listing is 1.88 in x 10 yd (not 12 yd) and shows both Pack of 2 and 6-Pack	replace
+B007W5D13O	water-purification-tablets	pick	yes	none	Aquatabs 49 mg, 30 pack	keep
+B001CSAHW0	3-day-emergency-food-supply	pick	yes	none	Datrex 3600 single pack, DX3600F	keep
+B00002ND64	fire-extinguisher	alt	yes	no-offers	Kidde FA110G: No featured offers available	remove
+B01LYNWRLA	emergency-blankets	pick	yes	buy	Swiss Safe 4-pack, silver	keep
+B0843HYLK9	freeze-dried-meals	pick	partial	buy	Mountain House Classic bucket 12 pouches, 24 servings; one capture of this ASIN showed a 3-day kit	review
+B07DD69QN3	multi-tool	pick	yes	buy	Gerber Suspension NXT 15-in-1	keep
+B0BXJKKV9G	freeze-dried-meals	candidate	yes	out	Mountain House Classic bucket other listing: currently unavailable	do not use
+B0BDGG9TM8	cooler	pick	yes	none	Coleman Classic 62 qt rolling, Twilight color	keep
+B00MW3HBA0	napkins	pick	yes	buy	Vanity Fair Everyday 200 count, 2-ply	keep
+B019XEY5GS	paper-towels	pick	yes	buy	Bounty Select-A-Size 6 double rolls	keep
+B01MF5ZP1G	paper-plates	pick	yes	none	Dixie Ultra 10-1/16 in, 176 count, 8 packs of 22	keep
+B0C3VJQWRK	cups	pick	yes	buy	SOLO red 18 oz, 200 count, 4 bags of 50	keep
+B004NG8DJ2	plastic-utensils	pick	partial	buy	Dixie CH108 title says 108 pieces; spec table says 168, model CM168	keep, flag
+B000CSS8UE	duct-tape	candidate	yes	none	Gorilla black 1.88 in x 35 yd single roll, model 6035180	use as new pick
+B01MU6L99T	leash-and-id-tag	pick	yes	buy	GoTags engraved steel ID tag, split ring included; no leash	keep
+B079LDQVYW	jumper-cables	pick	yes	none	Energizer ENB-420U 20 ft 4 gauge with bag	keep
+B0BXMW1TJ9	sleeping-bags	pick	yes	out	Coleman Brazos 20/30F: snapshot says currently unavailable	replace
+B008CL24SA	lighter-or-matches	pick	yes	none	UCO Stormproof match kit, 25 matches, 3 strikers, dark green	keep
+B0033ZL5YY	sunscreen	pick	yes	buy	Banana Boat Sport SPF 50 lotion 8 oz	keep
+B0BPGSRYFH	car-phone-charger	pick	yes	none	Anker 323 52.5W, USB-C + USB-A	keep
+B000HACYNY	car-snow-brush-and-scraper	pick	yes	buy	SubZero 16511 23 in snowbrush and scraper	keep
+B0DHJL8CMJ	sleeping-bags	candidate	yes	out	Coleman Brazos other listing: currently unavailable	do not use
+B07QK8KN8S	tent	pick	yes	out	Coleman Sundome 4 Blue/Gray: Currently Unavailable, no featured offers	replace
+B00GEDYOBS	tent	candidate	yes	out	Coleman Sundome 4 Navy/Grey: currently unavailable	do not use
+B0727NSTFM	poop-bags	pick	yes	buy	Earth Rated unscented 315 bags, 21 rolls	keep
+B01H3W4AM6	kitchen-trash-bags-13-gallon	pick	yes	buy	Hefty Strong 13 gal 90 count	keep
+B01DOP5S9K	pet-food-and-water-bowls	pick	yes	buy	Amazon Basics steel non-skid 38 oz, 2-pack	keep
+B000J07BRQ	packing-tape	pick	yes	buy	Scotch Heavy Duty 1.88 in x 800 in, 6 rolls, 142-6	keep
+B007PBK728	moving-boxes	pick	yes	buy	Uboxes 2 room economy kit, 10 small + 20 medium boxes, tape	keep
+B008KJEYLO	baby-wipes	pick	yes	none	WaterWipes 720 count, 12 packs	keep
+B07XDD7DFG	sleeping-bags	candidate	yes	out	Coleman Brazos 20F: currently unavailable	do not use
+B0FBWGMGZR	tent	candidate	yes	out	Coleman Sundome 4 with rainfly: unavailable, no featured offers	do not use
+B09MWHG3ZT	crib-or-bassinet	pick	yes	mixed	Graco Pack n Play On The Go Kaden: add to cart on a search page, no featured offers on another; other colors unavailable	keep, flag
+B0002AHVZU	baby-thermometer	pick	yes	none	Vicks V934 baby rectal thermometer	keep
+B0154ASCCI	twin-xl-sheets	pick	yes	buy	Amazon Basics microfiber 3-piece twin XL, Bright White	keep
+B07D7JC76Y	car-blanket	pick	yes	buy	Arcturus military wool 64 x 88, 4.5 lb	keep
+B07Q3FVY3P	first-aid-kit-for-the-car	pick	yes	buy	Protect Life FAK100-SFT 100 piece	keep
+B0D2PN4785	basic-tool-kit	pick	yes	buy	CRAFTSMAN 57 piece CMMT99447	keep
+0528029517	paper-road-map	pick	yes	none	Rand McNally 2027 Midsize, spiral bound	keep
+B000S5VEA2	all-purpose-cleaner	pick	yes	buy	Mrs. Meyer's multi-surface 16 oz lemon verbena	keep
+B08CXX6QGK	extra-blankets	pick	yes	none	Bedsure GentleSoft fleece throw 50x60, light grey	keep
+B0134DAXJ2	water-pouches-for-the-car	pick	yes	buy	Datrex 4.227 oz, 18 pouches	keep
+B0DY2F3W8F	electrolyte-drink-mix	pick	partial	none	Liquid I.V. title says Lemon Lime 50 pack, flavor field says Rainbow Sherbet	keep, flag
+B0B8SHPS5B	power-strip	pick	yes	out	Anker 332 strip A9169: snapshot says currently unavailable	replace
+B07XGDP7D7	tent	candidate	yes	buy	Coleman Skydome 4-person, 3-season, pre-attached poles, rainfly; add to cart in snapshot	use as new pick
+B0CHN4N4KK	sleeping-bags	candidate	yes	none	Teton Celsius Regular 20F with stuff sack, Lagoon color	use as new pick
+B0CKR7B9T9	power-strip	candidate	yes	none	Anker strip, 300J, 5 ft, 6 AC + 2 USB-C + 2 USB-A, 20W	use as new pick
+B0DV8F226M	thermometer	pick	yes	none	Braun PRT2100US with 5 probe covers and a battery	keep
+B00B71EKSY	disinfecting-wipes	pick	yes	buy	Clorox 3 x 75 value pack; not discontinued	keep
+B01J8DLGU2	tire-pressure-gauge	pick	yes	buy	AstroAI 150 PSI digital	keep
+B072W2MKQL	roadside-warning-triangles	pick	yes	buy	Performance Tool W1498 3-pack with case, DOT approved per listing	keep
+B01G6C18EC	seatbelt-cutter-and-window-breaker	pick	yes	buy	resqme keychain tool, neon yellow	keep
+B01M18RYXI	camp-chairs	pick	yes	buy	Coleman chair with 4-can cooler, 325 lb rating	keep
+B094DWQN62	travel-pet-bowls	pick	yes	out	CrossMor collapsible bowls 2-pack: marked unavailable	replace
+B07R18W3W1	food-thermometer	pick	yes	buy	TP19 now sold as TempPro; may ship either brand	keep, rename
+B09GTV79HK	reusable-water-bottles	pick	yes	buy	Nalgene Sustain 32 oz wide mouth	keep
+B000KA2K1W	instant-cold-packs	pick	yes	none	Dynarex 4511, 4 x 5 in, 24 count, not discontinued	keep
+B00IKRVU90	pet-first-aid-kit	pick	yes	none	Kurgo 50 piece kit, Paprika	keep
+B00GRTD942	plunger	pick	yes	none	Korky Beehive Max 99-4A	keep
+B07B68HPJD	bath-towels	pick	yes	none	Amazon Basics 2-pack 54 x 30, Ice Blue	keep
+B0C1RH2K82	travel-pet-bowls	candidate	yes	none	PetBonus 2-pack silicone 600 ml, 2 carabiners, turquoise and tan	use as new pick
+B0CTD36YKK	facial-tissues	pick	yes	buy	Kleenex Ultra Soft 8 cubes, 80 per box, 3-ply	keep
+B0CYFJL7QR	basic-tool-kit	upgrade	yes	none	CRAFTSMAN 102 piece CMMT99449	keep
+B0CCXT4QZR	charging-cables	pick	yes	none	Anker 240W USB-C to USB-C, 2-pack, 6 ft, black	keep
+B00063KG7S	pet-bed	pick	yes	none	QuietTime 36 in bolster, white fleece, medium breeds	keep
+B0B92QPMQD	light-bulbs	pick	yes	none	Philips Ultra Definition A19 2700K 800 lm dimmable, 8-pack	keep
+B08DRTC4H8	ice-packs	pick	yes	none	Arctic Ice Alaskan Series large 2.5 lb, 2-pack	keep
+B0D14YNCF9	aluminum-foil	pick	yes	none	Reynolds Wrap heavy duty 50 sq ft, pack of 2	keep
+B0FH3K7GS3	30-day-food-supply	pick	yes	buy	Augason Farms 30 day kit: 194 servings, listing says about 1,290 calories a day for one adult	keep, state calories
+B00LP36RIK	canned-chili	candidate	yes	buy	Hormel Chili with Beans 12 x 15 oz; add to cart in snapshot	use as new pick
+B005VH2DG6	canned-chili	candidate	yes	out	Hormel Chili with Beans 12 x 15 oz other listing: currently unavailable	do not use
+B00MMTQAF6	rice	candidate	yes	out	Mahatma 10 lb: currently unavailable	do not use
+B00488INUO	canned-pasta-meals	candidate	yes	out	Chef Boyardee ravioli 12 x 15 oz: currently unavailable	do not use
+B01ALQKTKS	canned-beans	candidate	yes	buy	Goya black beans 8 x 15.5 oz; ranked in canned black beans, purchases noted, no unavailable text; label 130 cal, 8 g protein per 1/2 cup, 3.5 servings	use as new pick
+B00WBGKJPW	pasta	candidate	yes	buy	Barilla spaghetti 8 x 16 oz; a snapshot showed in stock, sold by Amazon.com	use as new pick
+B0002IW6JS	5-gallon-water-jug	candidate	yes	buy	Reliance Aqua-Pak 5 gal rigid, model 8910-13, purchase options, BPA free per listing	use as new pick
+B001QBZI90	collapsible-water-containers	candidate	yes	none	Reliance Fold-A-Carrier 5 gal, model 5000-13; listing says BPA-free, food-approved polyethylene	use as new pick
+B07BP86BKK	oatmeal	candidate	yes	none	Quaker Old Fashioned 42 oz, 2 canisters; no unavailable text	use as new pick
+B07CVZRZTC	oatmeal	candidate	yes	out	Quaker Old Fashioned 42 oz 2 canisters other listing: currently unavailable	do not use
+B0CX6L54KV	smoke-and-co-alarm	candidate	yes	buy	Kidde 30CUDR AA battery combo, 2 AA included, 85 dB; a link carried Amazon seller id	use as alt
+B01FIL5P14	dry-beans-and-lentils	candidate	yes	out	Goya pinto 4 lb 6-pack: Currently Unavailable	do not use
+B0005ZH4QI	peanut-butter	candidate	yes	buy	SKIPPY Creamy 40 oz single; not discontinued, offer in snapshot	use as alt
+B000JOQ57E	rice	candidate	yes	buy	Mahatma 5 lb bag; a recent snapshot showed in stock, sold by Amazon.com	use as new pick
+B0FBXY75PM	rice	candidate	yes	none	Mahatma 5 lb, pack of 4; no unavailable text	bigger pack
+B01MQRSTKC	canned-beans	candidate	yes	buy	Bush's reduced sodium black beans 12 x 15 oz	use as alt
+B078SZHZ82	canned-vegetables	candidate	yes	none	Del Monte Blue Lake cut green beans 14.5 oz, pack of 12	bigger pack
+B09P9K8K2J	fire-extinguisher	candidate	yes	none	First Alert Home1-2, 2-pack, UL 1-A:10-B:C	bigger pack
+B0D81L6MD5	canned-tuna-or-chicken	candidate	yes	none	Swanson 25% less sodium chunk chicken 12.5 oz, pack of 6; no unavailable text	use as alt
+B00WH5YXLI	canned-tuna-or-chicken	candidate	yes	out	Swanson chunk chicken 6-pack: Currently Unavailable	do not use
+B0DT6QC41N	bottled-water	candidate	partial	out	Amazon Grocery purified 96 pack: currently unavailable, bullets say a 24-pack	do not use
+B079PTH69L	dry-beans-and-lentils	candidate	yes	out	Goya dry lentils 4 lb: currently unavailable, no featured offers	do not use
+173674478X	first-aid-manual	pick	yes	buy	Red Cross First Aid/CPR/AED Rev. 2021; a Revision 2025 edition also exists	keep
+B000FJQQVI	72-hour-kit	pick	yes	buy	Ready America 70280, 2 people, 3 days	keep
+B006QF3TW4	personal-water-filter	pick	yes	out	LifeStraw Personal blue 1 pack: snapshot says currently unavailable	replace
+B071Y4F3JD	personal-water-filter	alt	yes	buy	Sawyer Mini black; model shown as SP105 and SP128	keep
+B00B1OSU4W	personal-water-filter	upgrade	yes	buy	Sawyer SP302 with Cnoc 1 L bottle; page also lists ASIN B0DTJJ88BR	keep
+B0BX5F7L2X	gravity-water-filter	pick	yes	out	LifeStraw Family gravity 12 L: snapshot says currently unavailable	replace
+B001AXLUX2	bathtub-water-storage-bladder	pick	yes	none	waterBOB up to 100 gal, food grade liner per listing, pump included	keep
+B00LH3DMUO	aaa-batteries	pick	yes	buy	Amazon Basics AAA 36 count; sold by Amazon.com in a snapshot	keep
+B0FDXYKJYF	personal-water-filter	candidate	yes	out	LifeStraw Personal other listing: currently unavailable	do not use
+B00XWAP2SU	gravity-water-filter	candidate	yes	out	LifeStraw Mission 12 L: currently unavailable	do not use
+B00164H4AI	d-batteries	pick	yes	buy	Duracell Coppertop D 8 count; sold by Amazon.com in a snapshot	keep
+B0C2362NC6	rechargeable-aa-batteries	pick	yes	none	Panasonic eneloop charger + 8 AA	keep
+B0002RID4G	coin-cell-batteries-cr2032	pick	yes	buy	Energizer CR2032 6 pack; sold by Amazon in a recent snapshot	keep
+B09SFS9J2K	large-power-bank-20-000-mah	pick	yes	none	Anker 20,000 mAh 22.5W, 2 USB-A, 1 USB-C	keep
+B0CFV93GZM	portable-power-station	value	yes	out	Jackery Explorer 300 Plus: Currently Unavailable, no featured offers	replace
+B0DNX1K23K	portable-power-station	candidate	yes	out	Jackery 300 Plus fast charge kit: currently unavailable	do not use
+B0D7PPG25F	portable-power-station	upgrade	yes	mixed	Jackery Explorer 1000 v2 1070Wh; a late October snapshot showed in stock, another page shows no status	keep
+B085HNCC3T	personal-water-filter	candidate	yes	none	LifeStraw Personal green 1-pack; 4,000 L per listing	use as alt
+B08ZYMXLMH	gravity-water-filter	candidate	yes	buy	Membrane Solutions 6 L gravity filter for 3 to 6 people per listing; add to cart in snapshot	use as new pick
+B099KNR6W7	generator	value	yes	no-offers	Westinghouse iGen2200c: No featured offers available	replace
+B099KPDJBD	generator	upgrade	not-found	none	No listing for this ASIN in search	replace
+B005P12C5A	fireproof-safe	pick	yes	buy	SentrySafe SFW123GDC 1.23 cu ft; add to cart in an older snapshot	keep
+B0007OAPT0	escape-ladder	pick	yes	no-offers	First Alert EL52-2: No featured offers available	replace
+B01C96AFWU	car-emergency-kit	pick	yes	none	First Secure kit: 10 ft 8 gauge cables, 12V pump, 48 piece first aid	keep
+B0D62GMQ3F	portable-power-station	candidate	yes	no-offers	Anker SOLIX C300: No featured offers available	do not use
+B0GWQ1J7LC	portable-power-station	candidate	yes	buy	Anker SOLIX C300 with protective bag, 288Wh, 300W; search page showed add to cart	use as new value pick
+B0F2MXDBFF	portable-power-station	candidate	yes	out	Anker SOLIX C300 DC with car cable: currently unavailable	do not use
+B0892SHSQC	generator	candidate	yes	none	DeWALT PMC172200 2200W inverter, CO-PROTECT; stock not shown	use as new value pick, stock unverified
+B099KTHXMK	generator	candidate	yes	none	Westinghouse 12500 peak watt dual fuel, CO sensor, WGen9500DFc; no unavailable text	use as new upgrade, stock unverified
+B078964VVX	generator	candidate	yes	out	Westinghouse 9500 peak watt dual fuel WGen7500DF: currently unavailable	do not use
+B09RLLWTG8	escape-ladder	candidate	yes	none	First Alert two-story ladder, 14 ft; title seen in search, stock not checked before search limit	use as new pick, stock unverified
+B01MYVHST9	canned-beans	alt	yes	none	Bush's organic black beans 12-pack: not searched by ASIN, dropped with its unavailable sibling	remove

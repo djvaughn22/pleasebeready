@@ -6,9 +6,7 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { amazonUrl } from "../../lib/gear";
 import { STATE_TEXT, amountText, readiness, type Entry, type PlanItem, type Readiness, type Step } from "../../lib/ready/engine";
-import { picksFor, roleText } from "../../lib/shop/picks";
 import { durationLabel, planSummary, unitWord } from "../../lib/stockup/calc";
 import { itemById } from "../../lib/stockup/catalog";
 import { sources } from "../../lib/stockup/sources";
@@ -17,6 +15,7 @@ import type { Line, Plan } from "../../lib/stockup/types";
 import { ProductArt } from "../shop/Art";
 import { FoodCard, WaterCard } from "./Supplies";
 import { useLists } from "../shop/ListsProvider";
+import { MoreChoices } from "../stockup/BackupLink";
 import ShopButton from "../stockup/ShopButton";
 import { Stepper, btn, btnSmall, card, inset, label, muted } from "../stockup/ui";
 
@@ -249,7 +248,6 @@ function EntryRow({ e, r, onAdd, onDone }: { e: Entry; r: Readiness; onAdd: (id:
   const i = r.items.find((x) => x.item.id === e.id)!;
   const item = i.item;
   const [part, setPart] = useState<number | null>(null);
-  const others = picksFor(item.id).filter((p) => p.role === "value" || p.role === "upgrade");
   return (
     <li className="flex flex-col gap-2 px-4 py-3 sm:flex-row sm:items-center">
       <div className="flex min-w-0 flex-1 items-center gap-3">
@@ -261,14 +259,7 @@ function EntryRow({ e, r, onAdd, onDone }: { e: Entry; r: Readiness; onAdd: (id:
             {" · "}{TIER_TEXT[e.tier]}{i.covered > 0 && !e.task ? ` · ${n(i.covered)} of ${n(i.need)} covered` : ""}
           </p>
           {item.note && <p className={`${muted} line-clamp-2`}>{item.note}</p>}
-          {others.length > 0 && (
-            <p className="mt-0.5 flex flex-wrap gap-x-3 text-xs font-black print:hidden">
-              {others.map((o) => (
-                <a key={o.asin} href={amazonUrl(o.asin)} target="_blank" rel="noopener noreferrer sponsored" data-measure="shop" data-measure-label={`${item.cat}-${o.role}-${item.id}`}
-                  aria-label={`${roleText[o.role]}: ${o.name} on Amazon (opens in a new tab)`} className="pbr-blue hover:underline">{roleText[o.role]} ↗</a>
-              ))}
-            </p>
-          )}
+          {!e.task && !NO_SHOP.has(item.id) && <MoreChoices item={item} />}
         </div>
       </div>
       <div className="grid grid-cols-3 gap-2 sm:flex sm:flex-wrap sm:items-center sm:justify-end print:hidden">

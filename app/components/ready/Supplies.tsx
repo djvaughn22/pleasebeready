@@ -12,6 +12,8 @@ import { durationLabel } from "../../lib/stockup/calc";
 import { itemById } from "../../lib/stockup/catalog";
 import { sources } from "../../lib/stockup/sources";
 import type { Line, Plan } from "../../lib/stockup/types";
+import { packsText } from "../../lib/stockup/shop";
+import BackupLink from "../stockup/BackupLink";
 import ShopButton from "../stockup/ShopButton";
 import { Stepper, btnSmall, card, muted } from "../stockup/ui";
 
@@ -57,6 +59,7 @@ function Way({ id, title, qty, tag, actions }: { id: string; title: string; qty:
             ))}
           </p>
         )}
+        <BackupLink item={item} />
       </div>
       <div className="grid grid-cols-2 gap-2 sm:flex sm:items-center print:hidden">{actions}</div>
     </li>
@@ -89,7 +92,7 @@ export function WaterCard({ plan, r, gap, setLine, add }: { plan: Plan; r: Readi
               actions={<><Shop id="bottled-water" />
                 <button type="button" className={btnSmall} onClick={() => add("bottled-water", "bought", opt.cases * case24)}>Bought {opt.cases}</button>
                 <button type="button" className={btnSmall} onClick={() => add("bottled-water", "have", opt.cases * case24)}>Already have</button></>} />
-            <Way id="water" title="Gallon jugs" qty={`${n(opt.jugs)} ${opt.jugs === 1 ? "jug" : "jugs"}`}
+            <Way id="water" title="Gallon jugs" qty={`${n(opt.jugs)} ${opt.jugs === 1 ? "jug" : "jugs"}`} tag={packsText(itemById("water")!, opt.jugs) ?? undefined}
               actions={<><Shop id="water" />
                 <button type="button" className={btnSmall} onClick={() => add("water", "bought", opt.jugs)}>Bought {opt.jugs}</button>
                 <button type="button" className={btnSmall} onClick={() => add("water", "have", opt.jugs)}>Already have</button></>} />
@@ -151,7 +154,7 @@ export function FoodCard({ plan, r, gap, setLine, add }: { plan: Plan; r: Readin
               const item = itemById(m.id)!;
               const unit = m.qty === 1 ? item.unit.one : item.unit.many;
               return (
-                <Way key={m.id} id={m.id} title={m.group} qty={`${n(m.qty)} ${unit}`} tag={m.prep}
+                <Way key={m.id} id={m.id} title={m.group} qty={`${n(m.qty)} ${unit}`} tag={[packsText(item, m.qty), m.prep].filter(Boolean).join(" · ")}
                   actions={<><Shop id={m.id} />
                     <button type="button" className={btnSmall} onClick={() => add(m.id, "bought", m.qty)}>Bought {m.qty}</button>
                     <button type="button" className={btnSmall} onClick={() => add(m.id, "have", m.qty)}>Already have</button></>} />

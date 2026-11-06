@@ -5,7 +5,9 @@
 import type { Metadata } from "next";
 import { buildDailyReadiness } from "../lib/dailyReadiness";
 import { chicagoDateKey } from "../lib/dailySocialCore";
-import { amazonUrl } from "../lib/gear";
+import { amazonSearchUrl, amazonUrl } from "../lib/gear";
+import { backupQuery } from "../lib/shop/backups";
+import { pickByAsin } from "../lib/shop/picks";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
@@ -61,6 +63,14 @@ export default function TodayPage() {
               >
                 <span>🛒 {task.gear.name}</span>
                 <span>→</span>
+              </a>
+              <a
+                href={amazonSearchUrl(backupQuery(pickByAsin(task.gear.asin)?.item ?? "", task.gear.name))}
+                target="_blank"
+                rel="noopener noreferrer sponsored"
+                className="mt-2 inline-block text-xs font-bold text-[#94a3b8] underline"
+              >
+                Sold out? Search Amazon ↗
               </a>
             </>
           ) : null}

@@ -8,6 +8,7 @@ import Link from "next/link";
 import { isDone, toBuy, unitWord } from "../../lib/stockup/calc";
 import { kitBySlug } from "../../lib/shop/kits";
 import { primaryPick } from "../../lib/shop/picks";
+import BackupLink from "../stockup/BackupLink";
 import ShopButton from "../stockup/ShopButton";
 import { listRows } from "../stockup/resolve";
 import { card, muted } from "../stockup/ui";
@@ -51,7 +52,7 @@ export default function ListsTeaser() {
                       <span className="block text-sm font-black text-[#e8edf5]">{s.item.name} <span className="font-bold text-[#94a3b8]">· {need.toLocaleString("en-US")} {unitWord(s.item, need)}</span></span>
                       {pick && <span className="block text-xs font-bold pbr-blue">{pick.name}</span>}
                     </span>
-                    <span className="flex w-full sm:w-auto"><ShopButton item={s.item} big /></span>
+                    <span className="flex w-full flex-col items-center gap-0.5 sm:w-auto"><span className="flex w-full"><ShopButton item={s.item} big /></span><BackupLink item={s.item} short /></span>
                   </li>
                 );
               })}

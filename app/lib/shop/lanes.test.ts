@@ -17,7 +17,7 @@ describe("department relevance", () => {
   it("puts emergency essentials first, in the shared preparedness order", () => {
     const e = laneById("emergency")!;
     const feat = laneFeatured(e, hasPick, 12).map((i) => i.cat);
-    expect(feat.slice(0, 4)).toEqual(["water", "water", "food", "food"]);
+    expect(feat.slice(0, 5)).toEqual(["water", "water", "water", "food", "food"]);
     expect(feat).toEqual(expect.arrayContaining(["power", "health"]));
     // Party plates, cups and games sit at the very end of the Emergency department.
     const sorted = laneSort(e, laneItems(e), hasPick);

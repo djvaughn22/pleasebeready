@@ -6,14 +6,14 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { amazonUrl } from "../../lib/gear";
-import { ALL_BOTTLED_UP_TO, BOTTLED_DAYS, bundle, defaultWay, foodFacts, rowsFor, savedList, shoppingText, type Only, type Row, type WaterWay } from "../../lib/ready/bundle";
+import { ALL_BOTTLED_UP_TO, BOTTLED_DAYS, bundle, defaultWay, foodFacts, rowsFor, savedList, shoppingText, tripStages, type Only, type Row, type WaterWay } from "../../lib/ready/bundle";
 import { CALORIES_PER_DAY, PROTEIN_PER_DAY } from "../../lib/ready/nutrition";
 import { roleText } from "../../lib/shop/picks";
 import { durationLabel } from "../../lib/stockup/calc";
 import { itemById } from "../../lib/stockup/catalog";
-import { shopLink } from "../../lib/stockup/shop";
 import { sources } from "../../lib/stockup/sources";
 import { useLists } from "../shop/ListsProvider";
+import BackupLink from "../stockup/BackupLink";
 import ShopButton from "../stockup/ShopButton";
 import { btnPrimary, card, muted } from "../stockup/ui";
 import FoodWaterPicker, { bundleHref } from "./FoodWaterPicker";
@@ -25,13 +25,14 @@ const plural = (k: number, one: string, many: string) => `${n(k)} ${k === 1 ? on
 function packText(r: Row) {
   const per = r.pick?.count ?? 1;
   if (per === 1) return `${n(r.packs)} ${r.unit}`;
-  return r.id === "bottled-water" ? `${plural(r.packs, "case", "cases")} of ${per}` : `${plural(r.packs, "pack", "packs")} of ${per}`;
+  return r.id === "bottled-water" || r.id === "water" ? `${plural(r.packs, "case", "cases")} of ${per}` : `${plural(r.packs, "pack", "packs")} of ${per}`;
 }
 
 function detail(r: Row) {
   const unit = itemById(r.id)!.unit;
   const got = `${n(r.packUnits)} ${r.packUnits === 1 ? unit.one : unit.many}`;
   if (r.id === "bottled-water") return `${got}, about ${n(Math.floor((r.packUnits * 16.9) / 128))} gallons`;
+  if (r.id === "water") return `${got} · heavy, so a store near you can be easier`;
   if (r.id === "water-storage-container") return `${r.prep} · holds ${n(r.packUnits * 7)} gallons · replace the water every 6 months`;
   if ((r.pick?.count ?? 1) === 1) return r.prep ?? "";
   return [r.packUnits > r.units ? `${got} (${n(r.units)} needed)` : got, r.prep].filter(Boolean).join(" · ");
@@ -52,6 +53,7 @@ function Line({ r }: { r: Row }) {
             ))}
           </p>
         )}
+        <BackupLink item={item} />
       </div>
       <div className="flex sm:w-48"><ShopButton item={item} big /></div>
     </li>
@@ -62,7 +64,7 @@ function Done({ text }: { text: string }) {
   return <p className="py-3 text-sm font-black"><span className="pbr-accent">✓</span> {text}</p>;
 }
 
-export default function FoodWaterBundle({ people, days, only, way: asked }: { people: number; days: number; only: Only; way: WaterWay | null }) {
+export default function FoodWaterBundle({ people, days, goal: wanted, only, way: asked }: { people: number; days: number; goal?: number; only: Only; way: WaterWay | null }) {
   const api = useLists();
   const plans = api.store.plans;
   const way = asked ?? defaultWay(days);
@@ -88,7 +90,10 @@ export default function FoodWaterBundle({ people, days, only, way: asked }: { pe
   const rows = rowsFor(b, only);
   const showWater = only !== "food";
   const showFood = only !== "water";
-  const jugs = shopLink(itemById("water")!);
+  // Shopping a smaller stage keeps the goal in the link, so the stages stay on screen.
+  const goal = Math.max(wanted ?? days, days);
+  const stages = tripStages(goal);
+  const href = (d: number, o: Only = only) => `${bundleHref(people, d, o)}${goal > d ? `&goal=${goal}` : ""}`;
   const had = [showWater && b.water.have >= 1 ? `${n(Math.floor(b.water.have))} gallons` : "", showFood && b.food.have >= 1 ? `${n(Math.floor(b.food.have))} person-days` : ""].filter(Boolean);
 
   const save = () => {
@@ -103,10 +108,28 @@ export default function FoodWaterBundle({ people, days, only, way: asked }: { pe
 
       <nav aria-label="What to shop" className="mt-3 flex flex-wrap gap-2 text-sm font-black">
         {([[null, "Food & Water"], ["water", "Water only"], ["food", "Food only"]] as const).map(([o, t]) => (
-          <Link key={t} href={bundleHref(people, days, o)} replace scroll={false} aria-current={only === o ? "page" : undefined}
+          <Link key={t} href={href(days, o)} replace scroll={false} aria-current={only === o ? "page" : undefined}
             className={`inline-flex min-h-10 items-center rounded-full border px-3 ${only === o ? "border-[#F97316] pbr-accent" : "border-[#26324c] text-[#e8edf5]"}`}>{t}</Link>
         ))}
       </nav>
+
+      {stages.length > 1 && (
+        <nav aria-label="Build up one trip at a time" className="mt-3">
+          <p className="text-xs font-black uppercase tracking-wider text-[#94a3b8]">One trip at a time</p>
+          <p className="mt-1.5 flex flex-wrap items-center gap-1.5 text-sm font-black">
+            {stages.map((d, i) => (
+              <span key={d} className="inline-flex items-center gap-1.5">
+                {i > 0 && <span aria-hidden className="text-[#94a3b8]">→</span>}
+                <Link href={href(d)} replace scroll={false} aria-current={d === days ? "page" : undefined}
+                  className={`inline-flex min-h-10 items-center rounded-full border px-3 ${d === days ? "border-[#F97316] pbr-accent" : "border-[#26324c] text-[#e8edf5] hover:border-[#F97316]"}`}>{durationLabel(d)}</Link>
+              </span>
+            ))}
+          </p>
+          <p className={`mt-1 ${muted}`}>
+            Too much at once? Shop a smaller stage first and save it. Tick what you buy on your <Link href="/lists" className="underline">list</Link>, and the next stage shows only what’s left.
+          </p>
+        </nav>
+      )}
 
       {had.length > 0 && b.source && (
         <p className={`mt-3 ${muted}`}>
@@ -138,7 +161,7 @@ export default function FoodWaterBundle({ people, days, only, way: asked }: { pe
           {days > ALL_BOTTLED_UP_TO && b.water.gap > 0 && (
             <nav aria-label="How to get the water" className="mt-2 flex flex-wrap gap-2 text-xs font-black">
               {([["stored", `${BOTTLED_DAYS} days bottled + store tap water`], ["bottled", "All bottled"]] as const).map(([w, t]) => (
-                <Link key={w} href={`${bundleHref(people, days, only)}&water=${w}`} replace scroll={false} aria-current={way === w ? "page" : undefined}
+                <Link key={w} href={`${href(days)}&water=${w}`} replace scroll={false} aria-current={way === w ? "page" : undefined}
                   className={`inline-flex min-h-10 items-center rounded-full border px-3 ${way === w ? "border-[#F97316] pbr-accent" : "border-[#26324c] text-[#e8edf5]"}`}>{t}</Link>
               ))}
             </nav>
@@ -152,13 +175,7 @@ export default function FoodWaterBundle({ people, days, only, way: asked }: { pe
           {b.water.rows.length ? (
             <ul className="divide-y divide-[var(--om-border)]">
               {b.water.rows.map((r) => <Line key={r.id} r={r} />)}
-              <li className="flex flex-col gap-2 py-3 sm:flex-row sm:items-center sm:gap-4">
-                <p className="min-w-0 flex-1 text-sm font-black">Or {plural(b.water.jugs, "one-gallon jug", "one-gallon jugs")} <span className={muted}>· any grocery store</span></p>
-                <a href={jugs.url} target="_blank" rel="noopener noreferrer sponsored" data-measure="shop" data-measure-label="water-s-water"
-                  className="pbr-edge pbr-accent inline-flex min-h-10 items-center justify-center rounded-lg border-2 bg-transparent px-3 text-xs font-black sm:w-48">
-                  Search Amazon ↗
-                </a>
-              </li>
+              <Line r={b.water.jugRow} />
             </ul>
           ) : b.water.fill ? null : <Done text={`Water covered for ${plural(people, "person", "people")}, ${durationLabel(days)}.`} />}
         </section>
@@ -186,7 +203,7 @@ export default function FoodWaterBundle({ people, days, only, way: asked }: { pe
       )}
 
       <p className={`mt-4 ${muted}`}>
-        Each button opens one product on Amazon. 1 gallon of water per person per day (<a href={sources["rg-water"].href} target="_blank" rel="noopener noreferrer" className="underline">Ready.gov</a>); more for hot weather, nursing or illness.
+        Each button opens one product on Amazon. We can’t see its stock, and grocery listings can depend on your delivery area: if one is out, use the search link under it, or take the list to any store. 1 gallon of water per person per day (<a href={sources["rg-water"].href} target="_blank" rel="noopener noreferrer" className="underline">Ready.gov</a>); more for hot weather, nursing or illness.
         {" "}A person-day is a day of food for one person, counted as 2,000 calories.
       </p>
       <p className="mt-3 text-sm font-black">

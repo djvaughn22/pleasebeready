@@ -17,6 +17,7 @@
 // amounts covered, not checkboxes.
 
 import { durationLabel, fitsClimate, fitsPeople, suggest, suggestionsFor, unitWord, withDays } from "../stockup/calc";
+import { primaryPick } from "../shop/picks";
 import { EMERGENCY_KINDS, isEmergencyKind, prepRank } from "../shop/priority";
 import { categoryById, itemById } from "../stockup/catalog";
 import { FOOD_MIX, SUPPLY_WAYS, foodParts, total, waterParts, type Part } from "./supplies";
@@ -380,9 +381,10 @@ const n = (x: number) => x.toLocaleString("en-US");
 export function amountText(item: CatalogItem, qty: number): string {
   if (item.kind === "task") return "To do";
   const base = `${n(qty)} ${unitWord(item, qty)}`;
-  if (!item.pack || qty <= item.pack) return base;
-  const packs = Math.ceil(qty / item.pack);
-  return `${n(packs)} packs of ${n(item.pack)} (${base})`;
+  const pack = primaryPick(item.id)?.count ?? item.pack;
+  if (!pack || qty <= pack) return base;
+  const packs = Math.ceil(qty / pack);
+  return `${n(packs)} packs of ${n(pack)} (${base})`;
 }
 
 /** The next small action, in words: "Get 12 gallons of drinking water (3-day base)". */

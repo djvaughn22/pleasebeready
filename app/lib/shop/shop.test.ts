@@ -117,11 +117,11 @@ describe("exact products", () => {
   it("sends the main Amazon button to the item's first pick, and everything else to a labelled search", () => {
     const radio = itemById("weather-radio")!;
     expect(primaryPick("weather-radio")?.role).toBe("pick");
-    expect(shopLink(radio)).toMatchObject({ kind: "product", url: `https://www.amazon.com/dp/B015QIC1PW?tag=${AMAZON_TAG}` });
-    const chili = itemById("canned-chili")!;
-    expect(hasPick("canned-chili")).toBe(false);
-    expect(shopLink(chili).kind).toBe("search");
-    expect(shopLink(chili).url).toContain(`tag=${AMAZON_TAG}`);
+    expect(shopLink(radio)).toMatchObject({ kind: "product", url: `https://www.amazon.com/dp/B015QICDD2?tag=${AMAZON_TAG}` });
+    const shelf = itemById("shelf-food")!;
+    expect(hasPick("shelf-food")).toBe(false);
+    expect(shopLink(shelf).kind).toBe("search");
+    expect(shopLink(shelf).url).toContain(`tag=${AMAZON_TAG}`);
     expect(AMAZON_TAG).toBe("pleasebeready-20");
   });
 });

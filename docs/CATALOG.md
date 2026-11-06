@@ -1,4 +1,4 @@
-# Catalog, kits, lanes and checked products (updated Oct 31, 2026)
+# Catalog, kits, lanes and checked products (updated Nov 5, 2026)
 
 How the shop's data fits together, how to add to it, and what is verified.
 
@@ -7,8 +7,8 @@ How the shop's data fits together, how to add to it, and what is verified.
 | Thing | Count | Where |
 |---|---|---|
 | Catalog entries | 1,052 (957 products, 95 things to do) | `app/lib/stockup/catalog.ts` + `data/*.ts` |
-| Exact Amazon products | 204 ASINs (205 entries) for 194 catalog items: 192 "Our pick", 3 "Budget pick", 7 "Upgrade", 3 "Also good". Button: **Shop on Amazon** | `app/lib/shop/picks.ts`, the only place ASINs live |
-| Products that open a tagged Amazon search | the other 763, button **Search Amazon** (outlined), with the search words shown | `amazonSearchUrl()` in `app/lib/gear.ts` |
+| Exact Amazon products | 231 ASINs (233 entries) for 212 catalog items: 210 "Our pick", 3 "Budget pick", 7 "Upgrade", 8 "Also good", 5 "Bigger pack". Button: **Shop on Amazon**, with a labelled search link beside it for when it's sold out | `app/lib/shop/picks.ts`, the only place ASINs live; `backups.ts` for the search words |
+| Products that open a tagged Amazon search | the other 745, button **Search Amazon** (outlined), with the search words shown | `amazonSearchUrl()` in `app/lib/gear.ts` |
 | Shopping lanes | 16 | `app/lib/shop/lanes.ts` |
 | Kits | 31 | `app/lib/shop/kits.ts` |
 | Guides | 7 | `app/lib/shop/guides.ts` |
@@ -20,7 +20,7 @@ Every link carries the `pleasebeready-20` tag. `npm test` checks the ids, the ta
 - **Catalog item:** a type of thing (e.g. "Weather radio") with a planning rule for amounts, situations, priority and search words. One record, no copies.
 - **Lane:** a rule over catalog fields (category, situation, who it's for, plus a few hand-picked ids). An item shows in every lane its fields match, so cross-listing never duplicates a record.
 - **Kit:** a hand-picked list of catalog ids (must-haves, upgrades, cheaper swaps, easy to forget, things to do) with a starting group size and length. Amounts come from the catalog rules.
-- **Pick:** one exact Amazon product for a catalog item, by ASIN: a role (`pick`, `value`, `upgrade`, `alt`), our name for it, one plain reason, what it suits, how it was checked (`via`), the words that matched (`seen`, never shown), the date (`checked`) and the day it joined the store (`added`, which drives Ready Finds "New"). Catalog items carry no ASIN; `shopLink()` uses an item's first pick, else a search. The checklist's gear lines (`readiness.ts`, `dailyReadiness.ts`) may only use ASINs that are in `picks.ts` (tested).
+- **Pick:** one exact Amazon product for a catalog item, by ASIN: a role (`pick`, `value`, `upgrade`, `alt`, `bulk`), our name for it, one plain reason, what it suits, how it was checked (`via`), the words that matched (`seen`, never shown), the date (`checked`) the day it joined the store (`added`, which drives Ready Finds "New"), and `count`, the units in one package when the name states it, which turns amounts into "4 cases of 24". Catalog items carry no ASIN; `shopLink()` uses an item's first pick, else a search. The checklist's gear lines (`readiness.ts`, `dailyReadiness.ts`) may only use ASINs that are in `picks.ts` (tested).
 - **Guide:** sections that restate an official page in our words, each ending at a kit.
 
 ## Adding exact products (the review and import workflow)
@@ -29,14 +29,14 @@ There is no authorized product feed yet (see below), so exact products are revie
 
 1. **Choose items.** Start with the searches people click most (`shop_click` labels with `-s-`), then kit must-haves that still open a search. A kit page's "At a glance" box shows 🛒 (exact) or 🔎 (search) for each must-have.
 2. **Find and check the product.** Either way counts as evidence:
-   - `via: "page"`: open the product on amazon.com logged in to Associates, use **SiteStripe → Get link → Text**, and compare the page title with brand, model and size.
+   - `via: "page"`: a person opens the product on amazon.com logged in to Associates, uses **SiteStripe → Get link → Text**, and compares the page title with brand, model and size. An AI agent can't: Amazon answers it with "Access restricted" and a Continue button. Don't click it and don't try another route.
    - `via: "search"`: a web search limited to amazon.com returns that ASIN's product page under the product's name.
-   Copy the matching words into `seen`. A page that loads is not evidence: old listings get reused for other products. Never script loads of many Amazon pages (Amazon's terms forbid scraping, and this machine's permission system blocks it).
+   Copy the matching words into `seen`. A page that loads is not evidence: old listings get reused for other products. Never script loads of Amazon pages (Amazon's terms forbid it, and this machine's permission system blocks it). A search can also show "Currently unavailable" or "No featured offers": a listing with either doesn't go in. That text is a snapshot, so the site never says a product is in stock.
 3. **Write the row** in a TSV (header: `item role asin name why use via seen checked`). `name` is ours (brand, model, size). `why` is one plain line under 90 characters with no "best", "#1", prices, "free", "sale", "deal" or "guarantee". If a maker's claim matters (a rating, "removes viruses"), say it is the maker's. `checked` is the day you checked (defaults to today).
 4. **Import:** `npm run picks -- add rows.tsv --dry` to preview, then without `--dry`. It refuses an item that already has that role or ASIN. Then `npm test`, which checks the catalog ids, ASIN format, wording rules, duplicates and the tag.
 5. Never copy prices, ratings, reviews or images from Amazon.
 
-**Re-checks:** `npm run picks -- due` lists entries checked more than 90 days ago, with their product links. Re-check each by ASIN, update `checked`, and replace or delete any whose listing is gone or now sells something else; a deleted entry falls back to a labelled search. Re-check a product before featuring it in a post.
+**Re-checks:** `npm run picks -- audit` shows what `docs/AMAZON-AUDIT.md`'s pass hasn't reached; `npm run picks -- review` prints plain links for a person; `npm run picks -- due` lists entries checked more than 90 days ago, with their product links. Re-check each by ASIN, update `checked`, and replace or delete any whose listing is gone or now sells something else; a deleted entry falls back to a labelled search. Re-check a product before featuring it in a post.
 
 **Oct 30, 2026 batch:** 88 new entries, plus the 22 earlier ASINs re-checked, by `via: "search"` (2 by `via: "page"`). Three listings found unavailable were replaced (Mountain House 3-day kit, Augason Farms 30-day bucket, a 55-gallon barrel), and a gravity filter whose listing didn't say it removes germs was replaced by the LifeStraw Family purifier. Iodine tablets were left out: Ready.gov warns against relying on camping water treatments that aren't chlorine-based. 
 
@@ -49,7 +49,7 @@ There is no authorized product feed yet (see below), so exact products are revie
 - Packing paper, mattress bags, dishes for one, safety glasses: the results showed no branded title to match, or the only match was a 20-pack sold for workplaces.
 - Water purification tablets: Ready.gov warns against relying on camping water treatments that aren't chlorine-based.
 
-At about 95 a session, 600 exact products is roughly four more batches.
+
 
 **Oct 31, 2026 re-check of the home page's products:** the 34 exact products the home page can show (Emergency essentials, the New and this week's Everyday finds, every Budget pick and Upgrade) were searched again by ASIN on amazon.com. 32 matched their names. Two were fixed:
 
@@ -57,6 +57,8 @@ At about 95 a session, 600 exact products is roughly four more batches.
 - `personal-water-filter` upgrade (B00B1OSU4W): the listing now sells the Sawyer Squeeze SP302 with a 1-liter bottle, not the SP129 pouch kit. Renamed to what the listing sells.
 
 The other 84 products featured at the top of departments were last checked Oct 30-31 by the same method and were not searched again this time.
+
+**Nov 5, 2026 audit:** 136 entries searched by ASIN, 23 store listings replaced or removed, 36 picks added (gallons, containers, multipacks, bulk food). Full table and what's left: `docs/AMAZON-AUDIT.md`. Every exact product now has a labelled search beside it (`BackupLink`), so a listing that dies between checks isn't a dead end.
 
 ## Department order
 

@@ -9,7 +9,9 @@ import { measure } from "../../lib/measure";
 import { hasPick } from "../../lib/shop/picks";
 import { everything, matches, unitWord } from "../../lib/stockup/calc";
 import { categories, occasionById, occasions } from "../../lib/stockup/catalog";
+import { packsText } from "../../lib/stockup/shop";
 import type { CategoryId, Need, OccasionId, Plan, Priority, Suggestion } from "../../lib/stockup/types";
+import BackupLink from "./BackupLink";
 import QuickBar from "./QuickBar";
 import ShopButton from "./ShopButton";
 import type { PlansApi } from "./usePlans";
@@ -233,6 +235,7 @@ const Card = memo(function Card({ s, on, onAdd, onRemove }: {
         <p className="mt-1 text-sm font-bold tabular-nums text-[#e8edf5]">
           {varies ? "Amount varies" : <>Get about {s.qty.toLocaleString("en-US")} {unitWord(s.item, s.qty)}</>}
           {s.packs !== null && s.item.pack! > 1 && !hasPick(s.item.id) && <span className="text-[#94a3b8]"> ({s.packs} × {s.item.pack}-pack)</span>}
+          {!varies && packsText(s.item, s.qty) && <span className="text-[#94a3b8]"> ({packsText(s.item, s.qty)})</span>}
         </p>
         <p className={muted}>{s.how}{s.item.source ? " · official amount" : ""}</p>
         {s.item.note && <p className={`mt-1 ${muted}`}>{s.item.note}</p>}
@@ -245,6 +248,7 @@ const Card = memo(function Card({ s, on, onAdd, onRemove }: {
           <button type="button" className={`${btnSmall} min-h-11`} onClick={() => onAdd(s.item.id)} aria-label={`Save ${s.item.name} to list`}>+ List</button>
         )}
       </div>
+      <BackupLink item={s.item} />
     </li>
   );
 });

@@ -61,7 +61,8 @@ export function GoodToKnow({ children }: { children?: ReactNode }) {
       <p className="text-xs font-black text-[#e8edf5]">Good to know</p>
       <p className={`mt-1 ${muted}`}>
         Shop links go to Amazon. As an Amazon Associate, PleaseBeReady earns from qualifying purchases, and Open Mirror LLC may
-        earn a commission at no extra cost to you. Buy wherever you like; the list works anywhere.
+        earn a commission at no extra cost to you. We can’t see Amazon’s stock or prices, so if something is sold out, use the search
+        link under it. Buy wherever you like; the list works anywhere.
         {children}
       </p>
     </aside>

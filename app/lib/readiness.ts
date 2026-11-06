@@ -26,7 +26,7 @@ export const areas: Area[] = [
     ],
     gear: [
       { name: "Reliance Aqua-Tainer 7-gallon water container", asin: "B001QC31G6" },
-      { name: "LifeStraw personal water filter", asin: "B006QF3TW4" },
+      { name: "Sawyer Mini water filter", asin: "B071Y4F3JD" },
     ],
   },
   {
@@ -60,7 +60,7 @@ export const areas: Area[] = [
       "Generators run outdoors only, 20+ ft from windows and doors (carbon monoxide kills).",
     ],
     gear: [
-      { name: "Energizer LED headlamps, 2-pack with batteries", asin: "B092RHC2FY" },
+      { name: "Energizer LED headlamps, 2-pack with batteries", asin: "B0DDQL8T6Z" },
       { name: "Anker 10,000mAh USB-C power bank", asin: "B0D5CLSMFB" },
     ],
   },
@@ -84,7 +84,7 @@ export const areas: Area[] = [
       "Two meeting spots: near home, and outside the neighborhood. Text over call in outages.",
     ],
     gear: [
-      { name: "Midland ER310 hand-crank NOAA weather radio", asin: "B015QIC1PW" },
+      { name: "Midland ER210 hand-crank NOAA weather radio", asin: "B015QICDD2" },
     ],
   },
   {
@@ -160,7 +160,7 @@ export const levels: Level[] = [
     text: "FEMA's current guidance for many disasters. Water, food, meds, and power for two weeks.",
     gear: [
       { name: "Augason Farms 30-day food supply, 1 person", asin: "B0FH3K7GS3" },
-      { name: "Augason Farms 55-gallon water storage barrel", asin: "B07YSZ68GV" },
+      { name: "Augason Farms 55-gallon water storage kit", asin: "B006OW4FVI" },
       { name: "Jackery Explorer 1000 v2 power station", asin: "B0D7PPG25F" },
     ],
   },
@@ -168,8 +168,8 @@ export const levels: Level[] = [
     tag: "Level 3", title: "1 Month+",
     text: "Extended resilience for longer disruptions — build here once Levels 1–2 are solid.",
     gear: [
-      { name: "Westinghouse 9500W dual-fuel generator (CO sensor)", asin: "B099KPDJBD" },
-      { name: "LifeStraw Family gravity water purifier, 12 L", asin: "B0BX5F7L2X" },
+      { name: "Westinghouse 12,500W dual-fuel generator (CO sensor)", asin: "B099KTHXMK" },
+      { name: "Membrane Solutions 6-liter gravity water filter", asin: "B08ZYMXLMH" },
       { name: "SentrySafe fireproof + waterproof safe", asin: "B005P12C5A" },
     ],
   },

@@ -20,10 +20,10 @@ export default async function FoodWaterPage({ searchParams }: { searchParams: Pr
           <Link href="/" className="hover:underline">Home</Link> › <Link href="/shop/emergency" className="hover:underline">Emergency</Link>
         </nav>
         <ListsProvider>
-          <FoodWaterBundle people={parsePeople(one("people"))} days={parseDays(one("days"))} only={parseOnly(one("only"))} way={parseWay(one("water"))} />
+          <FoodWaterBundle people={parsePeople(one("people"))} days={parseDays(one("days"))} goal={one("goal") ? parseDays(one("goal")) : undefined} only={parseOnly(one("only"))} way={parseWay(one("water"))} />
         </ListsProvider>
         <p className="mx-auto mt-10 max-w-xl text-center text-xs font-semibold leading-6 text-[#94a3b8]">
-          As an Amazon Associate, PleaseBeReady earns from qualifying purchases. “Search Amazon” opens search results, not one chosen product.
+          As an Amazon Associate, PleaseBeReady earns from qualifying purchases. “Search Amazon” and “Sold out? Search” open search results, not one chosen product.
         </p>
       </div>
     </main>

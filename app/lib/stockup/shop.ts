@@ -3,6 +3,7 @@
 // Amazon search, labelled as a search. Both carry the Associates tag from gear.ts.
 
 import { amazonSearchUrl, amazonUrl } from "../gear";
+import { backupQuery } from "../shop/backups";
 import { primaryPick, type Pick as Product } from "../shop/picks";
 import { toBuy, unitWord } from "./calc";
 import type { CatalogItem, Plan, Suggestion } from "./types";
@@ -14,6 +15,22 @@ export function shopLink(item: CatalogItem): ShopLink {
   if (pick) return { url: amazonUrl(pick.asin), kind: "product", label: pick.name, pick };
   const q = item.q ?? item.name;
   return { url: amazonSearchUrl(q), kind: "search", label: `Amazon search: “${q}”` };
+}
+
+/** The labelled search beside an exact product, for when it's sold out. Null when the main button is already a search. */
+export function backupLink(item: CatalogItem): { url: string; q: string } | null {
+  if (!primaryPick(item.id)) return null;
+  const q = backupQuery(item.id, item.q ?? item.name.toLowerCase());
+  return { url: amazonSearchUrl(q), q };
+}
+
+/** An amount in packages of our pick, when the pick says how many are in one: "4 cases of 24", "2 packs of 2". */
+export function packsText(item: CatalogItem, qty: number): string | null {
+  const per = primaryPick(item.id)?.count;
+  if (!per || per <= 1 || qty <= 0) return null;
+  const packs = Math.ceil(qty / per);
+  const one = item.cat === "water" ? "case" : "pack";
+  return `${packs.toLocaleString("en-US")} ${packs === 1 ? one : `${one}s`} of ${per}`;
 }
 
 /** Plain-text list for copying, texting or saving. */
@@ -34,7 +51,8 @@ export function listText(plan: Plan, rows: TextRow[]): string {
     }
     const need = Math.max(0, r.qty - r.have);
     const mark = r.got || r.ready || need === 0 ? "[x]" : "[ ]";
-    const packs = r.s.item.pack && need > 0 ? ` (${Math.ceil(need / r.s.item.pack)} × ${r.s.item.pack}-pack)` : "";
+    const exact = packsText(r.s.item, need);
+    const packs = exact ? ` (${exact})` : !primaryPick(r.s.item.id) && r.s.item.pack && need > 0 ? ` (${Math.ceil(need / r.s.item.pack)} × ${r.s.item.pack}-pack)` : "";
     const status = statusText(r);
     lines.push(`${mark} ${r.s.item.name}: ${need} ${unitWord(r.s.item, need)}${packs}${r.have ? ` · have ${r.have}` : ""}${status ? ` · ${status}` : ""}${note}`);
   }

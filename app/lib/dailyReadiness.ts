@@ -45,7 +45,7 @@ export const READINESS_TASKS: ReadinessTask[] = [
   // 💧 Water
   { emoji: "💧", area: "Water", title: "Count your water tonight", detail: "One gallon per person per day, three days minimum. Count what's actually on the shelf — most homes are surprised.", gear: { name: "Reliance Aqua-Tainer 7-gallon container", asin: "B001QC31G6" } },
   { emoji: "💧", area: "Water", title: "Fill one container", detail: "Don't plan it — do it. One filled 7-gallon container covers one person for a week of drinking water." },
-  { emoji: "💧", area: "Water", title: "Put a filter in your go-bag", detail: "A personal straw filter turns almost any water source into drinking water. It weighs two ounces.", gear: { name: "LifeStraw personal water filter", asin: "B006QF3TW4" } },
+  { emoji: "💧", area: "Water", title: "Put a filter in your go-bag", detail: "A small filter for clear water you aren't sure of. It fits in a pocket. It won't remove chemicals.", gear: { name: "Sawyer Mini water filter", asin: "B071Y4F3JD" } },
   { emoji: "💧", area: "Water", title: "Date your stored water", detail: "Write today's date on every container with a marker. Replace water you bottled yourself every 6 months." },
   // 🥫 Food
   { emoji: "🥫", area: "Food", title: "Count your shelf food", detail: "Two weeks of no-cook food is the goal. Count how many days of meals you have for each person." },
@@ -58,17 +58,17 @@ export const READINESS_TASKS: ReadinessTask[] = [
   { emoji: "🩹", area: "First Aid", title: "Restock the basics", detail: "Pain reliever, antihistamine, anti-diarrheal, electrolytes. Check what's expired and write the shopping list." },
   // 🔦 Power & Light
   { emoji: "🔦", area: "Power & Light", title: "Charge every power bank", detail: "A dead power bank is a paperweight. Charge them all tonight and put one where you'd grab it leaving.", gear: { name: "Anker 10,000mAh USB-C power bank", asin: "B0D5CLSMFB" } },
-  { emoji: "🔦", area: "Power & Light", title: "Stage a headlamp", detail: "Hands-free light beats a phone flashlight every time. One headlamp on the nightstand, one in the kit.", gear: { name: "Energizer LED headlamps, 2-pack", asin: "B092RHC2FY" } },
+  { emoji: "🔦", area: "Power & Light", title: "Stage a headlamp", detail: "Hands-free light beats a phone flashlight every time. One headlamp on the nightstand, one in the kit.", gear: { name: "Energizer LED headlamps, 2-pack", asin: "B0DDQL8T6Z" } },
   { emoji: "🔦", area: "Power & Light", title: "Test every flashlight", detail: "Click each one tonight. Count your spare batteries while you're at it — AAs disappear." },
   { emoji: "🔦", area: "Power & Light", title: "Make the outage plan", detail: "If the power died right now: what needs electricity first? Fridge, phones, medical gear. Know your order.", gear: { name: "Jackery Explorer 1000 v2 power station", asin: "B0D7PPG25F" } },
   // 🔥 Heat & Shelter
-  { emoji: "🔥", area: "Heat & Shelter", title: "Mylar in every car", detail: "Emergency blankets retain 90% of body heat and weigh nothing. One per glovebox, one per go-bag.", gear: { name: "Swiss Safe mylar blankets, 4-pack", asin: "B01LYNWRLA" } },
-  { emoji: "🔥", area: "Heat & Shelter", title: "Test the CO detector", detail: "Carbon monoxide is invisible and kills quietly — especially when generators and heaters come out. Test it tonight.", gear: { name: "First Alert smoke + CO combo alarm", asin: "B000MXJ498" } },
+  { emoji: "🔥", area: "Heat & Shelter", title: "Mylar in every car", detail: "Emergency blankets reflect body heat and weigh next to nothing. One per glovebox, one per go-bag.", gear: { name: "Swiss Safe mylar blankets, 4-pack", asin: "B01LYNWRLA" } },
+  { emoji: "🔥", area: "Heat & Shelter", title: "Test the CO detector", detail: "Carbon monoxide is invisible and kills quietly — especially when generators and heaters come out. Test it tonight.", gear: { name: "First Alert smoke + CO combo alarm", asin: "B0CLVRPNZX" } },
   { emoji: "🔥", area: "Heat & Shelter", title: "Hand warmers in the bags", detail: "Cheap, light, and they turn a cold night survivable. A few pairs in each go-bag and car kit.", gear: { name: "HotHands hand warmers, 10 pair", asin: "B077RXSZN3" } },
   // 📻 Communication
   { emoji: "📻", area: "Communication", title: "The paper contact card", detail: "Write your out-of-town contact's number on paper for every wallet. When networks jam, texts to one contact work." },
   { emoji: "📻", area: "Communication", title: "Pick two meeting spots", detail: "One near home, one outside the neighborhood. Text both to the whole family today — done in five minutes." },
-  { emoji: "📻", area: "Communication", title: "Radio that survives the grid", detail: "When cell service and power are both down, a hand-crank NOAA radio is your information line.", gear: { name: "Midland ER310 hand-crank weather radio", asin: "B015QIC1PW" } },
+  { emoji: "📻", area: "Communication", title: "Radio that survives the grid", detail: "When cell service and power are both down, a hand-crank NOAA radio is your information line.", gear: { name: "Midland ER210 hand-crank weather radio", asin: "B015QICDD2" } },
   { emoji: "📻", area: "Communication", title: "Turn on emergency alerts", detail: "Check every phone in the house: government emergency alerts ON, including the kids' phones." },
   // 📄 Documents & Cash
   { emoji: "📄", area: "Documents", title: "Photograph your documents", detail: "IDs, insurance cards, deeds. Photos in encrypted cloud storage tonight — it's the fastest version of a document backup." },
@@ -84,7 +84,7 @@ export const READINESS_TASKS: ReadinessTask[] = [
   { emoji: "🚗", area: "Car", title: "Half-tank rule starts today", detail: "In an evacuation, gas stations have lines or no power. Below half is the new empty." },
   { emoji: "🚗", area: "Car", title: "Glovebox essentials", detail: "Phone cable, ice scraper, paper map of your region. Three small things that matter when it counts." },
   // 🏠 Home Safety
-  { emoji: "🏠", area: "Home Safety", title: "Test every smoke alarm", detail: "Every level of the house, hold the button, hear the beep. Monthly is the rule — today is the day.", gear: { name: "First Alert smoke + CO combo alarm", asin: "B000MXJ498" } },
+  { emoji: "🏠", area: "Home Safety", title: "Test every smoke alarm", detail: "Every level of the house, hold the button, hear the beep. Monthly is the rule — today is the day.", gear: { name: "First Alert smoke + CO combo alarm", asin: "B0CLVRPNZX" } },
   { emoji: "🏠", area: "Home Safety", title: "Learn PASS tonight", detail: "Pull, Aim, Squeeze, Sweep. Now go touch your extinguisher so you know exactly where it is.", gear: { name: "First Alert HOME1 fire extinguisher", asin: "B01LTICQYE" } },
   { emoji: "🏠", area: "Home Safety", title: "Find your shutoffs", detail: "Water, gas, electricity. Walk to each one tonight and make sure you could work it in the dark." },
   { emoji: "🏠", area: "Home Safety", title: "Clear two exits", detail: "Two ways out of the house, nothing blocking either. Check them both before bed." },
@@ -94,9 +94,9 @@ export const READINESS_TASKS: ReadinessTask[] = [
   { emoji: "🤝", area: "Skills", title: "Run the drill", detail: "Practice the family evacuation once. Where do you meet? Who grabs what? Ten minutes, twice a year." },
   { emoji: "🤝", area: "Skills", title: "Trade two phone numbers", detail: "Two neighbors, numbers exchanged, tonight. In a real emergency the people closest to you matter most." },
   // ⬆️ Level up
-  { emoji: "⬆️", area: "Level Up", title: "Step up to two weeks of water", detail: "Once the 72-hour basics are set, bulk water storage is the next real upgrade.", gear: { name: "Augason Farms 55-gallon water barrel", asin: "B07YSZ68GV" } },
+  { emoji: "⬆️", area: "Level Up", title: "Step up to two weeks of water", detail: "Once the 72-hour basics are set, bulk water storage is the next real upgrade.", gear: { name: "Augason Farms 55-gallon water storage kit", asin: "B006OW4FVI" } },
   { emoji: "⬆️", area: "Level Up", title: "A month of food, one pail", detail: "Long-shelf-life food pails turn 'two weeks' into 'a month' without a second freezer.", gear: { name: "Augason Farms 30-day food supply", asin: "B0FH3K7GS3" } },
-  { emoji: "⬆️", area: "Level Up", title: "Filter beyond bottles", detail: "A gravity-fed filter makes water independence real — no power, no plumbing, thousands of gallons.", gear: { name: "LifeStraw Family gravity water purifier", asin: "B0BX5F7L2X" } },
+  { emoji: "⬆️", area: "Level Up", title: "Filter beyond bottles", detail: "A gravity filter treats more water at once, with no power or plumbing. It won't remove chemicals.", gear: { name: "Membrane Solutions 6-liter gravity water filter", asin: "B08ZYMXLMH" } },
 ];
 
 export function taskIndexForDate(dateKey: string, offset = 0): number {

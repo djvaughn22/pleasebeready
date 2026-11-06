@@ -12,7 +12,7 @@ describe("water and food amounts", () => {
   it("28 person-days of food as a grocery mix, counted by label calories, no single product standing in for a day", () => {
     const mix = Object.fromEntries(foodMix(28).map((m) => [m.id, m.qty]));
     expect(mix).toEqual({
-      "canned-soups-and-stews": 43, "canned-tuna-or-chicken": 25, "canned-beans": 17, "canned-vegetables": 23, "canned-fruit": 22,
+      "canned-soups-and-stews": 43, "canned-tuna-or-chicken": 25, "canned-beans": 13, "canned-vegetables": 23, "canned-fruit": 22,
       "shelf-stable-milk": 30, "peanut-butter": 2, "pretzels-and-crackers": 3, "granola-or-protein-bars": 71,
     });
     expect(foodMix(3).every((m) => m.qty >= 1)).toBe(true);
@@ -22,6 +22,6 @@ describe("water and food amounts", () => {
     const p = { ...newPlan("emergency"), people: 4, days: 7, list: { "canned-soups-and-stews": { qty: null, have: 43, got: false } } };
     const mix = foodMix(28 - 0.26 * 28, p, 28);
     expect(mix.some((m) => m.id === "canned-soups-and-stews")).toBe(false);
-    expect(mix.find((m) => m.id === "canned-beans")!.qty).toBe(17);
+    expect(mix.find((m) => m.id === "canned-beans")!.qty).toBe(13);
   });
 });
