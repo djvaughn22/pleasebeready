@@ -30,9 +30,21 @@ Third deploy, Nov 6 (commit 4996ff2, rollback tag live-before-search-fix-2026110
 - 170 tests, types, lint and build pass. Live: `/search` for beans, dry beans, lights and off grid show the right lists, no console errors on home or dry beans, sweep of 69 pages found 0 problems.
 - 17 test searches went from wrong products to "Nothing matched", with kit suggestions: wind, chain(s), french press, mess kit, sign(s), dress, doll(s), line, birth certificate, pass, route, star(s), slide.
 
+Fourth deploy, Nov 6 (commit 99bcf6a, rollback tag live-before-short-words-20261106): short words in `search.ts`.
+- `wholeForms`: a three-letter word also matches its plural as a whole word ("hat"/"hats", "pot"/"pots", "kid"/"kids", "box"/"boxes"). Still no prefix match, so "car" doesn't find "carbon". Two-letter words stay as typed ("up" isn't "ups"); "id" and "tv" get theirs from `SYN`. `stem` turns "boxes" into "box".
+- `bandaid` and `bandaids` are synonyms for bandage and a first aid kit term.
+- `AVOID` keeps out plurals that would be wrong: "first aid" isn't calming aids, "grab bar" isn't granola bars, "nut free" and "egg allergy" don't list nuts or eggs. Look-alikes added: bed/bedside, men/menstrual, sick/sickness.
+- "Sick" no longer means the temperature kind of cold: 7 products on target, no snow brush or motion sickness. "Bug out bag" reads as "go bag". A one-word search that is a kit term's singular reaches that kit ("pet", "bandage", "tool", "holiday").
+- Before and after on 2,928 searches (the earlier list plus 375 short-word searches and every word of four letters or fewer in the catalog): 330 changed, every change read, kit lists changed 7. One item name slipped: "First-night box" is now second, behind "Moving boxes", because "first" and "night" aren't search words.
+- 172 tests, types, lint and build pass. Vercel success. Live: `/search` for hat, pot, pan, kid, bandaid, first aid, nut free and dry beans show the right lists, no console errors on those pages, sweep of 69 pages found 0 problems.
+
 Not verified: live stock of anything (see Rules), a tap through to Amazon on a real phone, print preview of the new links.
 
 ## Next steps
 1. Owner steps: tap through `docs/audit/hand-check-links.md`; register the Creators API (the only automated way to see live stock).
 2. Optional: more bulk picks. Canned pasta has no catalog item (Chef Boyardee Overstuffed 12-pack B003XUJ3RK looked fine). Red Cross manual Revision 2025 may beat the 2021 edition.
-3. Optional: search gaps in `search.ts`, found while fixing the look-alikes and not touched. Words under four letters don't find their plurals: "hat" misses winter hats, "pot" and "pan" miss the pots and pans set. "bandaid" finds nothing ("band aid" works). "Mess kit", "french press" and "wind" could get a real answer from a synonym or kit term.
+3. Optional: search gaps in `search.ts`, found and not touched.
+   - Joined or split spellings. These find nothing: firstaid, toolbox, toiletpaper, papertowels, trashbags, gobag, bugspray, canopener, ducttape, powerbank. "Sand bag" and "tooth brush" don't put sandbags or toothbrushes first.
+   - "Milk allergy" lists milk first, and "gluten free" and "nut free" list bleach-free spray. `ALLERGENS` only covers nuts, peanut butter and eggs.
+   - A two-word search with fewer than three full matches lists items that match one word after them: "coffee pod" shows laundry pods second, as "coffee pods" already did.
+   - "Mess kit", "french press" and "wind" could get a real answer from a synonym or kit term.
