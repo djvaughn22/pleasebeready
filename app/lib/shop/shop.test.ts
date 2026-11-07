@@ -218,6 +218,54 @@ describe("search", () => {
     expect(ids("constructors")).toEqual([]);
   });
 
+  it("finds the plural of a short word, and the singular from the plural", () => {
+    const ids = (q: string) => searchItems(q, 500).map((i) => i.id);
+    expect(ids("hat")).toEqual(expect.arrayContaining(["winter-hats", "party-hats", "hats"]));
+    expect(ids("pot")[0]).toBe("pots-and-pans-starter-set");
+    expect(ids("pan")).toEqual(expect.arrayContaining(["pots-and-pans-starter-set", "aluminum-pans-with-lids"]));
+    expect(ids("kid")).toContain("kids-water-bottles");
+    expect(ids("egg")).toEqual(["breakfast-eggs"]);
+    expect(ids("bun")).toContain("hot-dog-buns");
+    expect(ids("box")).toContain("moving-boxes");
+    expect(ids("boxes")).toContain("first-night-box");
+    expect(ids("id")).toContain("document-bag");
+    expect(ids("tvs")).toContain("amplified-headphones-or-tv-speaker");
+    // Same list either way.
+    for (const [one, more] of [["hat", "hats"], ["pot", "pots"], ["pan", "pans"], ["bag", "bags"], ["cup", "cups"], ["toy", "toys"], ["tie", "ties"], ["pad", "pads"],
+      ["kid", "kids"], ["pet", "pets"], ["bed", "beds"], ["box", "boxes"], ["mix", "mixes"], ["med", "meds"]]) expect(ids(one), one).toEqual(ids(more));
+    expect(searchKits("pet")[0]?.slug).toBe("pet-emergency");
+    // Short words still don't match the start of a longer word, and two-letter words stay as typed.
+    expect(ids("car")).not.toContain("carbon-monoxide-alarm");
+    expect(ids("bar")).not.toContain("55-gallon-water-barrel");
+    expect(ids("up")).not.toContain("uninterruptible-power-supply");
+    // Plurals that would pull in the wrong thing.
+    expect(ids("first aid")).not.toContain("calming-aids-for-pets");
+    expect(ids("calming aid")[0]).toBe("calming-aids-for-pets");
+    expect(ids("aids")).toContain("calming-aids-for-pets");
+    expect(ids("grab bars")).not.toContain("granola-or-protein-bars");
+    expect(ids("granola bar")[0]).toBe("granola-or-protein-bars");
+    expect(ids("dog")).not.toContain("hot-dogs");
+    expect(ids("hot dog")[0]).toBe("hot-dogs");
+    expect(ids("mens")).toEqual([]);
+    for (const q of ["sick", "sick kid", "sick kids"]) expect(ids(q), q).not.toContain("motion-sickness-relief");
+    expect(ids("motion sickness")[0]).toBe("motion-sickness-relief");
+    expect(ids("sick kids")[0]).toBe("cold-and-flu-medicine");
+    // A search for what to stay away from doesn't list it.
+    for (const q of ["nut free", "egg free", "peanut free", "nut allergy", "egg allergy", "peanut allergy"]) {
+      for (const id of ["nuts-and-seeds", "breakfast-eggs", "peanut-butter"]) expect(ids(q), q).not.toContain(id);
+    }
+    expect(ids("gluten free peanut butter")[0]).toBe("peanut-butter");
+    for (const q of ["bug out bag", "bug-out bag", "bugout bag"]) expect(ids(q)[0], q).toBe("go-bag");
+    expect(ids("bug spray")).not.toContain("go-bag");
+  });
+
+  it("knows a band-aid by every spelling", () => {
+    for (const q of ["bandaid", "bandaids", "band aid", "band aids", "band-aid", "Band-Aids", "bandage", "bandages"]) {
+      expect(searchItems(q, 30)[0]?.id, q).toBe("adhesive-bandages");
+    }
+    for (const q of ["bandaid", "bandaids", "bandage", "bandages"]) expect(searchKits(q)[0]?.slug, q).toBe("first-aid-kit");
+  });
+
   it("doesn't let a describing word alone make a match", () => {
     const ids = (q: string) => searchItems(q, 30).map((i) => i.id);
     const dryBeans = ids("dry beans");

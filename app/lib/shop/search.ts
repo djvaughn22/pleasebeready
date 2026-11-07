@@ -84,10 +84,10 @@ const SYN: Record<string, string[]> = {
   flashlight: ["flashlights"], light: ["flashlights", "lantern", "headlamps"], lights: ["flashlights", "lantern"],
   charger: ["charger", "charging"], phone: ["charger", "phone"], car: ["car"], tire: ["tire"], battery: ["batteries"],
   bbq: ["grill", "charcoal"], barbecue: ["grill", "charcoal"], cookout: ["grill"], grill: ["grill"],
-  medicine: ["medicine", "medicines", "reliever"], meds: ["medicines"], sick: ["cold", "flu", "fever"], flu: ["flu", "fever"],
+  medicine: ["medicine", "medicines", "reliever"], med: ["medicines"], meds: ["medicines"], sick: ["cold medicine", "flu", "fever", "cough"], flu: ["flu", "fever"],
   diapers: ["diapers"], tp: ["toilet"], camping: ["camp", "tent"], tent: ["tent"], hiking: ["hiking", "trail"],
   party: ["party", "plates"], birthday: ["birthday", "candles", "cake"], tools: ["tool"], tool: ["tool"],
-  beanies: ["beanie"], skin: ["lotion"],
+  beanies: ["beanie"], skin: ["lotion"], bandaid: ["bandage"], bandaids: ["bandage"], id: ["ids"], ids: ["id"], tv: ["tvs"], tvs: ["tv"],
 };
 
 /** Words that describe a thing without naming one. When a search also names a thing, an item that only
@@ -97,11 +97,12 @@ const DESCRIBING = new Set(["dry", "dried", "wet", "portable",
   "big", "bigger", "small", "smaller", "large", "larger", "medium", "mini", "little", "tiny", "huge", "giant", "long", "short", "tall", "wide", "heavy",
   "best", "better", "good", "great", "top", "nice", "cheap", "cheapest", "affordable", "quick", "fast", "easy", "simple", "strong", "sturdy", "extra", "spare"]);
 
-const stem = (w: string) => (w.length > 4 && w.endsWith("ies") ? `${w.slice(0, -3)}y` : w.length > 3 && w.endsWith("s") && !w.endsWith("ss") ? w.slice(0, -1) : w);
+const stem = (w: string) => (w.length > 4 && w.endsWith("ies") ? `${w.slice(0, -3)}y` : w.length > 4 && w.endsWith("xes") ? w.slice(0, -2) : w.length > 3 && w.endsWith("s") && !w.endsWith("ss") ? w.slice(0, -1) : w);
 
 /** The words a product search looks for, with stems and synonyms. */
 export function queryWords(query: string): string[][] {
-  return normalize(query).split(" ")
+  // A bug-out bag is a go-bag.
+  return normalize(query).replace(/\bbug ?out\b/g, "go").split(" ")
     .filter((w) => w && !STOP.has(w) && !/^\d+$/.test(w) && !(w in WORDS))
     .map((w) => [w, stem(w), ...(SYN[w] ?? []).filter((x) => x !== w && x !== stem(w))]);
 }
@@ -126,30 +127,38 @@ function haystack(item: CatalogItem) {
 /** Whole words that are also the start of a different word: "bean" isn't "beanie", "pill" isn't "pillow".
  * Keyed by the shorter word's stem, listing how the longer words start. Typing on ("pillo") still finds them. */
 const LOOKALIKES = new Map<string, string[]>(Object.entries({
-  ball: ["balloon", "ballpoint"], bean: ["beanie"], birth: ["birthday"], black: ["blackout"], blue: ["bluetooth"], boot: ["booth"], brace: ["bracelet"],
+  ball: ["balloon", "ballpoint"], bean: ["beanie"], bed: ["bedside"], birth: ["birthday"], black: ["blackout"], blue: ["bluetooth"], boot: ["booth"], brace: ["bracelet"],
   break: ["breakfast"], brown: ["brownie"], cabin: ["cabinet"], card: ["cardigan"], care: ["careful"], cart: ["cartridge"], chain: ["chainsaw"],
   clip: ["clipper"], cloth: ["clothe", "clothing"], compress: ["compression"], control: ["controller"], cook: ["cookie", "cookout"], cool: ["coolant"],
   cord: ["cordless"], corn: ["corned", "corner", "cornhole"], cream: ["creamer"], doll: ["dolly"], dress: ["dresser", "dressing"], fire: ["fireworks"],
   flame: ["flameless"], foot: ["footprint"], free: ["freeze"], fresh: ["freshener"], grad: ["grade"], grid: ["griddle"], hand: ["handle", "handy"],
-  high: ["highlighter"], home: ["homework"], jack: ["jacket"], lice: ["license"], light: ["lighter", "lightweight"], line: ["liner"], mess: ["messenger"],
+  high: ["highlighter"], home: ["homework"], jack: ["jacket"], lice: ["license"], light: ["lighter", "lightweight"], line: ["liner"], men: ["menstrual"], mess: ["messenger"],
   must: ["mustard"], pain: ["paint"], pant: ["pantry"], paper: ["paperback"], part: ["party"], pass: ["passport"], pill: ["pillow"],
   port: ["portable", "portion"], post: ["postpartum"], press: ["pressure"], prop: ["propane"], route: ["router"], safe: ["safety"], salt: ["saltine"],
-  sand: ["sandal", "sandwich"], sensor: ["sensory"], sharp: ["sharpie"], sign: ["signal", "signing"], slide: ["slider"], soft: ["softener"],
+  sand: ["sandal", "sandwich"], sensor: ["sensory"], sharp: ["sharpie"], sick: ["sickness"], sign: ["signal", "signing"], slide: ["slider"], soft: ["softener"],
   spark: ["sparkling"], stand: ["standard"], star: ["start"], suit: ["suitcase"], table: ["tablet"], tire: ["tired"], toilet: ["toiletr"],
   treat: ["treatment"], wall: ["wallet"], water: ["waterproof"], wind: ["window", "windshield"], wire: ["wireless"],
 }));
+/** A three-letter word and its plural: "hat" → "hats", "box" → "boxes". Two-letter words stay as typed ("up" isn't "ups"). */
+const wholeForms = (w: string) => (w.length === 3 ? [w, /[sx]$/.test(w) ? `${w}es` : `${w}s`] : [w]);
 // Words of four letters or more also match the start of a longer word ("tent" → "tents"); short ones
-// must match whole, so "car" doesn't find "carbon" and "bar" doesn't find "barrel".
+// must match whole or as a plural, so "hat" finds "hats" but "car" doesn't find "carbon".
 const hasWord = (text: string, w: string) => {
   const others = w.length >= 4 ? LOOKALIKES.get(stem(w)) : undefined;
   if (others) return text.split(" ").some((t) => t.startsWith(w) && !others.some((o) => t.startsWith(o)));
-  return ` ${text} `.includes(w.length >= 4 ? ` ${w}` : ` ${w} `);
+  if (w.length >= 4) return ` ${text} `.includes(` ${w}`);
+  return wholeForms(w).some((f) => ` ${text} `.includes(` ${f} `));
 };
 
+/** "nut free" and "egg allergy" are searches for what to stay away from, so they shouldn't list that food. */
+const ALLERGENS = { ids: ["nuts-and-seeds", "peanut-butter", "breakfast-eggs"], unless: "" };
 /** Items a word finds by accident, unless another word in the search asks for them. */
 const AVOID: Record<string, { ids: string[]; unless: string }> = {
   dog: { ids: ["hot-dogs", "hot-dog-buns"], unless: "hot" },
   dogs: { ids: ["hot-dogs", "hot-dog-buns"], unless: "hot" },
+  aid: { ids: ["calming-aids-for-pets"], unless: "calming" },
+  grab: { ids: ["granola-or-protein-bars", "emergency-food-bars-for-the-car", "3-day-emergency-food-supply"], unless: "food" },
+  free: { ...ALLERGENS, unless: "butter" }, allergy: ALLERGENS, allergies: ALLERGENS, allergic: ALLERGENS,
 };
 
 /** Products ranked by how well they match. Each query word must match somewhere unless none would. */
@@ -185,7 +194,7 @@ export function searchItems(query: string, limit = 40): CatalogItem[] {
       const own = g.slice(0, 2);
       const syn = g.slice(2).filter((w) => !typed.has(w));
       const s = own.some((w) => hasWord(h.name, w)) ? 3 : syn.some((w) => hasWord(h.name, w)) ? 2
-        : own.some((w) => ` ${h.brand} `.includes(` ${w} `)) ? 2
+        : own.some((w) => wholeForms(w).some((f) => ` ${h.brand} `.includes(` ${f} `))) ? 2
         : own.some((w) => hasWord(h.rest, w)) ? 1 : syn.some((w) => hasWord(h.rest, w)) ? 0.5 : 0;
       if (s) { score += s; matched++; named ||= !DESCRIBING.has(g[0]); }
     }
@@ -228,6 +237,8 @@ function scoreKits(query: string): { k: Kit; score: number; phrase: boolean }[] 
       // A one-word search that is the kit's own name ("hurricane", "tornado") counts as naming it.
       if (n && t.includes(` ${n} `)) { score += n.split(" ").length * 2; phrase ||= n.includes(" ") || (t.trim() === n && k.slug === n); }
       else if (n.length > 4 && t.includes(` ${n}`)) score += 1;
+      // A one-word search that is the term's singular counts too ("pet" → "pets").
+      else if (t.trim() === stem(n)) score += 2;
     }
     if (t.includes(` ${normalize(k.title)} `)) { score += 3; phrase = true; }
     return { k, score, phrase };

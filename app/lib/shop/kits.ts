@@ -177,7 +177,7 @@ const written: Kit[] = [
     upgrades: ["laundry-pods", "microfiber-cloths", "pantry-bins", "cordless-stick-vacuum"],
     budget: [{ id: "laundry-detergent", instead: "laundry-pods" }],
     forget: ["light-bulbs", "aaa-batteries", "coin-cell-batteries-cr2032", "zip-top-bags", "aluminum-foil"],
-    terms: ["household", "restock", "stock up", "household supplies", "toilet paper", "paper towels", "trash bags", "cleaning supplies", "monthly", "basics", "groceries", "home supplies", "run out"],
+    terms: ["household", "restock", "stock up", "household supplies", "toilet paper", "paper towels", "trash bags", "trash bag", "cleaning supplies", "monthly", "basics", "groceries", "home supplies", "run out"],
   },
   {
     slug: "new-baby", emoji: "👶", title: "New baby", short: "The first weeks home",
@@ -360,7 +360,7 @@ const written: Kit[] = [
     upgrades: ["humidifier", "covid-and-flu-home-tests", "heating-pad"],
     forget: ["popsicles", "masks", "lip-balm", "saline-nasal-spray"],
     todo: ["med-list"],
-    terms: ["cold and flu", "flu season", "sick", "sick day", "sick days", "cold", "flu", "covid", "stomach bug", "sore throat", "fever", "cough", "illness", "sick kid"],
+    terms: ["cold and flu", "flu season", "sick", "sick day", "sick days", "cold", "flu", "covid", "stomach bug", "sore throat", "fever", "cough", "illness", "sick kid", "sick kids"],
     months: [10, 11, 12, 1, 2, 3],
   },
   {
@@ -373,7 +373,7 @@ const written: Kit[] = [
     forget: ["allergy-medicine", "meds", "eye-drops", "antacids"],
     todo: ["med-list", "learn-cpr"],
     guide: { label: "Red Cross: Survival Kit Supplies", href: "https://www.redcross.org/get-help/how-to-prepare-for-emergencies/survival-kit-supplies.html" },
-    terms: ["first aid kit", "first aid", "medicine cabinet", "bandages", "home first aid", "first aid supplies", "med kit", "medical kit", "injury"],
+    terms: ["first aid kit", "first aid", "medicine cabinet", "bandages", "bandaid", "home first aid", "first aid supplies", "med kit", "medical kit", "injury"],
   },
   {
     slug: "aging-parent", emoji: "🤝", title: "Aging parent at home", short: "A parent who lives alone",
