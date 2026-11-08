@@ -433,7 +433,7 @@ const written: Kit[] = [
     budget: [{ id: "screwdriver-set", instead: "cordless-drill" }],
     forget: ["9-volt-batteries", "superglue", "painters-tape", "zip-ties"],
     todo: ["test-alarms", "learn-shutoffs", "label-breakers", "service-furnace", "clear-gutters"],
-    terms: ["home maintenance", "tool kit", "toolkit", "tools", "homeowner", "fix it", "repairs", "repair", "handyman", "new homeowner", "basic tools", "diy"],
+    terms: ["home maintenance", "tool kit", "toolkit", "toolbox", "tools", "homeowner", "fix it", "repairs", "repair", "handyman", "new homeowner", "basic tools", "diy"],
   },
 ];
 

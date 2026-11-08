@@ -74,6 +74,7 @@ const BROAD = new Set([...DISASTER, "emergencies", "disasters", "preparedness", 
   "essential", "basics", "basic", "household", "home", "house", "family", "storm", "storms", "hurricane", "tornado", "outage",
   "blackout", "wildfire", "winter", "shelter", "place"]);
 
+const ZIP_BAGS = ["zip top", "freezer bags", "food storage bags"];
 /** Words that mean the same thing for product matching. */
 const SYN: Record<string, string[]> = {
   electricity: ["power"], electric: ["power"], blackout: ["power", "outage"], outage: ["power"],
@@ -88,7 +89,11 @@ const SYN: Record<string, string[]> = {
   diapers: ["diapers"], tp: ["toilet"], camping: ["camp", "tent"], tent: ["tent"], hiking: ["hiking", "trail"],
   party: ["party", "plates"], birthday: ["birthday", "candles", "cake"], tools: ["tool"], tool: ["tool"],
   beanies: ["beanie"], skin: ["lotion"], bandaid: ["bandage"], bandaids: ["bandage"], id: ["ids"], ids: ["id"], tv: ["tvs"], tvs: ["tv"],
+  toolbox: ["tool kit", "tool"], toolboxes: ["tool kit", "tool"], raincoat: ["rain jacket", "poncho"], raincoats: ["rain jacket", "poncho"],
+  ziplock: ZIP_BAGS, ziplocks: ZIP_BAGS, ziploc: ZIP_BAGS, ziplocs: ZIP_BAGS, allergic: ["allergy"],
 };
+// A Map, so a typed word like "constructor" can't reach an object's built-in properties.
+const synonyms = new Map(Object.entries(SYN));
 
 /** Words that describe a thing without naming one. When a search also names a thing, an item that only
  * matches these is noise ("dry beans" → beans, not a dry bag or a quick-dry towel). */
@@ -101,10 +106,16 @@ const stem = (w: string) => (w.length > 4 && w.endsWith("ies") ? `${w.slice(0, -
 
 /** The words a product search looks for, with stems and synonyms. */
 export function queryWords(query: string): string[][] {
-  // A bug-out bag is a go-bag.
-  return normalize(query).replace(/\bbug ?out\b/g, "go").split(" ")
-    .filter((w) => w && !STOP.has(w) && !/^\d+$/.test(w) && !(w in WORDS))
-    .map((w) => [w, stem(w), ...(SYN[w] ?? []).filter((x) => x !== w && x !== stem(w))]);
+  const words = respell(query).split(" ");
+  const foods = avoidedFoods(words);
+  return words.flatMap((w, i) => {
+    // "nut free" and "milk allergy" look for food that says it's nut-free or allergy-safe, not for nuts or milk.
+    // In "nut free", both words ask for that, so both count.
+    const food = foods.get(i) ?? (w === "free" ? foods.get(i - 1) : undefined);
+    if (food) return [[`${food} free`, `${food} free`, "allergy safe"]];
+    if (!w || STOP.has(w) || /^\d+$/.test(w) || w in WORDS) return [];
+    return [[w, stem(w), ...(synonyms.get(w) ?? []).filter((x) => x !== w && x !== stem(w))]];
+  });
 }
 
 const catTitle = new Map(categories.map((c) => [c.id, c.title.toLowerCase()]));
@@ -150,23 +161,102 @@ const hasWord = (text: string, w: string) => {
   return wholeForms(w).some((f) => ` ${text} `.includes(` ${f} `));
 };
 
-/** "nut free" and "egg allergy" are searches for what to stay away from, so they shouldn't list that food. */
-const ALLERGENS = { ids: ["nuts-and-seeds", "peanut-butter", "breakfast-eggs"], unless: "" };
 /** Items a word finds by accident, unless another word in the search asks for them. */
 const AVOID: Record<string, { ids: string[]; unless: string }> = {
   dog: { ids: ["hot-dogs", "hot-dog-buns"], unless: "hot" },
   dogs: { ids: ["hot-dogs", "hot-dog-buns"], unless: "hot" },
   aid: { ids: ["calming-aids-for-pets"], unless: "calming" },
   grab: { ids: ["granola-or-protein-bars", "emergency-food-bars-for-the-car", "3-day-emergency-food-supply"], unless: "food" },
-  free: { ...ALLERGENS, unless: "butter" }, allergy: ALLERGENS, allergies: ALLERGENS, allergic: ALLERGENS,
 };
+
+/** Foods a search can stay away from, and the words in an item's name that mean that food. */
+const GLUTEN = ["bread", "bun", "pasta", "noodle", "macaroni", "flour", "cracker", "pretzel", "cookie", "cereal", "pancake", "tortilla", "granola"];
+const FOODS = new Map<string, string[]>(Object.entries({
+  nut: ["nut", "peanut", "trail mix"], peanut: ["peanut", "trail mix"], egg: ["egg"], milk: ["milk"], dairy: ["milk", "cheese"], lactose: ["milk", "cheese"],
+  gluten: GLUTEN, wheat: GLUTEN, soy: ["soy"], fish: ["fish", "tuna", "salmon", "sardine"], shellfish: ["shellfish", "shrimp", "crab", "lobster"], sesame: ["sesame"],
+}));
+/** Words that make the foods beside them something to stay away from. */
+const ALLERGY = new Set(["free", "allergy", "allergies", "allergic", "intolerance", "intolerant"]);
+
+/** The foods a search stays away from, by their place in it: just before "free" or "allergy" ("milk and egg
+ * allergy", "peanut free") or just after "allergic to". */
+function avoidedFoods(words: string[]): Map<number, string> {
+  const out = new Map<number, string>();
+  const take = (from: number, step: number) => {
+    for (let j = from; j >= 0 && j < words.length; j += step) {
+      const food = stem(words[j]);
+      if (FOODS.has(food)) out.set(j, food);
+      else if (words[j] !== "and" && words[j] !== "or") return;
+    }
+  };
+  words.forEach((w, i) => {
+    if (!ALLERGY.has(w)) return;
+    take(i - 1, -1);
+    if (w !== "free" && words[i + 1] === "to") take(i + 2, 1);
+  });
+  return out;
+}
+
+/** True when a search names a food to stay away from ("nut free", "milk allergy"). */
+export function avoidsFood(query: string): boolean {
+  return avoidedFoods(respell(query).split(" ")).size > 0;
+}
+
+/** The store's own words: every start of a word that finds something, every two words that sit side by side,
+ * and the long words in item names, search words and kit terms. Built on the first search. */
+let spelling: { known: Set<string>; pairs: Set<string>; joined: Set<string> } | undefined;
+function storeWords() {
+  if (spelling) return spelling;
+  const items = catalog.filter((i) => i.kind !== "task");
+  const known = new Set<string>(), pairs = new Set<string>(), joined = new Set<string>();
+  const starts = (into: Set<string>, text: string, min: number) => {
+    for (const t of text.split(" ")) for (let n = min; n <= t.length; n++) into.add(t.slice(0, n));
+  };
+  for (const item of items) { const h = haystack(item); starts(known, `${h.name} ${h.brand} ${h.rest}`, 4); }
+  const things = [...items.flatMap((i) => [i.name, i.q ?? ""]), ...kits.flatMap((k) => k.terms)].map(normalize);
+  for (const text of [...things, ...items.map((i) => normalize(i.note ?? "")), ...categories.map((c) => normalize(c.title))]) {
+    const w = text.split(" ");
+    for (let n = 1; n < w.length; n++) { pairs.add(`${w[n - 1]} ${w[n]}`); pairs.add(`${w[n - 1]} ${stem(w[n])}`); }
+  }
+  for (const text of things) starts(joined, text, 6);
+  return (spelling = { known, pairs, joined });
+}
+
+/** The search in the store's spelling: "firstaid" → "first aid", "sand bag" → "sandbag", "bug out bag" → "go bag". */
+export function respell(query: string): string {
+  const { known, pairs, joined } = storeWords();
+  // Side by side somewhere in the store, or with a synonym of the first word ("catfood" as "pet food").
+  const pair = (a: string, b: string) => [a, ...(synonyms.get(a) ?? [])].some((x) => pairs.has(`${x} ${b}`) || pairs.has(`${x} ${stem(b)}`));
+  // A bug-out bag is a go-bag, and tree nuts are nuts.
+  const words = normalize(query).replace(/\bbug ?out(?=\b|bags?\b)/g, "go ").replace(/\btree (nuts?)\b/g, "$1").split(" ").filter(Boolean).flatMap((w) => {
+    if (w.endsWith("free") && FOODS.has(stem(w.slice(0, -4)))) return [w.slice(0, -4), "free"];
+    if (w.length < 5 || /\d/.test(w) || synonyms.has(w) || w in WORDS || known.has(w)) return [w];
+    // A word nothing in the store starts with, made of two or three words the store puts side by side.
+    for (let i = 2; i <= w.length - 2; i++) if (pair(w.slice(0, i), w.slice(i))) return [w.slice(0, i), w.slice(i)];
+    for (let i = 2; i <= w.length - 4; i++) {
+      for (let j = i + 2; j <= w.length - 2; j++) {
+        const [a, b, c] = [w.slice(0, i), w.slice(i, j), w.slice(j)];
+        if (pair(a, b) && pair(b, c)) return [a, b, c];
+      }
+    }
+    return [w];
+  });
+  // Two words the store only writes as one.
+  for (let i = 0; i < words.length - 1; i++) {
+    const [a, b] = [words[i], words[i + 1]];
+    if (a.length >= 3 && b.length >= 3 && !STOP.has(a) && !STOP.has(b) && joined.has(a + b) && !pair(a, b)) words.splice(i, 2, a + b);
+  }
+  return words.join(" ");
+}
 
 /** Products ranked by how well they match. Each query word must match somewhere unless none would. */
 export function searchItems(query: string, limit = 40): CatalogItem[] {
   const groups = queryWords(query);
   if (!groups.length) return [];
-  const words = normalize(query).split(" ");
+  const words = respell(query).split(" ");
   const avoid = new Set(words.flatMap((w) => (AVOID[w] && !words.includes(AVOID[w].unless) ? AVOID[w].ids : [])));
+  // An allergy search leaves out food named for what it stays away from.
+  const foods = [...avoidedFoods(words).values()].flatMap((f) => FOODS.get(f) ?? []);
   // A synonym that is also a typed word would count that word twice ("power outage" → "power power").
   const typed = new Set(groups.flatMap((g) => g.slice(0, 2)));
   // A search that names a kit's situation ("power outage", "new puppy") ranks that kit's must-haves first,
@@ -186,6 +276,7 @@ export function searchItems(query: string, limit = 40): CatalogItem[] {
   for (const item of catalog) {
     if (item.kind === "task" || avoid.has(item.id)) continue;
     const h = haystack(item);
+    if (foods.some((f) => hasWord(h.name, f))) continue;
     let score = 0;
     let matched = 0;
     let named = false;
@@ -225,22 +316,26 @@ export function searchItems(query: string, limit = 40): CatalogItem[] {
   return pool.sort((a, b) => b.score - a.score || a.item.name.localeCompare(b.item.name)).slice(0, limit).map((s) => s.item);
 }
 
+/** Kit terms and titles in the store's spelling, worked out once each. */
+const kitSpelling = new Map<string, string>();
+const spelled = (text: string) => kitSpelling.get(text) ?? kitSpelling.set(text, respell(text)).get(text)!;
+
 /** Kits scored by their search words; longer phrases count for more. `phrase`: a multi-word term or the title matched. */
 function scoreKits(query: string): { k: Kit; score: number; phrase: boolean }[] {
-  const t = ` ${normalize(query)} `;
+  const t = ` ${respell(query)} `;
   if (!t.trim()) return [];
   return kits.map((k) => {
     let score = 0;
     let phrase = false;
     for (const term of k.terms) {
-      const n = normalize(term);
+      const n = spelled(term);
       // A one-word search that is the kit's own name ("hurricane", "tornado") counts as naming it.
       if (n && t.includes(` ${n} `)) { score += n.split(" ").length * 2; phrase ||= n.includes(" ") || (t.trim() === n && k.slug === n); }
       else if (n.length > 4 && t.includes(` ${n}`)) score += 1;
       // A one-word search that is the term's singular counts too ("pet" → "pets").
       else if (t.trim() === stem(n)) score += 2;
     }
-    if (t.includes(` ${normalize(k.title)} `)) { score += 3; phrase = true; }
+    if (t.includes(` ${spelled(k.title)} `)) { score += 3; phrase = true; }
     return { k, score, phrase };
   }).filter((s) => s.score > 0).sort((a, b) => b.score - a.score);
 }

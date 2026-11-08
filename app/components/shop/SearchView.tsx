@@ -10,7 +10,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { measure } from "../../lib/measure";
 import { POPULAR, kitBySlug } from "../../lib/shop/kits";
 import { hasPick } from "../../lib/shop/picks";
-import { EXAMPLES, kitHref, parseIntent, searchItems, searchKits, searchLanes } from "../../lib/shop/search";
+import { EXAMPLES, avoidsFood, kitHref, parseIntent, searchItems, searchKits, searchLanes } from "../../lib/shop/search";
 import { durationLabel } from "../../lib/stockup/calc";
 import { inset, muted } from "../stockup/ui";
 import ItemCard from "./ItemCard";
@@ -45,6 +45,8 @@ function SearchBody() {
   const kitsFound = useMemo(() => searchKits(q), [q]);
   const lanesFound = useMemo(() => searchLanes(q).slice(0, 4), [q]);
   const items = useMemo(() => searchItems(q, 30), [q]);
+  // "nut free" or "milk allergy": we leave out foods named for it, but we only read names, not ingredients.
+  const allergy = useMemo(() => avoidsFood(q), [q]);
   const top = kitsFound[0];
 
   // Count a search once per submitted phrase: the top kit's slug, or whether only items matched. Never the words.
@@ -134,6 +136,7 @@ function SearchBody() {
                 className={`min-h-9 rounded-full border px-3 text-xs font-black ${show === k ? "pbr-edge pbr-accent" : "border-[#26324c] text-[#94a3b8]"}`}>{SHOW[k]}</button>
             ))}
           </div>
+          {allergy && <p className={`mb-3 ${muted}`}>We don’t check ingredients. Read every label for allergens.</p>}
           {shown.length === 0
             ? <p className={muted}>None of these match that filter. <button type="button" className="font-black pbr-accent underline" onClick={() => setShow("all")}>Show all</button></p>
             : <ul className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">{shown.map((i) => <ItemCard key={i.id} item={i} />)}</ul>}

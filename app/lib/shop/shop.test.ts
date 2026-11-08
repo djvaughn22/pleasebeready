@@ -13,7 +13,7 @@ import { READINESS_TASKS as dailyTasks } from "../dailyReadiness";
 import { AMAZON_TAG } from "../gear";
 import { shopLink } from "../stockup/shop";
 import { checkedOn, hasPick, pickByAsin, picks, primaryPick } from "./picks";
-import { kitHref, parseIntent, searchItems, searchKits, searchLanes } from "./search";
+import { avoidsFood, kitHref, parseIntent, respell, searchItems, searchKits, searchLanes } from "./search";
 
 describe("kits", () => {
   it("has at least 20 kits with unique slugs", () => {
@@ -264,6 +264,51 @@ describe("search", () => {
       expect(searchItems(q, 30)[0]?.id, q).toBe("adhesive-bandages");
     }
     for (const q of ["bandaid", "bandaids", "bandage", "bandages"]) expect(searchKits(q)[0]?.slug, q).toBe("first-aid-kit");
+  });
+
+  it("reads words run together, and two words the store writes as one", () => {
+    const ids = (q: string) => searchItems(q, 500).map((i) => i.id);
+    const slugs = (q: string) => searchKits(q).map((k) => k.slug);
+    for (const [joined, apart] of [["firstaid", "first aid"], ["firstaidkit", "first aid kit"], ["toiletpaper", "toilet paper"], ["papertowels", "paper towels"],
+      ["trashbags", "trash bags"], ["gobag", "go bag"], ["bugoutbag", "go bag"], ["bugspray", "bug spray"], ["canopener", "can opener"],
+      ["ducttape", "duct tape"], ["powerbank", "power bank"], ["nutfree", "nut free"], ["glutenfree", "gluten free"]]) {
+      expect(ids(joined), joined).toEqual(ids(apart));
+      expect(slugs(joined), joined).toEqual(slugs(apart));
+    }
+    expect(slugs("firstaid")[0]).toBe("first-aid-kit");
+    expect(slugs("trashbags")[0]).toBe("household-restock");
+    for (const q of ["toolbox", "tool box"]) {
+      expect(slugs(q)[0], q).toBe("home-maintenance");
+      expect(ids(q)[0], q).toBe("basic-tool-kit");
+    }
+    expect(ids("sand bag")[0]).toBe("sandbags");
+    expect(ids("tooth brush")[0]).toBe("toothbrushes");
+    for (const q of ["ziplock", "ziploc bags", "zip lock bags"]) expect(ids(q), q).toEqual(expect.arrayContaining(["zip-top-bags", "freezer-bags", "food-storage-bags"]));
+    expect(ids("raincoat")).toContain("rain-jackets");
+    // Words the store already uses stay as typed, and a word that names an object's built-ins is just a word.
+    expect(respell("sandbags flashlight first aid")).toBe("sandbags flashlight first aid");
+    expect(() => searchItems("constructorset")).not.toThrow();
+  });
+
+  it("leaves out the food an allergy search names", () => {
+    const ids = (q: string) => searchItems(q, 500).map((i) => i.id);
+    for (const q of ["milk allergy", "allergic to milk", "dairy free", "lactose intolerant"]) {
+      for (const id of ["milk", "shelf-stable-milk", "powdered-milk"]) expect(ids(q), q).not.toContain(id);
+    }
+    expect(ids("dairy free")).not.toContain("sliced-cheese");
+    for (const q of ["nut free snacks", "tree nut allergy", "allergic to peanuts and eggs"]) {
+      for (const id of ["nuts-and-seeds", "peanut-butter", "trail-mix"]) expect(ids(q), q).not.toContain(id);
+    }
+    expect(ids("allergic to peanuts and eggs")).not.toContain("breakfast-eggs");
+    expect(ids("gluten free bread")).not.toContain("bread-or-buns");
+    // It finds what the store calls allergy-safe or nut-free, and "free" no longer means "bleach-free".
+    for (const q of ["milk allergy", "gluten free", "dairy free", "egg free"]) expect(ids(q)[0], q).toBe("special-diet-foods");
+    expect(ids("nut free").slice(0, 2)).toEqual(["hazelnut-or-seed-butter", "special-diet-foods"]);
+    for (const q of ["nut free", "gluten free", "dairy free", "nut free snacks"]) expect(ids(q), q).not.toContain("bleach-free-disinfectant-spray");
+    expect(ids("bleach free")[0]).toBe("bleach-free-disinfectant-spray");
+    expect(avoidsFood("milk allergy")).toBe(true);
+    expect(avoidsFood("bleach free")).toBe(false);
+    expect(avoidsFood("milk")).toBe(false);
   });
 
   it("doesn't let a describing word alone make a match", () => {
