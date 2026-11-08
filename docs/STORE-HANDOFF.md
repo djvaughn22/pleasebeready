@@ -38,13 +38,21 @@ Fourth deploy, Nov 6 (commit 99bcf6a, rollback tag live-before-short-words-20261
 - Before and after on 2,928 searches (the earlier list plus 375 short-word searches and every word of four letters or fewer in the catalog): 330 changed, every change read, kit lists changed 7. One item name slipped: "First-night box" is now second, behind "Moving boxes", because "first" and "night" aren't search words.
 - 172 tests, types, lint and build pass. Vercel success. Live: `/search` for hat, pot, pan, kid, bandaid, first aid, nut free and dry beans show the right lists, no console errors on those pages, sweep of 69 pages found 0 problems.
 
+Fifth deploy, Nov 7 (commit b2d6e06, rollback tag live-before-joined-words-20261107): joined spellings and allergy searches.
+- `respell()` reads a search in the store's own spelling. A word nothing in the store starts with becomes the two or three words the store puts side by side ("firstaid", "trashbags", "gobag", "canopener", "firstaidkit"; "catfood" through the cat → pet synonym). Two typed words become one when the store only writes them as one ("sand bag" → sandbags, "tooth brush", "zip lock", "water proof"). Kit terms go through it too. Words with a digit or a one-letter part stay as typed ("usbc", "kcup").
+- Synonyms for toolbox, ziplock and ziploc, raincoat, allergic; "toolbox" is a home maintenance kit term. `SYN` is read through the `synonyms` Map, so "constructor" can't reach an object's built-ins.
+- Allergy searches: `FOODS` and `avoidedFoods()`. The food just before "free", "allergy" or "intolerant", or after "allergic to", is left out by item name (nut also leaves out peanut and trail mix; gluten and wheat leave out bread, pasta, crackers and the like). Those words then look for "nut free" or "allergy safe" in item text, so "free" no longer finds bleach-free spray. `avoidsFood()` shows "We don't check ingredients. Read every label for allergens." under Products on those searches (DJ approved the line).
+- Before and after on 3,136 searches (the Nov 6 list plus joined spellings, two-word forms and 130 allergy searches): 185 changed, every change read, no item's own name search got worse, none now finds nothing, kit lists changed 24 (all joined spellings gaining their kit). Of 2,304 two-word catalog phrases typed as one word, 2,279 read back as the phrase with the same list; the rest are words the store already writes as one ("lunchbox") or have a one-letter part.
+- 174 tests, types, lint and build pass. Local production build: right results for firstaid, trashbags, toolbox, sand bag, nut free, gluten free bread, bleach free, gobag; typing "nutfree" at phone width works, no sideways scroll, no console errors.
+- Vercel success. Live: `/search` for milk allergy, firstaid, trashbags, toolbox, sand bag, nut free, gluten free, bleach free, gobag, hat and dry beans show the right lists, the label line only on the allergy ones, every Amazon link tagged, no console errors. Sweep of 69 pages found 0 problems.
+
 Not verified: live stock of anything (see Rules), a tap through to Amazon on a real phone, print preview of the new links.
 
 ## Next steps
 1. Owner steps: tap through `docs/audit/hand-check-links.md`; register the Creators API (the only automated way to see live stock).
 2. Optional: more bulk picks. Canned pasta has no catalog item (Chef Boyardee Overstuffed 12-pack B003XUJ3RK looked fine). Red Cross manual Revision 2025 may beat the 2021 edition.
 3. Optional: search gaps in `search.ts`, found and not touched.
-   - Joined or split spellings. These find nothing: firstaid, toolbox, toiletpaper, papertowels, trashbags, gobag, bugspray, canopener, ducttape, powerbank. "Sand bag" and "tooth brush" don't put sandbags or toothbrushes first.
-   - "Milk allergy" lists milk first, and "gluten free" and "nut free" list bleach-free spray. `ALLERGENS` only covers nuts, peanut butter and eggs.
+   - Allergy searches only leave out food named for the allergen. "Nut free snacks" still lists trail snacks and granola bars, which can hold nuts; the label line is the honest answer, not a longer word list.
+   - "Ear plugs" now lists only sleep masks and earplugs (it used to show ear protection among plugs and alarms). "Band aid" lost its Emergency and Health lane chips. A synonym would fix either.
    - A two-word search with fewer than three full matches lists items that match one word after them: "coffee pod" shows laundry pods second, as "coffee pods" already did.
    - "Mess kit", "french press" and "wind" could get a real answer from a synonym or kit term.
