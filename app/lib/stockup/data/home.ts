@@ -45,9 +45,11 @@ Coffee filters ; hom,cmp,hst ; g:1 ; pack ; x
 Creamer ; hom,hst,wrk,cmp ; g:1 ; container ; x ; q=coffee creamer
 Lunchbox snacks variety pack ; sch,wrk ; kd:5 ; snack ; u ; need=kids ; pack=40 ; q=snack variety pack
 
+## water
+5-gallon water jug ; hom,eme,out,hur ; g:2 ; jug ; u ; q=5 gallon water jug | n=Each holds 5 gallons, a day of water for 5 people at 1 gallon each. Fill with tap water.
+Water dispenser pump ; hom,eme,out ; g:1 ; pump ; x ; q=5 gallon water jug pump | n=Pours from a 5-gallon jug without lifting it.
+
 ## drinks
-5-gallon water jug ; hom,eme,out,hur ; g:2 ; jug ; u ; q=5 gallon water jug | n=Shows up often in Amazon searches next to emergency prep.
-Water dispenser pump ; hom,eme,out ; g:1 ; pump ; x ; q=5 gallon water jug pump
 Kids' water bottles ; sch,spt,hik,bch ; k:1 ; bottle ; u ; need=kids ; q=kids water bottle
 Insulated tumbler ; wrk,col,rdt ; a:1 ; tumbler ; x
 Decaf and tea for guests ; hst ; g:1 ; box/boxes ; x ; q=tea variety pack
