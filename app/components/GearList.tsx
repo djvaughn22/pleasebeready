@@ -29,7 +29,7 @@ export default function GearList({ gear, label = "Optional gear" }: { gear: Gear
               </a>
               <a href={amazonSearchUrl(q)} target="_blank" rel="noopener noreferrer sponsored"
                 data-measure="gear" data-measure-label={`b-${g.asin}`}
-                className="px-1 text-[0.7rem] font-bold text-[#94a3b8] underline decoration-[#26324c] underline-offset-2 hover:text-[#e8edf5] print:hidden">
+                className="inline-flex min-h-6 items-center px-1 text-[0.7rem] font-bold text-[#94a3b8] underline decoration-[#26324c] underline-offset-2 hover:text-[#e8edf5] print:hidden">
                 Sold out? Search “{q}” ↗
               </a>
             </div>

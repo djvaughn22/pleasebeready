@@ -68,7 +68,7 @@ export default function TodayPage() {
                 href={amazonSearchUrl(backupQuery(pickByAsin(task.gear.asin)?.item ?? "", task.gear.name))}
                 target="_blank"
                 rel="noopener noreferrer sponsored"
-                className="mt-2 inline-block text-xs font-bold text-[#94a3b8] underline"
+                className="mt-2 inline-flex min-h-6 items-center text-xs font-bold text-[#94a3b8] underline"
               >
                 Sold out? Search Amazon ↗
               </a>
