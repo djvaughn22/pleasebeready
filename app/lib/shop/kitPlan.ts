@@ -53,3 +53,17 @@ export function kitRows(ids: string[], plan: Plan): Suggestion[] {
     return item ? [suggest(item, plan)] : [];
   });
 }
+
+/**
+ * The kit's link with this group's numbers, for "Share this kit". Only numbers
+ * that differ from the kit's own preset go in, using the same names
+ * numbersFromQuery reads, so the person who opens it sees the same amounts.
+ * Nothing about the family but four counts; no list contents, no names.
+ */
+export function kitSharePath(kit: Kit, n: KitNumbers): string {
+  const base = kitNumbers(kit);
+  const q = new URLSearchParams();
+  for (const k of ["people", "kids", "pets", "days"] as const) if (n[k] !== base[k]) q.set(k, String(n[k]));
+  const s = q.toString();
+  return s ? `/kits/${kit.slug}?${s}` : `/kits/${kit.slug}`;
+}

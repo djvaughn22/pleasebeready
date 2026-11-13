@@ -6,7 +6,7 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { kitNumbers, kitPlan, kitRows, numbersFromQuery, type KitNumbers } from "../../lib/shop/kitPlan";
+import { kitNumbers, kitPlan, kitRows, kitSharePath, numbersFromQuery, type KitNumbers } from "../../lib/shop/kitPlan";
 import { kitBySlug, type Kit } from "../../lib/shop/kits";
 import { hasPick } from "../../lib/shop/picks";
 import { MAX_DAYS, MAX_PEOPLE, durationLabel, unitWord } from "../../lib/stockup/calc";
@@ -58,6 +58,18 @@ function KitBody({ kit, n, setN }: { kit: Kit; n: KitNumbers; setN: (fn: (n: Kit
     return next;
   });
 
+  // Share this kit: the link carries only the four counts, so whoever opens it sees the same amounts.
+  const [shared, setShared] = useState("");
+  const share = async () => {
+    const url = `${window.location.origin}${kitSharePath(kit, n)}`;
+    try {
+      if (navigator.share) { await navigator.share({ title: `${kit.title} | PleaseBeReady`, url }); setShared("sent"); return; }
+    } catch (e) {
+      if ((e as Error)?.name === "AbortError") return; // they closed the share sheet
+    }
+    try { await navigator.clipboard.writeText(url); setShared("copied"); } catch { setShared(url); }
+  };
+
   const who = [`${n.people} ${n.people === 1 ? "person" : "people"}`];
   if (n.kids) who.push(`${n.kids} ${n.kids === 1 ? "kid" : "kids"}`);
   if (n.pets) who.push(`${n.pets} ${n.pets === 1 ? "pet" : "pets"}`);
@@ -88,7 +100,14 @@ function KitBody({ kit, n, setN }: { kit: Kit; n: KitNumbers; setN: (fn: (n: Kit
           ) : (
             <button type="button" className={btnPrimary} disabled={!saver.ready} onClick={() => saver.saveMany(missing)}>⭐ Save this kit</button>
           )}
+          <button type="button" className={`${btnSmall.replace("min-h-10", "min-h-11")} print:hidden`} onClick={share} data-testid="kit-share">🔗 Share this kit</button>
         </div>
+        <p role="status" aria-live="polite" className={shared ? muted : "sr-only"}>
+          {shared === "sent" ? "Shared. The link opens this kit with your numbers."
+            : shared === "copied" ? <span className="pbr-accent">Link copied. It opens this kit with your numbers; nothing is stored on our side.</span>
+            : shared ? <>Copy this link: <input readOnly value={shared} onFocus={(e) => e.target.select()} aria-label="Link to this kit" className="w-full rounded border border-[#26324c] bg-[#0c1220] px-2 py-1 text-xs" /></>
+            : ""}
+        </p>
         <p className={muted}>
           Saves the {kit.essentials.length} must-haves{forget.length ? `, ${forget.length} easy-to-forget items` : ""}{todo.length ? ` and ${todo.length} things to do` : ""} to a list on this device. Upgrades are up to you. Then shop the list item by item and tick things off.
         </p>
