@@ -1,6 +1,8 @@
 // The way out beside an exact product: other products we checked for the same
-// item, and a labelled Amazon search for when it's sold out or not right. The
-// site can't see Amazon's live stock, so this is always there. Counted through
+// item, and a labelled Amazon search for more options. The site can't see
+// Amazon's live stock, so this is always there. Nov 14 2026: it used to read
+// "Sold out? Search", which on a phone read as a stock warning under every
+// product; "More options" says what it is without claiming anything. Counted through
 // the site's GA listener as shop_click, with -b- in the label.
 
 import { amazonUrl } from "../../lib/gear";
@@ -10,16 +12,16 @@ import type { CatalogItem } from "../../lib/stockup/types";
 
 const quiet = "inline-flex min-h-6 items-center text-xs font-bold text-[#94a3b8] underline decoration-[#26324c] underline-offset-2 hover:text-[#e8edf5] print:hidden";
 
-/** "Sold out? Search “aa batteries 48 pack” ↗". `short` drops the words, for tiles. Nothing when the main button is already a search. */
+/** "More options: “aa batteries 48 pack” ↗". `short` drops the words, for tiles. Nothing when the main button is already a search. */
 export default function BackupLink({ item, short }: { item: CatalogItem; short?: boolean }) {
   const b = backupLink(item);
   if (!b) return null;
   return (
     <a href={b.url} target="_blank" rel="noopener noreferrer sponsored"
       data-measure="shop" data-measure-label={`${item.cat}-b-${item.id}`}
-      aria-label={`Sold out or not right? Search Amazon for ${b.q} (search results, opens in a new tab)`}
+      aria-label={`More options: search Amazon for ${b.q} (search results, opens in a new tab)`}
       className={quiet}>
-      {short ? "Sold out? Search ↗" : `Sold out? Search “${b.q}” ↗`}
+      {short ? "More options ↗" : `More options: “${b.q}” ↗`}
     </a>
   );
 }

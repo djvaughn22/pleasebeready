@@ -35,7 +35,7 @@ export default function ReadyPage() {
             ))}
           </ul>
           <p className="mt-6 text-xs font-semibold leading-6 text-[#94a3b8]">
-            Shop links go to Amazon. As an Amazon Associate, PleaseBeReady earns from qualifying purchases. “Search Amazon” and “Sold out? Search” open search results, not one chosen product.
+            Shop links go to Amazon. As an Amazon Associate, PleaseBeReady earns from qualifying purchases. “Search Amazon” and “More options” open search results, not one chosen product.
           </p>
           <p className="mt-2 text-xs font-semibold leading-6 text-[#94a3b8]">
             General planning information, not professional or medical advice. A plan does not guarantee anyone’s safety. In any emergency,
