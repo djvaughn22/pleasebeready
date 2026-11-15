@@ -450,3 +450,16 @@ export const kitsForMonth = (month: number) => kits.filter((k) => k.months?.incl
 
 /** Kits shown first on the home page when nothing seasonal applies. */
 export const POPULAR = ["five-day-emergency", "power-outage", "new-puppy", "birthday-party", "teen-driver", "first-apartment"];
+
+/** November to February: the storm and outage kits lead the home page (Nov 14 2026 audit). */
+export const WINTER_MONTHS = [11, 12, 1, 2];
+const WINTER_LEAD = ["winter-storm", "power-outage"];
+
+/** The home page's seasonal shelf for a month (1-12): shortest season first; in winter, storm and outage lead. */
+export function seasonalKits(month: number, limit = 4): Kit[] {
+  const inSeason = kitsForMonth(month).sort((a, b) => (a.months?.length ?? 12) - (b.months?.length ?? 12));
+  if (!WINTER_MONTHS.includes(month)) return inSeason.slice(0, limit);
+  const lead = WINTER_LEAD.map((slug) => kitBySlug(slug)).filter((k): k is Kit => Boolean(k));
+  return [...lead, ...inSeason.filter((k) => !WINTER_LEAD.includes(k.slug))].slice(0, limit);
+}
+

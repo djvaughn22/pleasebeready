@@ -13,7 +13,7 @@ import { KitCard } from "./components/shop/Tiles";
 import { activeDeals } from "./lib/shop/deals";
 import { findsTabs } from "./lib/shop/finds";
 import { guides } from "./lib/shop/guides";
-import { POPULAR, kitBySlug, kits, kitsForMonth } from "./lib/shop/kits";
+import { POPULAR, WINTER_MONTHS, kitBySlug, kits, seasonalKits } from "./lib/shop/kits";
 import { lanes } from "./lib/shop/lanes";
 import { pickByAsin } from "./lib/shop/picks";
 
@@ -57,10 +57,31 @@ export default function Home() {
   const now = new Date();
   const today = now.toISOString().slice(0, 10);
   const monthName = now.toLocaleString("en-US", { month: "long", timeZone: "UTC" });
-  const seasonal = kitsForMonth(now.getUTCMonth() + 1).sort((a, b) => (a.months?.length ?? 12) - (b.months?.length ?? 12)).slice(0, 4);
+  const month = now.getUTCMonth() + 1;
+  const seasonal = seasonalKits(month);
+  // November to February the storm and outage shelf comes first on the page.
+  const winterFirst = WINTER_MONTHS.includes(month);
   const deals = activeDeals(today);
   const finds = findsTabs(now);
   const shown = new Set([...finds.essentials, ...finds.new, ...finds.everyday].map((p) => p.asin));
+
+  const seasonShelf = (
+            <section aria-labelledby="season-title" className="mb-10">
+              <Head id="season-title" title={`Ready for ${monthName}`} href="/guides" more="Guides" />
+              {seasonal.length > 0 && (
+                <ul className={`${rail} mb-3`}>{seasonal.map((k) => <li key={k.slug} className="w-[11.5rem] shrink-0 snap-start"><KitCard kit={k} /></li>)}</ul>
+              )}
+              <ul className="flex flex-wrap gap-2">
+                {guides.map((g) => (
+                  <li key={g.slug}>
+                    <Link href={`/guides/${g.slug}`} className="inline-flex min-h-10 items-center gap-1.5 rounded-full border border-[#26324c] bg-[#141d2e] px-3 text-sm font-bold text-[#e8edf5]">
+                      <span aria-hidden>{g.emoji}</span>{g.title}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </section>
+  );
 
   return (
     <main className="min-h-screen bg-[#0b1220] text-[#e8edf5]">
@@ -99,6 +120,8 @@ export default function Home() {
               </ul>
             </nav>
 
+            {winterFirst && seasonShelf}
+
             <section aria-labelledby="finds-title" className="mb-10">
               <Head id="finds-title" title="Ready Finds" href="/shop/emergency" more="Emergency store" />
               <FindsTabs tabs={[
@@ -121,21 +144,8 @@ export default function Home() {
 
             <div className="mb-10"><ListsTeaser /></div>
 
-            <section aria-labelledby="season-title" className="mb-10">
-              <Head id="season-title" title={`Ready for ${monthName}`} href="/guides" more="Guides" />
-              {seasonal.length > 0 && (
-                <ul className={`${rail} mb-3`}>{seasonal.map((k) => <li key={k.slug} className="w-[11.5rem] shrink-0 snap-start"><KitCard kit={k} /></li>)}</ul>
-              )}
-              <ul className="flex flex-wrap gap-2">
-                {guides.map((g) => (
-                  <li key={g.slug}>
-                    <Link href={`/guides/${g.slug}`} className="inline-flex min-h-10 items-center gap-1.5 rounded-full border border-[#26324c] bg-[#141d2e] px-3 text-sm font-bold text-[#e8edf5]">
-                      <span aria-hidden>{g.emoji}</span>{g.title}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </section>
+            {!winterFirst && seasonShelf}
+
 
             <SaveToast />
           </Saver>
