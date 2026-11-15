@@ -21,7 +21,9 @@ export type MeasureEvent =
   /** A search ran. Label: kit-<slug> for the top kit, items-only, or none. Never the words typed. */
   | "search"
   /** A list's share link was sent or copied. Label: the list's situation. */
-  | "list_share";
+  | "list_share"
+  /** Two or more shoes compared side by side on /footwear. Label: <activity>-<count>. */
+  | "footwear_compare";
 
 export function measure(event: MeasureEvent, label: string): void {
   if (typeof window === "undefined") return;

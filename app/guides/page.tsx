@@ -30,6 +30,13 @@ export default function GuidesPage() {
             </li>
           ))}
         </ul>
+        <Link href="/footwear" className="mt-6 flex items-start gap-3 rounded-2xl border border-[#26324c] bg-[#141d2e] p-4 transition hover:border-[#F97316]">
+          <span aria-hidden className="text-2xl leading-none">👟</span>
+          <span className="min-w-0">
+            <span className="block text-base font-black leading-snug text-[#e8edf5]">Compare shoes and boots</span>
+            <span className="mt-1 block text-xs font-semibold leading-5 text-[#94a3b8]">Tread, traction, miles and price for walking, running, hiking, snow and work.</span>
+          </span>
+        </Link>
       </div>
       <JsonLd data={{
         "@context": "https://schema.org",
