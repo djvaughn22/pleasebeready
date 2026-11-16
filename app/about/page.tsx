@@ -41,12 +41,16 @@ export default function AboutPage() {
           need, guide, or gear link was picked; which kind of plan was started; when items are added to a list; which shop link was opened), except in browsers that ask not to be tracked. Nothing you type is sent. Plan names and amounts are not sent either.
         </p>
 
+        <p style={{ fontSize: 15, lineHeight: 1.65, color: "#94a3b8", margin: "0 0 14px" }}>
+          For households and anyone planning ahead: a storm, an outage, a trip, a new puppy, a first car.
+        </p>
+
         <p style={{ fontSize: 13, lineHeight: 1.7, color: "#64748b", margin: 0 }}>
-          PleaseBeReady is an{" "}
+          PleaseBeReady is an independent product of{" "}
           <a href="https://openmirrorllc.com" style={{ color: A, textDecoration: "none" }}>
             Open Mirror LLC
-          </a>{" "}
-          project.
+          </a>
+          .
         </p>
 
         {/* The footer's Contact and Disclaimer links land on these two
