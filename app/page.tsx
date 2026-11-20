@@ -3,9 +3,9 @@ import Link from "next/link";
 import { Mark, Wordmark } from "./components/Brand";
 import JsonLd, { SITE } from "./components/JsonLd";
 import ListsProvider from "./components/shop/ListsProvider";
-import FoodWaterPicker from "./components/ready/FoodWaterPicker";
 import ReadyCard from "./components/ready/ReadyCard";
 import ListsTeaser from "./components/shop/ListsTeaser";
+import OccasionPlanner from "./components/shop/OccasionPlanner";
 import Saver from "./components/shop/Saver";
 import SaveToast, { ListPicker } from "./components/shop/SaveBar";
 import { FindsTabs } from "./components/shop/Store";
@@ -17,9 +17,11 @@ import { POPULAR, WINTER_MONTHS, kitBySlug, kits, seasonalKits } from "./lib/sho
 import { lanes } from "./lib/shop/lanes";
 import { pickByAsin } from "./lib/shop/picks";
 
-// Home is a storefront: wordmark and search, Food & Water (two choices, one Shop button), Get Ready (or
-// Continue my plan), departments, then products.
-// No headline or pitch: the name says what the store is. Ready Finds opens on
+// Home: wordmark and search, then the planner (owner direction 2026-11-20: the page reads at once as a
+// planner for real occasions like parties, sleepovers and camping): one headline, the occasions, how many
+// people, and one button to that plan with amounts for the group. Food & Water is one of the occasions.
+// "Continue my plan" shows only to a visitor with a Get Ready plan (Get Ready is in the menu). Then
+// departments and products; the "Saving to" line sits above the products it saves. Ready Finds opens on
 // Essentials (what a household should stock first, in the shared order from
 // lib/shop/priority.ts), then New, Everyday, Budget picks, Upgrades, and
 // Verified deals only when deals.ts has one. Then kits, the visitor's lists,
@@ -30,7 +32,7 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: { absolute: "PleaseBeReady" },
   description:
-    "Emergency supplies and everyday essentials, picked product by product, with kits for outages, storms, pets, cars, trips and parties, and lists saved on your device.",
+    "Plan what to buy for a party, sleepover, camping trip or storm: amounts for your group, a link to each item, and lists saved on your device.",
   alternates: { canonical: "/" },
 };
 
@@ -88,11 +90,11 @@ export default function Home() {
       <div className="mx-auto max-w-6xl px-4 pb-10 pt-4 sm:px-6 sm:pt-6">
         <ListsProvider>
           <Saver>
-            <header className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-6">
-              <h1 className="flex shrink-0 items-center gap-2.5" aria-label="PleaseBeReady">
+            <header className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-6">
+              <div className="flex shrink-0 items-center gap-2.5">
                 <Mark size={40} />
                 <Wordmark className="text-[1.75rem] leading-none sm:text-3xl" />
-              </h1>
+              </div>
               <form action="/search" method="get" role="search" className="flex flex-1 gap-2">
                 <label htmlFor="home-q" className="sr-only">Search products and kits</label>
                 <input id="home-q" name="q" type="search" enterKeyHint="search" autoComplete="off" placeholder="Search products and kits"
@@ -102,9 +104,8 @@ export default function Home() {
                 </button>
               </form>
             </header>
-            <ListPicker className="-mt-3 mb-3" />
-            <div className="mb-3"><FoodWaterPicker /></div>
-            <div className="mb-6"><ReadyCard /></div>
+            <div className="mb-6"><OccasionPlanner month={month} /></div>
+            <ReadyCard onlyPlan className="-mt-3 mb-6" />
 
             <nav aria-label="Departments" className="mb-8">
               <ul className={`${rail} sm:grid sm:grid-cols-8 sm:overflow-visible sm:pb-0`}>
@@ -124,6 +125,7 @@ export default function Home() {
 
             <section aria-labelledby="finds-title" className="mb-10">
               <Head id="finds-title" title="Ready Finds" href="/shop/emergency" more="Emergency store" />
+              <ListPicker className="-mt-2 mb-2" />
               <FindsTabs tabs={[
                 { key: "essentials", label: "Essentials", picks: finds.essentials },
                 { key: "new", label: "New", picks: finds.new, tag: "New" },

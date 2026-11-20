@@ -8,12 +8,13 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { DAYS, MAX_FW_DAYS, MAX_FW_PEOPLE, PEOPLE, parseDays, parsePeople, type Only } from "../../lib/ready/bundle";
+import { DAYS, MAX_FW_DAYS, MAX_FW_PEOPLE, PEOPLE, bundleHref, parseDays, parsePeople } from "../../lib/ready/bundle";
+import type { Only } from "../../lib/ready/bundle";
 import { input } from "../stockup/ui";
 
 const KEY = "pbr:fw";
 const n = (x: number) => x.toLocaleString("en-US");
-export const bundleHref = (people: number, days: number, only?: Only) => `/food-water?people=${people}&days=${days}${only ? `&only=${only}` : ""}`;
+export { bundleHref };
 
 const chip = (on: boolean) =>
   `min-h-10 min-w-9 rounded-full border px-2 text-sm sm:min-w-10 sm:px-3 font-black transition ${on ? "border-[#F97316] bg-[#F97316] text-[#0b1220]" : "border-[#26324c] bg-[#1c2740] text-[#e8edf5] hover:border-[#F97316]"}`;

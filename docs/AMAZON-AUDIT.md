@@ -108,7 +108,15 @@ Looked for and not added because the copies seen were unavailable: Mahatma 10 lb
 
 **Red Cross manual:** the 2021 edition still shows; a Revision 2025 exists and may be a better pick.
 
-## To re-check later
+## Nov 20, 2026: the buyer path from the home planner
+
+Sleepover for 4, birthday party for 12 and camping for 4 were walked from home to each listing; record in `audit/buyer-audit-2026-11-20.tsv`.
+
+- Removed: the Coleman Skydome tent B07XGDP7D7 (only a used offer, on Nov 19 and again Nov 20) and the GSI Bugaboo cookset B0CXC4JG7D (the listing is the small set; we sold it as medium). Both buttons are now the labelled Amazon search, so nobody lands on a listing they can't buy new.
+- The sleepover uses kids' sleeping bags (a search), not the 20°F camping bag.
+- The match kit counts as "2 match kits", not "2 lighters".
+- Still flagged: the Coleman 62 qt cooler (no offer text), and the Dixie cutlery (title says 108 pieces, spec table 168).
+
 
 1. `npm run picks -- due` lists entries past their re-check date. Search each by ASIN, add a row to the TSV, and for a keeper set `checked` in `picks.ts`.
 2. A listing seen as unavailable leaves `picks.ts`; its row stays in the TSV so the test keeps it out.

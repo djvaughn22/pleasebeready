@@ -1,8 +1,10 @@
 "use client";
 
-// Home's Get Ready door: "Continue my plan" with progress and the next small
+// Get Ready's door: "Continue my plan" with progress and the next small
 // action when the visitor has a guided plan, else a plain start. Keeps one
-// height while lists load, so the page doesn't jump.
+// height while lists load, so the page doesn't jump. `onlyPlan` (home, since
+// Nov 20 2026): nothing at all unless there is a plan to continue; the planner
+// leads home and Get Ready stays in the menu.
 
 import Link from "next/link";
 import { useMemo } from "react";
@@ -10,10 +12,11 @@ import { amountText, currentGuided, readiness } from "../../lib/ready/engine";
 import { itemById } from "../../lib/stockup/catalog";
 import { useLists } from "../shop/ListsProvider";
 
-export default function ReadyCard() {
+export default function ReadyCard({ onlyPlan, className = "" }: { onlyPlan?: boolean; className?: string }) {
   const api = useLists();
   const plan = api.ready ? currentGuided(api.store.plans) : null;
   const r = useMemo(() => (plan ? readiness(plan) : null), [plan]);
+  if (onlyPlan && !plan) return null;
   const next = r?.next;
   const item = next ? itemById(next.id) : null;
   // Water first, then food, then the next thing on the plan: the same numbers as the plan page.
@@ -45,7 +48,7 @@ export default function ReadyCard() {
   );
   return (
     <Link href="/ready" aria-label={plan ? "Continue my readiness plan" : "Get Ready: start a readiness plan"}
-      className="pbr-edge flex min-h-[3.75rem] items-center gap-3 rounded-2xl border-2 bg-[#141d2e] px-4 py-2.5">
+      className={`pbr-edge flex min-h-[3.75rem] items-center gap-3 rounded-2xl border-2 bg-[#141d2e] px-4 py-2.5 ${className}`}>
       {body ?? <span className="text-xs font-bold text-[#94a3b8]">Get Ready</span>}
     </Link>
   );

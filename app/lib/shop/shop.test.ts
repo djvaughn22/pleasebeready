@@ -170,7 +170,8 @@ describe("search", () => {
     expect(ids("car")).not.toContain("carbon-monoxide-alarm");
     expect(ids("grab bar")).not.toContain("granola-or-protein-bars");
     expect(ids("grab bar")[0]).toBe("grab-bars");
-    expect(ids("coleman")).toEqual(expect.arrayContaining(["tent", "camp-stove", "cooler"]));
+    // Nov 20 2026: the Coleman tent left the store (only a used offer, twice), so "coleman" finds the stove and cooler.
+    expect(ids("coleman")).toEqual(expect.arrayContaining(["camp-stove", "cooler"]));
     expect(ids("midland")).toContain("weather-radio");
     // Brand names inside product names match whole words only, and a named situation ranks its kit's must-haves.
     const outage = ids("power outage for 4 people", 8);
@@ -407,6 +408,18 @@ describe("kit amounts", () => {
     expect(numbersFromQuery("?kids=0", family).kids).toBe(0);
     expect(numbersFromQuery("?people=0&days=9999&pets=x", puppy)).toEqual(puppy);
     expect(numbersFromQuery("?kids=7", family).people).toBe(7);
+  });
+
+  it("a link for 4 people plans for 4, even when the kit starts with more kids (the home planner's links)", () => {
+    const sleepover = kitBySlug("kids-sleepover")!;
+    expect(kitNumbers(sleepover)).toMatchObject({ people: 8, kids: 6 });
+    expect(numbersFromQuery("?people=4", kitNumbers(sleepover))).toMatchObject({ people: 4, kids: 4 });
+    expect(numbersFromQuery("?people=7", kitNumbers(sleepover))).toMatchObject({ people: 7, kids: 6 });
+    expect(numbersFromQuery("?people=4&kids=3", kitNumbers(sleepover))).toMatchObject({ people: 4, kids: 3 });
+    expect(numbersFromQuery("?people=2&kids=5", kitNumbers(sleepover))).toMatchObject({ people: 5, kids: 5 });
+    const party = kitBySlug("birthday-party")!;
+    expect(numbersFromQuery("?people=10", kitNumbers(party))).toMatchObject({ people: 10, kids: 10 });
+    expect(kitPlan(sleepover, numbersFromQuery("?people=4", kitNumbers(sleepover)))).toMatchObject({ people: 4, kids: 4 });
   });
 
   it("works out water from the official rule: 1 gallon per person per day", () => {

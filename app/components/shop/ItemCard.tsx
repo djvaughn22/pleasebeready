@@ -88,6 +88,8 @@ function ItemCard({ item, s, compact, minor }: { item: CatalogItem; s?: Suggesti
               {/* The catalog's pack size is a typical one; an exact product's own count gives the real package math. */}
               {s.packs !== null && item.pack! > 1 && !varies && !main && <span className="text-[#94a3b8]"> ({s.packs} × {item.pack}-pack)</span>}
               {!varies && packsText(item, s.qty) && <span className="text-[#94a3b8]"> ({packsText(item, s.qty)})</span>}
+              {/* A single product named in its own unit (a match kit for "lighters", a jug for gallons) says what to buy. */}
+              {!varies && main?.each && (main.count ?? 1) <= 1 && s.qty > 0 && <span className="text-[#94a3b8]"> ({packText(offerFor(main, s.qty), item)})</span>}
             </p>
           )}
           {s && !varies && !compact && <p className={muted}>{s.how}{item.source ? " · official amount" : ""}</p>}

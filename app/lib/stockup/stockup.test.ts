@@ -83,10 +83,13 @@ describe("shopping links", () => {
   });
   it("writes a plain list with what is left", () => {
     const p = plan({ people: 4 });
-    const s = suggest(itemById("tent")!, p);
+    const s = suggest(itemById("camp-stove")!, p);
     const t = listText(p, [{ s, qty: 2, have: 1, got: false }]);
-    expect(t).toContain("[ ] Tent: 1 tent — Coleman Skydome 4-person tent · have 1");
+    expect(t).toContain("[ ] Camp stove: 1 stove — Coleman Classic 2-burner stove with WindBlock panels · have 1");
     expect(t).toContain("planning estimates");
+    // An item on a search (the tent since Nov 20 2026) names no product.
+    const tent = listText(p, [{ s: suggest(itemById("tent")!, p), qty: 2, have: 1, got: false }]);
+    expect(tent).toContain("[ ] Tent: 1 tent · have 1");
   });
 });
 

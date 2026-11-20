@@ -358,3 +358,5 @@ B0H8ZFD32X	camp-stove	pick	yes	none	Nov 19 buyer audit: WindBlock stove promoted
 B07XGDP7D7	tent	pick	yes	mixed	Nov 19 buyer audit: only a used offer seen from a third-party seller; no new offer	keep, flag
 B0BDGG9TM8	cooler	pick	yes	mixed	Nov 19 buyer audit: only a used Like New offer seen (Amazon Resale); sibling 62 qt listings unavailable	keep, flag
 B0CXC4JG7D	camp-cookware-set	pick	partial	none	Nov 19 buyer audit: listing copies disagree on size (Small 2L + 1.5L vs Medium 3L + 2L)	keep, flag
+B07XGDP7D7	tent	pick	yes	mixed	Nov 20 recheck: the listing still shows only a used offer (third-party seller, Used - Very Good) and no new offer, as on Nov 19; the newer Skydome 4-person listing B0DS2V4LK6 is Currently unavailable; two other Skydome 4-person listings have conflicting ASINs or capacity	remove (used only in two checks; the Tent button is now the labelled search)
+B0CXC4JG7D	camp-cookware-set	pick	partial	none	Nov 20 recheck: the main listing title is Bugaboo Base Camper SMALL (2 L and 1.5 L pots, 8 in fry pan); we sold it as medium (3 L and 2 L pots); one copy still says Medium	remove (wrong size for a family; the button is now the labelled search)

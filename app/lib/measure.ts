@@ -8,7 +8,7 @@
 
 export type MeasureEvent =
   | "need_select" | "guide_click" | "gear_click"
-  /** Stock-up planner: a plan was created. Label: <picker|link|shared>-<situation>. */
+  /** A plan was started: the stock-up planner (<picker|link|shared>-<situation>) or the home planner's button (home-<occasion id>). */
   | "plan_start"
   /** Items went onto a list. Label: <one|ticked|category|all>-<situation>. */
   | "plan_add"

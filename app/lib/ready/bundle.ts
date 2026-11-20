@@ -30,6 +30,9 @@ export const MAX_FW_DAYS = 365;
 export const FOOD_WATER = "food-water";
 
 export type Only = "water" | "food" | null;
+
+/** The Food & Water page for a group: /food-water?people=4&days=7, with &only=water|food for one half. */
+export const bundleHref = (people: number, days: number, only?: Only) => `/food-water?people=${people}&days=${days}${only ? `&only=${only}` : ""}`;
 /**
  * bottled: all sealed bottled water in cases (Ready.gov's first choice). jugs: all sealed one-gallon jugs.
  * stored: a few days bottled, the rest tap water in food-grade containers.

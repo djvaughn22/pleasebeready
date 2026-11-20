@@ -27,7 +27,9 @@ export function kitPlan(kit: Kit, n: KitNumbers = kitNumbers(kit)): Plan {
 /**
  * Numbers from a kit link (?people=6&kids=2&pets=1&days=5). A number that is
  * missing, blank or out of range keeps the current value; an absent ?pets= is
- * not "0 pets".
+ * not "0 pets". A link that sets people but not kids caps the kids at that
+ * many, as the People stepper does: a sleepover "for 4" is 4, not the kit's 6
+ * kids (Nov 20 2026: the home planner's links read ?people=4 as 6 people).
  */
 export function numbersFromQuery(search: string, cur: KitNumbers): KitNumbers {
   const q = new URLSearchParams(search);
@@ -38,8 +40,10 @@ export function numbersFromQuery(search: string, cur: KitNumbers): KitNumbers {
     return Number.isInteger(v) && v >= lo && v <= hi ? v : undefined;
   };
   const next = { ...cur };
-  next.people = num("people", 1, MAX_PEOPLE) ?? next.people;
-  next.kids = num("kids", 0, MAX_PEOPLE) ?? next.kids;
+  const people = num("people", 1, MAX_PEOPLE);
+  const kids = num("kids", 0, MAX_PEOPLE);
+  next.people = people ?? next.people;
+  next.kids = kids ?? (people !== undefined ? Math.max(0, Math.min(next.kids, people - next.babies)) : next.kids);
   next.pets = num("pets", 0, 50) ?? next.pets;
   next.days = num("days", 1, MAX_DAYS) ?? next.days;
   next.people = Math.max(next.people, next.kids + next.babies);

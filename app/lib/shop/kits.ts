@@ -195,7 +195,8 @@ const written: Kit[] = [
     slug: "kids-sleepover", emoji: "🛌", title: "Kids' sleepover", short: "One night, a room full of kids",
     intro: "One night, a living room full of kids: somewhere to sleep, snacks, a movie, and breakfast in the morning.",
     lane: "family", also: ["parties"], base: "sleepover", preset: { people: 8, kids: 6, days: 2, nights: 1, meals: 2 }, ask: ["people", "kids"],
-    essentials: ["sleeping-bags", "pillows", "pizza", "popcorn", "juice-boxes", "breakfast-cereal", "pancake-mix", "syrup", "paper-plates", "cups", "napkins", "glow-sticks"],
+    // Nov 20 2026: kids' sleeping bags, not the 20°F camping bag (a living room, not a campsite).
+    essentials: ["kids-sleeping-bags", "pillows", "pizza", "popcorn", "juice-boxes", "breakfast-cereal", "pancake-mix", "syrup", "paper-plates", "cups", "napkins", "glow-sticks"],
     upgrades: ["sleepover-tents-for-kids", "movie-night-projector", "air-mattress", "kids-sleeping-masks-and-pajama-favors"],
     budget: [{ id: "board-games", instead: "movie-night-projector" }],
     forget: ["toothbrushes", "night-light", "card-games", "friendship-bracelet-kit"],

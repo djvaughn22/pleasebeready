@@ -3,8 +3,11 @@
 // labelled Amazon search for similar ones. The site can't see Amazon's live
 // stock, so this is always there. Nov 14 2026: "Sold out? Search" read as a
 // stock warning on a phone, so it became "More options"; Nov 19 2026: "More
-// options" didn't say it was a search, so it reads "Search similar". Counted
-// through the site's GA listener as shop_click, with -b- in the label.
+// options" didn't say it was a search, so it reads "Search similar". Nov 20
+// 2026 (fallback pass): the full label names the retailer ("Search similar on
+// Amazon: …") and the link is a 40px tap target, since it is the one-tap way out
+// when a product page turns out unavailable. Counted through the site's GA
+// listener as shop_click, with -b- in the label.
 
 import { amazonUrl } from "../../lib/gear";
 import { holdsText, offersFor, packText } from "../../lib/shop/offers";
@@ -13,18 +16,18 @@ import { localNote } from "../../lib/shop/local";
 import { backupLink } from "../../lib/stockup/shop";
 import type { CatalogItem } from "../../lib/stockup/types";
 
-const quiet = "inline-flex min-h-6 items-center text-xs font-bold text-[#94a3b8] underline decoration-[#26324c] underline-offset-2 hover:text-[#e8edf5] print:hidden";
+const quiet = "inline-flex min-h-10 items-center text-xs font-bold text-[#94a3b8] underline decoration-[#26324c] underline-offset-2 hover:text-[#e8edf5] print:hidden";
 
-/** "Search similar: “aa batteries 48 pack” ↗". `short` drops the words, for tiles. Nothing when the main button is already a search. */
+/** "Search similar on Amazon: “aa batteries 48 pack” ↗". `short` drops the words, for tiles. Nothing when the main button is already a search. */
 export default function BackupLink({ item, short }: { item: CatalogItem; short?: boolean }) {
   const b = backupLink(item);
   if (!b) return null;
   return (
     <a href={b.url} target="_blank" rel="noopener noreferrer sponsored"
       data-measure="shop" data-measure-label={`${item.cat}-b-${item.id}`}
-      aria-label={`Search similar: Amazon search results for ${b.q} (opens in a new tab)`}
+      aria-label={`Search similar on Amazon: search results for ${b.q} (opens in a new tab)`}
       className={quiet}>
-      {short ? "Search similar ↗" : `Search similar: “${b.q}” ↗`}
+      {short ? "Search similar ↗" : `Search similar on Amazon: “${b.q}” ↗`}
     </a>
   );
 }
