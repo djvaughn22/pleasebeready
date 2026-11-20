@@ -16,7 +16,9 @@ import { itemById } from "../../lib/stockup/catalog";
 import { unitWord } from "../../lib/stockup/calc";
 import { packsText } from "../../lib/stockup/shop";
 import type { CatalogItem, Per, Suggestion } from "../../lib/stockup/types";
-import BackupLink from "../stockup/BackupLink";
+import BackupLink, { LocalNote } from "../stockup/BackupLink";
+import { localFirst, localNote } from "../../lib/shop/local";
+import { offerFor, packText } from "../../lib/shop/offers";
 import ShopButton from "../stockup/ShopButton";
 import { btnSmall, muted } from "../stockup/ui";
 import { ProductArt } from "./Art";
@@ -97,6 +99,7 @@ function ItemCard({ item, s, compact, minor }: { item: CatalogItem; s?: Suggesti
           )}
         </div>
       </div>
+      {localFirst(item.id) && <p className="-mb-1 text-sm font-bold leading-6 text-[#e8edf5]">{localNote(item.id, s?.qty ?? 0)}</p>}
       <div className="flex gap-2">
         <ShopButton item={item} big />
         <button type="button" disabled={!saver.ready} onClick={() => saver.toggle(item.id)} aria-pressed={saved}
@@ -106,6 +109,7 @@ function ItemCard({ item, s, compact, minor }: { item: CatalogItem; s?: Suggesti
         </button>
       </div>
       <BackupLink item={item} short={compact} />
+      {!compact && !localFirst(item.id) && <LocalNote item={item} need={s && !varies ? s.qty : 0} />}
       {!compact && others.length > 0 && (
         <ul aria-label={`Other choices for ${item.name}`} className="flex flex-col gap-2 border-t border-[#26324c] pt-2.5 print:hidden">
           {others.map((o) => (
@@ -114,7 +118,8 @@ function ItemCard({ item, s, compact, minor }: { item: CatalogItem; s?: Suggesti
                 data-measure="shop" data-measure-label={`${item.cat}-${o.role}-${item.id}`}
                 aria-label={`${roleText[o.role]}: ${o.name} on Amazon (opens in a new tab)`}
                 className="font-black text-[#e8edf5] underline decoration-[#F97316] underline-offset-2 hover:brightness-110">
-                <span className="pbr-blue">{roleText[o.role]}:</span> {o.name} ↗
+                <span className="pbr-blue">{roleText[o.role]}:</span> {o.name}
+                {s && !varies && s.qty > 0 && <span className="text-[#94a3b8]"> · buy {packText(offerFor(o, s.qty), item)}</span>} ↗
               </a>
               <span className="block font-semibold text-[#94a3b8]">{o.why}</span>
             </li>

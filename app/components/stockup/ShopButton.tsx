@@ -8,9 +8,10 @@ import { shopLink } from "../../lib/stockup/shop";
 import type { CatalogItem } from "../../lib/stockup/types";
 import { btnSmall } from "./ui";
 
-export default function ShopButton({ item, big, tile }: { item: CatalogItem; big?: boolean; tile?: boolean }) {
+/** `chosen`: the product a visitor swapped to on their list (an ASIN); our pick otherwise. */
+export default function ShopButton({ item, big, tile, chosen }: { item: CatalogItem; big?: boolean; tile?: boolean; chosen?: string }) {
   if (item.kind === "task") return null;
-  const link = shopLink(item);
+  const link = shopLink(item, chosen);
   const exact = link.kind === "product";
   const text = exact ? "Shop on Amazon" : "Search Amazon";
   const look = exact

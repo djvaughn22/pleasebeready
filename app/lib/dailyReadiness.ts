@@ -58,7 +58,7 @@ export const READINESS_TASKS: ReadinessTask[] = [
   { emoji: "🩹", area: "First Aid", title: "Restock the basics", detail: "Pain reliever, antihistamine, anti-diarrheal, electrolytes. Check what's expired and write the shopping list." },
   // 🔦 Power & Light
   { emoji: "🔦", area: "Power & Light", title: "Charge every power bank", detail: "A dead power bank is a paperweight. Charge them all tonight and put one where you'd grab it leaving.", gear: { name: "Anker 10,000mAh USB-C power bank", asin: "B0D5CLSMFB" } },
-  { emoji: "🔦", area: "Power & Light", title: "Stage a headlamp", detail: "Hands-free light beats a phone flashlight every time. One headlamp on the nightstand, one in the kit.", gear: { name: "Energizer LED headlamps, 2-pack", asin: "B0DDQL8T6Z" } },
+  { emoji: "🔦", area: "Power & Light", title: "Stage a headlamp", detail: "Hands-free light beats a phone flashlight every time. One headlamp on the nightstand, one in the kit.", gear: { name: "Energizer LED headlamps, 2-pack", asin: "B0BN4K3PT6" } },
   { emoji: "🔦", area: "Power & Light", title: "Test every flashlight", detail: "Click each one tonight. Count your spare batteries while you're at it — AAs disappear." },
   { emoji: "🔦", area: "Power & Light", title: "Make the outage plan", detail: "If the power died right now: what needs electricity first? Fridge, phones, medical gear. Know your order.", gear: { name: "Jackery Explorer 1000 v2 power station", asin: "B0D7PPG25F" } },
   // 🔥 Heat & Shelter

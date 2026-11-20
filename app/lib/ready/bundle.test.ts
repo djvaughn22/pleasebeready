@@ -79,9 +79,9 @@ describe("Food & Water bundle", () => {
     expect(pk).toEqual({
       "bottled-water": [213, 9, 216],
       "canned-soups-and-stews": [43, 4, 48],
-      "canned-tuna-or-chicken": [25, 3, 36],
+      "canned-tuna-or-chicken": [25, 1, 48],
       "canned-beans": [13, 2, 16],
-      "canned-vegetables": [23, 4, 24],
+      "canned-vegetables": [23, 2, 24],
       "canned-fruit": [22, 2, 24],
       "shelf-stable-milk": [30, 3, 36],
       "peanut-butter": [2, 1, 2],
@@ -91,6 +91,10 @@ describe("Food & Water bundle", () => {
     });
     expect(rowsFor(b, "water").map((r) => r.id)).toEqual(["bottled-water"]);
     expect(rowsFor(b, "food").map((r) => r.id)).not.toContain("bottled-water");
+    // Gallon jugs instead of cases: one row, the whole 28 gallons, counted in jugs.
+    const j = bundle(4, 7, [], "jugs");
+    expect(j.water.rows.map((r) => [r.id, r.units, r.packs])).toEqual([["water", 28, 28]]);
+    expect(j.water.rows[0].offers[0].pick.each).toBe("jug");
   });
 
   it("counts what the household already has, once, and never an empty container", () => {
@@ -157,7 +161,13 @@ describe("Food & Water bundle", () => {
     expect(t).toContain("Food: 28 person-days (2,000 calories each)");
     expect(t).toContain("[ ] Canned meals: 4 packs of 12 (48 cans)");
     expect(t).toContain("[ ] Peanut butter: 1 pack of 2 (2 jars)");
-    expect(t).toContain("Or 28 one-gallon jugs from any store.");
+    expect(t).toContain("Or 28 one-gallon jugs (5 six-packs) from any store.");
+    // Every other product says how many to buy for the same amount.
+    expect(t).toContain("    or 7 packs of 12 — Campbell's Chunky savory vegetable soup, 12 × 18.8 oz");
+    expect(t).toContain("    or 2 jars — SKIPPY creamy peanut butter, one 40 oz jar");
+    const jugs = shoppingText(bundle(4, 7, [], "jugs"), "water");
+    expect(jugs).toContain("[ ] Gallon jugs: 28 jugs — e.g. Pure Life purified water, 1-gallon jug");
+    expect(jugs).toContain("Any store: 28 one-gallon jugs, or 5 six-packs of jugs.");
     expect(t).not.toMatch(/\$|price|free|best/i);
     const long = shoppingText(bundle(4, 30), "water");
     expect(long).toContain("[ ] Store tap water: 16 containers");
@@ -168,7 +178,7 @@ describe("Food & Water bundle", () => {
   });
 
   it("reads people and days from a link safely", () => {
-    expect([parseWay("bottled"), parseWay("stored"), parseWay("x")]).toEqual(["bottled", "stored", null]);
+    expect([parseWay("bottled"), parseWay("jugs"), parseWay("stored"), parseWay("x")]).toEqual(["bottled", "jugs", "stored", null]);
     expect([parsePeople("3"), parsePeople("0"), parsePeople("999"), parsePeople("x")]).toEqual([3, 1, 50, 4]);
     expect([parseDays("14"), parseDays("-2"), parseDays("9999"), parseDays(undefined)]).toEqual([14, 1, 365, 7]);
     expect([parseOnly("water"), parseOnly("food"), parseOnly("x")]).toEqual(["water", "food", null]);

@@ -51,6 +51,7 @@ export function parsePlan(v: unknown): Plan | null {
       if (l.ready === true) line.ready = true;
       if (l.restock === true) line.restock = true;
       if (typeof l.note === "string" && l.note.trim()) line.note = l.note.slice(0, NOTE_MAX);
+      if (typeof l.pick === "string" && /^[0-9A-Z]{10}$/.test(l.pick)) line.pick = l.pick;
       list[id] = line;
     }
   }

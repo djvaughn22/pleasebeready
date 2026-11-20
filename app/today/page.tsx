@@ -70,7 +70,7 @@ export default function TodayPage() {
                 rel="noopener noreferrer sponsored"
                 className="mt-2 inline-flex min-h-6 items-center text-xs font-bold text-[#94a3b8] underline"
               >
-                More options on Amazon ↗
+                Search similar on Amazon ↗
               </a>
             </>
           ) : null}

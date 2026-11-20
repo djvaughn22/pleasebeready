@@ -118,6 +118,12 @@ export type Line = {
   restock?: boolean;
   /** The visitor's own note, such as a size, a brand or who is buying it. */
   note?: string;
+  /**
+   * The product the visitor swapped to (an ASIN from picks.ts), when it isn't our pick.
+   * Only which product to open: the amount, have, bought and ready stay the line's own,
+   * and a product that leaves the store falls back to our pick (shop/offers.ts).
+   */
+  pick?: string;
 };
 
 export type Plan = {

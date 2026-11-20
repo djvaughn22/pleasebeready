@@ -335,3 +335,26 @@ B003XUJ3RK	canned-pasta	candidate	yes	none	Chef Boyardee Overstuffed beef raviol
 B01H2DG1SW	handheld-shower-head	candidate	yes	none	AquaDance 6 setting chrome handheld, 5 ft hose	use as new pick
 B07PPJZJ9F	handheld-shower-head	candidate	yes	out	Waterpik SM-653CGE: currently unavailable	do not use
 B014TGI96C	handheld-shower-head	candidate	yes	none	Moen 26100 chrome: page showed sign in, no stock text	not used
+B07V8LP11V	bottled-water	pick	yes	out	Nov 19 buyer audit: ASIN page shows Currently unavailable; Amazon Fresh lists a renamed 24 ct	replace
+B000T9SZOU	bottled-water	alt	yes	out	Nov 19 buyer audit: ASIN page and Amazon Fresh page show Currently unavailable (one older copy showed stock)	remove
+B01M0RRW2L	water	pick	yes	no-offers	Nov 19 buyer audit: No featured offers available; same 6-pack under B0D81LKZ3V shows Currently unavailable	replace
+B0BCL2LLP5	toilet-paper	pick	yes	no-offers	Nov 19 buyer audit: No featured offers available	replace
+B07QJ5NCBP	canned-tuna-or-chicken	pick	yes	no-offers	Nov 19 buyer audit: No featured offers available; not discontinued	replace
+B08WJW4DBS	canned-vegetables	pick	yes	out	Nov 19 buyer audit: Currently unavailable and No featured offers available	replace
+B00005OU9D	camp-stove	pick	yes	out	Nov 19 buyer audit: Currently unavailable	replace
+B0DDQL8T6Z	headlamps	pick	yes	out	Nov 19 buyer audit: Currently unavailable; the same 2-pack is live as B0BN4K3PT6	replace
+B0DS2V4LK6	tent	pick	yes	out	Nov 19 buyer audit: newer Skydome 4-person listing, Currently unavailable	do not use
+B0009PUQXW	camp-stove	pick	yes	out	Nov 19 buyer audit: InstaStart PerfectFlow, Currently unavailable	do not use
+B07HDF1YYN	toilet-paper	pick	yes	no-offers	Nov 19 buyer audit: Charmin 18 Mega 286 sheets, No featured offers available	do not use
+B003O3ACJ4	bottled-water	pick	yes	buy	Nov 19 buyer audit: Pure Life 24 x 16.9 oz; In Stock, ships from and sold by AmazonFresh	use as new pick
+B095CN96JS	toilet-paper	pick	yes	none	Nov 19 buyer audit: Amazon Basics 2-ply 30 rolls; title matched, no stock text	use as new pick
+B0BN4K3PT6	headlamps	pick	yes	buy	Nov 19 buyer audit: Energizer Headlamp PRO 2-pack; purchase options shown	use as new pick
+B083DQB3D9	candles-and-lighter	pick	yes	none	Nov 19 buyer audit: BEAN LIEVE 24 thin candles, gold; title matched	use as new pick
+B001QC31G6	camp-water-jug	pick	yes	none	Nov 19 buyer audit: same Aqua-Tainer as water-storage-container; title matched	use as new pick
+B0851WXNBQ	water	pick	yes	none	Nov 19 buyer audit: single 1-gallon jug promoted to first pick; title matched, no stock text	keep
+B003WT31QQ	canned-tuna-or-chicken	pick	yes	buy	Nov 19 buyer audit: 48-can case promoted to first pick; offer shown	keep
+B078SZHZ82	canned-vegetables	pick	yes	buy	Nov 19 buyer audit: cut green beans 12-pack promoted to first pick; offer shown	keep
+B0H8ZFD32X	camp-stove	pick	yes	none	Nov 19 buyer audit: WindBlock stove promoted to first pick; title matched, no stock text	keep
+B07XGDP7D7	tent	pick	yes	mixed	Nov 19 buyer audit: only a used offer seen from a third-party seller; no new offer	keep, flag
+B0BDGG9TM8	cooler	pick	yes	mixed	Nov 19 buyer audit: only a used Like New offer seen (Amazon Resale); sibling 62 qt listings unavailable	keep, flag
+B0CXC4JG7D	camp-cookware-set	pick	partial	none	Nov 19 buyer audit: listing copies disagree on size (Small 2L + 1.5L vs Medium 3L + 2L)	keep, flag

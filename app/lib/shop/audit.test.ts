@@ -68,7 +68,8 @@ describe("no dead ends", () => {
   });
 
   it("the essentials each have another exact choice or a search, and water has gallons and containers", () => {
-    expect(primaryPick("water")?.count).toBe(6);
+    // Nov 19, 2026: the 6-pack of gallon jugs showed no offer, so the single jug leads (counted in jugs).
+    expect(primaryPick("water")?.each).toBe("jug");
     expect(picksFor("water").some((p) => p.count === 1)).toBe(true);
     expect(primaryPick("water-storage-container")?.name).toMatch(/7-gallon/);
     expect(picksFor("water-storage-container").some((p) => p.role === "bulk")).toBe(true);
@@ -90,8 +91,9 @@ describe("clear choices and quantities", () => {
 
   it("amounts become packages of the product we link", () => {
     expect(packsText(itemById("bottled-water")!, 216)).toBe("9 cases of 24");
-    expect(packsText(itemById("water")!, 28)).toBe("5 cases of 6");
-    expect(packsText(itemById("water")!, 6)).toBe("1 case of 6");
+    expect(packsText(itemById("water")!, 28)).toBeNull();
+    expect(packsText(itemById("canned-tuna-or-chicken")!, 25)).toBe("1 pack of 48");
+    expect(packsText(itemById("canned-tuna-or-chicken")!, 25, "B0D81L6MD5")).toBe("3 packs of 6");
     expect(packsText(itemById("batteries")!, 16)).toBe("1 pack of 48");
     expect(packsText(itemById("manual-can-opener")!, 1)).toBeNull();
     expect(packsText(itemById("shelf-food")!, 28)).toBeNull();

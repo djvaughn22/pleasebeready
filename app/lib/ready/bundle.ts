@@ -14,6 +14,7 @@
 import { currentGuided, readiness } from "./engine";
 import { labelFor } from "./nutrition";
 import { FOOD_KITS, FOOD_MIX, WATER_WAYS, foodMix, total, units, waterParts } from "./supplies";
+import { offersFor, packText, type Offer } from "../shop/offers";
 import { picksFor, primaryPick, type Pick } from "../shop/picks";
 import { withDays } from "../stockup/calc";
 import { itemById } from "../stockup/catalog";
@@ -29,8 +30,11 @@ export const MAX_FW_DAYS = 365;
 export const FOOD_WATER = "food-water";
 
 export type Only = "water" | "food" | null;
-/** bottled: all sealed bottled water (Ready.gov's first choice). stored: a few days bottled, the rest tap water in food-grade containers. */
-export type WaterWay = "bottled" | "stored";
+/**
+ * bottled: all sealed bottled water in cases (Ready.gov's first choice). jugs: all sealed one-gallon jugs.
+ * stored: a few days bottled, the rest tap water in food-grade containers.
+ */
+export type WaterWay = "bottled" | "jugs" | "stored";
 
 export type Row = {
   id: string;
@@ -43,6 +47,8 @@ export type Row = {
   packs: number;
   packUnits: number;
   others: Pick[];
+  /** Every product we list for the row, our pick first, each with its own package count for the same amount. */
+  offers: Offer[];
   prep?: string;
 };
 
@@ -54,8 +60,6 @@ export type Bundle = {
     need: number; have: number; gap: number; rows: Row[];
     /** The whole gap as one-gallon jugs, or as cases of bottles. */
     jugs: number; cases: number;
-    /** The same gap as gallon jugs: a choice beside the rows, not added to them. */
-    jugRow: Row;
     /** Gallons bought in bottles and gallons to store from the tap. */
     bottled: number; stored: number;
     /** Containers the household has, empty, to fill from the tap (not bought again). */
@@ -73,7 +77,7 @@ const whole = (x: unknown, lo: number, hi: number, d: number) => {
 export const parsePeople = (x: unknown) => whole(x, 1, MAX_FW_PEOPLE, 4);
 export const parseDays = (x: unknown) => whole(x, 1, MAX_FW_DAYS, 7);
 export const parseOnly = (x: unknown): Only => (x === "water" || x === "food" ? x : null);
-export const parseWay = (x: unknown): WaterWay | null => (x === "bottled" || x === "stored" ? x : null);
+export const parseWay = (x: unknown): WaterWay | null => (x === "bottled" || x === "jugs" || x === "stored" ? x : null);
 /** Up to a week, bottles; longer, mostly stored tap water, so a month isn't dozens of cases. */
 export const defaultWay = (days: number): WaterWay => (days > ALL_BOTTLED_UP_TO ? "stored" : "bottled");
 
@@ -84,6 +88,10 @@ export function supplySource(plans: Plan[]): Plan | null {
 
 /** Lines that hold water or food (and the opener that goes with cans). */
 const SUPPLY_IDS = ["water", "shelf-food", ...WATER_WAYS.map((w) => w.id), ...FOOD_MIX.map((f) => f.id), ...FOOD_KITS.map((k) => k.id), "manual-can-opener"];
+/** Lines the Food & Water page sets the amounts of (its own label math, not the catalog's rules). */
+export const isBundleItem = (id: string) => SUPPLY_IDS.includes(id);
+/** The lines water is bought on, one per way: a switch of way replaces the other way's unbought line. */
+const WATER_BUYS = ["bottled-water", "water-storage-container", "water"];
 const CANS = new Set(["canned-soups-and-stews", "canned-tuna-or-chicken", "canned-beans", "canned-vegetables", "canned-fruit"]);
 
 /** The source's supply lines. Water and food drop any set amount, so the need is this household's. */
@@ -111,7 +119,7 @@ function row(id: string, group: string, units: number, prep?: string): Row {
   const pick = primaryPick(id);
   const per = pick?.count ?? 1;
   const packs = Math.ceil(units / per);
-  return { id, group, units, unit: unitWord(id, units), pick, packs, packUnits: packs * per, others: picksFor(id).filter((p) => p !== pick), prep };
+  return { id, group, units, unit: unitWord(id, units), pick, packs, packUnits: packs * per, others: picksFor(id).filter((p) => p !== pick), offers: offersFor(id, units), prep };
 }
 
 const BOTTLE = WATER_WAYS[0].gallons;
@@ -136,8 +144,9 @@ export function bundle(people: number, days: number, plans: Plan[] = [], way: Wa
   const water: Row[] = [];
   // The bottled days count bottles and jugs already in hand, so buying them doesn't move the target.
   const inBottles = total(waterParts(plan).filter((x) => x.id === "bottled-water" || x.id === "water"));
-  const bottled = way === "stored" ? Math.min(wGap, Math.max(0, people * BOTTLED_DAYS - inBottles)) : wGap;
-  const stored = Math.max(0, wGap - bottled);
+  const bottled = way === "stored" ? Math.min(wGap, Math.max(0, people * BOTTLED_DAYS - inBottles)) : way === "jugs" ? 0 : wGap;
+  const stored = way === "jugs" ? 0 : Math.max(0, wGap - bottled);
+  if (way === "jugs" && wGap > 1e-9) water.push(row("water", "Gallon jugs", Math.ceil(wGap - 1e-9)));
   if (bottled > 1e-9) water.push(row("bottled-water", "Bottled water", Math.ceil(bottled / BOTTLE - 1e-9)));
   const box = plan.list["water-storage-container"];
   const empty = box && !box.restock ? Math.max(0, units(box, 0) - (box.filled ?? 0)) : 0;
@@ -152,7 +161,7 @@ export function bundle(people: number, days: number, plans: Plan[] = [], way: Wa
 
   return {
     people, days, source, way,
-    water: { need: w.need, have: w.covered, gap: wGap, rows: water, jugs: Math.ceil(wGap - 1e-9), cases: Math.ceil(wGap / BOTTLE / 24 - 1e-9), jugRow: row("water", "Or gallon jugs", Math.ceil(wGap - 1e-9)), bottled, stored, fill },
+    water: { need: w.need, have: w.covered, gap: wGap, rows: water, jugs: Math.ceil(wGap - 1e-9), cases: Math.ceil(wGap / BOTTLE / 24 - 1e-9), bottled, stored, fill },
     food: { need: f.need, have: f.covered, gap: fGap, rows: food },
   };
 }
@@ -173,6 +182,15 @@ export function savedList(b: Bundle, only: Only, now = Date.now()): Plan {
   const start = own ?? { ...newPlan("emergency", now), name: "Food & Water", kit: FOOD_WATER, list: {} as Record<string, Line> };
   const list: Record<string, Line> = { ...start.list };
   if (!own && b.source) Object.assign(list, supplyLines(b.source));
+  // A switch between bottles, jugs and stored tap water swaps the water line: the other way's line goes
+  // if nothing on it is bought, stored or filled yet. Lines with progress stay.
+  if (only !== "food") {
+    const now = new Set(b.water.rows.map((r) => r.id));
+    for (const id of WATER_BUYS) {
+      const l = list[id];
+      if (l && !now.has(id) && units(l, 0) === 0 && !(l.filled ?? 0)) delete list[id];
+    }
+  }
   for (const x of rowsFor(b, only)) {
     const l = list[x.id] ?? { qty: null, have: 0, got: false };
     // What the line already holds stays counted (a ticked line as bought); the bundle's amount goes on top.
@@ -191,10 +209,12 @@ export function foodFacts(rows: Row[]) {
   }, { kcal: 0, protein: 0 });
 }
 
+/** "9 cases of 24 (216 bottles)", "28 jugs", "4 packs of 12 (48 cans)": the first offer, as bought. */
 const word = (r: Row) => {
-  const per = r.pick?.count ?? 1;
-  if (per === 1) return `${r.packs} ${r.unit}`;
-  return `${r.packs} ${r.id === "bottled-water" ? (r.packs === 1 ? "case" : "cases") : r.packs === 1 ? "pack" : "packs"} of ${per} (${r.packUnits} ${unitWord(r.id, r.packUnits)})`;
+  const o = r.offers[0];
+  const item = itemById(r.id)!;
+  if (!o) return `${r.units} ${r.unit}`;
+  return o.per > 1 ? `${packText(o, item)} (${o.units} ${unitWord(r.id, o.units)})` : packText(o, item);
 };
 
 /** The bundle as a plain shopping list for any store: what, how many, our pick as an example. */
@@ -203,12 +223,21 @@ export function shoppingText(b: Bundle, only: Only): string {
   const add = (title: string, rows: Row[]) => {
     if (!rows.length) return;
     lines.push(title);
-    for (const r of rows) lines.push(`[ ] ${r.group}: ${word(r)}${r.pick ? ` — e.g. ${r.pick.name}` : ""}`);
+    for (const r of rows) {
+      lines.push(`[ ] ${r.group}: ${word(r)}${r.pick ? ` — e.g. ${r.pick.name}` : ""}`);
+      // A swap is the same amount in other packages: say how many, so a substitute isn't short.
+      for (const o of r.offers.slice(1)) lines.push(`    or ${packText(o, itemById(r.id)!)} — ${o.pick.name}`);
+    }
     lines.push("");
   };
   if (only !== "food") {
     add(`Water: ${Math.ceil(b.water.gap - 1e-9)} gallons`, b.water.rows);
-    if (b.water.rows.length) lines.push(`Or ${b.water.jugs} one-gallon ${b.water.jugs === 1 ? "jug" : "jugs"} from any store.`, "");
+    if (b.water.rows.length) {
+      const sixes = Math.ceil(b.water.jugs / 6);
+      lines.push(b.way === "jugs"
+        ? `Any store: ${b.water.jugs} one-gallon ${b.water.jugs === 1 ? "jug" : "jugs"}, or ${sixes} ${sixes === 1 ? "six-pack" : "six-packs"} of jugs.`
+        : `Or ${b.water.jugs} one-gallon ${b.water.jugs === 1 ? "jug" : "jugs"} (${sixes} ${sixes === 1 ? "six-pack" : "six-packs"}) from any store.`, "");
+    }
     if (b.water.fill) lines.push(`[ ] Fill ${b.water.fill} water containers you have from the tap`, "");
   }
   if (only !== "water") add(`Food: ${Math.ceil(b.food.gap - 1e-9)} person-days (2,000 calories each)`, b.food.rows);

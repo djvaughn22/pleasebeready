@@ -60,7 +60,7 @@ export const areas: Area[] = [
       "Generators run outdoors only, 20+ ft from windows and doors (carbon monoxide kills).",
     ],
     gear: [
-      { name: "Energizer LED headlamps, 2-pack with batteries", asin: "B0DDQL8T6Z" },
+      { name: "Energizer LED headlamps, 2-pack with batteries", asin: "B0BN4K3PT6" },
       { name: "Anker 10,000mAh USB-C power bank", asin: "B0D5CLSMFB" },
     ],
   },

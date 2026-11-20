@@ -6,15 +6,17 @@
 // Ticking "Bought" is the visitor's own mark: a click on an Amazon link never
 // counts as a purchase.
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import { measure } from "../../lib/measure";
 import { durationLabel, isDone, lineQty, toBuy, unitWord } from "../../lib/stockup/calc";
 import { categories } from "../../lib/stockup/catalog";
-import { listText, packsText, statusText, type TextRow } from "../../lib/stockup/shop";
+import { listText, statusText, type TextRow } from "../../lib/stockup/shop";
 import { LIST_NOTE_MAX, NOTE_MAX, encodePlan } from "../../lib/stockup/storage";
 import type { Line, Plan } from "../../lib/stockup/types";
+import { chosenPick, offerFor, packText, staleChoice } from "../../lib/shop/offers";
 import { primaryPick, roleText } from "../../lib/shop/picks";
-import { FOOD_WATER } from "../../lib/ready/bundle";
+import { FOOD_WATER, isBundleItem } from "../../lib/ready/bundle";
 import { readiness } from "../../lib/ready/engine";
 import { MoreChoices } from "./BackupLink";
 import { listRows, type Row } from "./resolve";
@@ -46,7 +48,12 @@ export default function ListView({ plan, api, onIdeas }: { plan: Plan; api: Plan
     return { ...p, list };
   });
 
-  const textRows: TextRow[] = rows.map((r) => ({ s: r.s, qty: lineQty(r.line, r.s), have: r.line.have, got: r.line.got, ready: r.line.ready, restock: r.line.restock, note: r.line.note }));
+  const textRows: TextRow[] = rows.map((r) => ({ s: r.s, qty: lineQty(r.line, r.s), have: r.line.have, got: r.line.got, ready: r.line.ready, restock: r.line.restock, note: r.line.note, pick: r.line.pick }));
+  // The Food & Water list's amounts come from the Food & Water page's label math, not the catalog's rules,
+  // so its lines say where the amount came from instead of offering a "Reset" to a different number.
+  const fw = plan.kit === FOOD_WATER
+    ? { text: `Amount from Food & Water for ${plan.people} ${plan.people === 1 ? "person" : "people"}, ${durationLabel(plan.days)}`, href: `/food-water?people=${plan.people}&days=${plan.days}` }
+    : undefined;
   const copy = async (text: string, ok: string) => {
     try { await navigator.clipboard.writeText(text); setMsg(ok); } catch { setMsg("Copy didn't work in this browser. Try Download."); }
   };
@@ -132,7 +139,7 @@ export default function ListView({ plan, api, onIdeas }: { plan: Plan; api: Plan
           <section key={c.id} aria-labelledby={`list-${c.id}`}>
             <h3 id={`list-${c.id}`} className="mb-2 text-lg font-black"><span aria-hidden>{c.emoji} </span>{c.title} <span className="text-sm text-[#94a3b8]">({rows.length})</span></h3>
             <ul className="flex flex-col gap-2">
-              {rows.map((r) => <BuyRow key={r.s.item.id} r={r} setLine={setLine} remove={remove} />)}
+              {rows.map((r) => <BuyRow key={r.s.item.id} r={r} setLine={setLine} remove={remove} fw={fw} />)}
             </ul>
           </section>
         ))}
@@ -211,22 +218,29 @@ function NoteField({ id, name, line, setLine }: { id: string; name: string; line
   );
 }
 
-function BuyRow({ r, setLine, remove }: { r: Row; setLine: SetLine; remove: (id: string) => void }) {
+function BuyRow({ r, setLine, remove, fw }: { r: Row; setLine: SetLine; remove: (id: string) => void; fw?: { text: string; href: string } }) {
   const { s, line } = r;
   const id = s.item.id;
   const qty = lineQty(line, s);
   const need = toBuy(line, s);
-  const own = line.qty !== null && line.qty !== s.qty;
-  const pick = primaryPick(id);
+  const fromBundle = fw && isBundleItem(id);
+  const own = !fromBundle && line.qty !== null && line.qty !== s.qty;
+  const ours = primaryPick(id);
+  const pick = chosenPick(id, line.pick);
+  const swapped = !!pick && pick !== ours;
+  const offer = pick && need > 0 ? offerFor(pick, need) : null;
+  const choose = (asin: string | undefined) => setLine(id, { pick: asin });
   return (
     <li className={`${inset} flex flex-col gap-3 p-3`}>
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           {line.restock && <span className="mb-1 inline-block rounded-md border border-[#26324c] px-1.5 py-0.5 text-[0.65rem] font-black uppercase tracking-wider pbr-amber">Restock</span>}
           <p className="text-sm font-black text-[#e8edf5]">{s.item.name}</p>
-          {pick && <p className="text-xs font-bold pbr-blue">{roleText[pick.role]}: {pick.name}</p>}
+          {pick && <p className="text-xs font-bold pbr-blue">{swapped ? "Your choice" : roleText[pick.role]}: {pick.name}</p>}
+          {staleChoice(id, line.pick) && <p className="text-xs font-bold pbr-amber">The product you chose isn’t in our store anymore, so this shows our pick. Your amount and progress are kept.</p>}
           <p className={muted}>
-            {own ? <>Suggested {s.qty.toLocaleString("en-US")}. <button type="button" className="font-black underline pbr-accent" onClick={() => setLine(id, { qty: null })}>Reset</button></> : s.how}
+            {fromBundle ? <><Link href={fw.href} className="underline">{fw.text}</Link></>
+              : own ? <>Suggested {s.qty.toLocaleString("en-US")}. <button type="button" className="font-black underline pbr-accent" onClick={() => setLine(id, { qty: null })}>Reset</button></> : s.how}
             {line.have > 0 && <> · you have {line.have} <button type="button" className="font-black underline pbr-accent" onClick={() => setLine(id, { have: 0 })}>clear</button></>}
           </p>
         </div>
@@ -235,16 +249,16 @@ function BuyRow({ r, setLine, remove }: { r: Row; setLine: SetLine; remove: (id:
       <div className="flex flex-wrap items-end justify-between gap-3">
         <Stepper compact sr={s.item.name} id={`qty-${id}`} text={`Amount (${s.item.unit.many})`} value={qty} min={0} max={99999} onChange={(n) => setLine(id, { qty: n })} />
         {!pick && s.item.pack && s.item.pack > 1 && need > 0 && <p className={`${muted} self-center`}>{Math.ceil(need / s.item.pack)} × {s.item.pack}-pack</p>}
-        {packsText(s.item, need) && <p className={`${muted} self-center`}>{packsText(s.item, need)}</p>}
+        {offer && <p className="self-center text-sm font-black pbr-accent">Buy {packText(offer, s.item)}</p>}
       </div>
       <div className="flex flex-wrap items-center gap-2">
-        <ShopButton item={s.item} big />
+        <ShopButton item={s.item} chosen={line.pick} big />
         <label className="flex min-h-11 cursor-pointer items-center gap-2 rounded-xl border border-[#26324c] px-3 text-sm font-black">
           <input type="checkbox" className="h-5 w-5" style={{ accentColor: "#F97316" }} checked={line.got} onChange={(e) => setLine(id, { got: e.target.checked, restock: undefined })} />
           Bought<span className="sr-only">: {s.item.name}</span>
         </label>
       </div>
-      <MoreChoices item={s.item} />
+      <MoreChoices item={s.item} need={need} chosen={line.pick} onChoose={choose} />
       <NoteField id={id} name={s.item.name} line={line} setLine={setLine} />
       {need === 0 && !line.got && <p className={muted}>Amount is 0, so there is nothing to buy.</p>}
       <span className="sr-only">{need} {unitWord(s.item, need)} to buy</span>

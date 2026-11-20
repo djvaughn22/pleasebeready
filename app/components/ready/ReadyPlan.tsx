@@ -259,7 +259,7 @@ function EntryRow({ e, r, onAdd, onDone }: { e: Entry; r: Readiness; onAdd: (id:
             {" · "}{TIER_TEXT[e.tier]}{i.covered > 0 && !e.task ? ` · ${n(i.covered)} of ${n(i.need)} covered` : ""}
           </p>
           {item.note && <p className={`${muted} line-clamp-2`}>{item.note}</p>}
-          {!e.task && !NO_SHOP.has(item.id) && <MoreChoices item={item} />}
+          {!e.task && !NO_SHOP.has(item.id) && <MoreChoices item={item} need={e.buy} />}
         </div>
       </div>
       <div className="grid grid-cols-3 gap-2 sm:flex sm:flex-wrap sm:items-center sm:justify-end print:hidden">

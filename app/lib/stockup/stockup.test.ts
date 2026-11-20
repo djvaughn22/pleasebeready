@@ -85,7 +85,7 @@ describe("shopping links", () => {
     const p = plan({ people: 4 });
     const s = suggest(itemById("tent")!, p);
     const t = listText(p, [{ s, qty: 2, have: 1, got: false }]);
-    expect(t).toContain("[ ] Tent: 1 tent · have 1");
+    expect(t).toContain("[ ] Tent: 1 tent — Coleman Skydome 4-person tent · have 1");
     expect(t).toContain("planning estimates");
   });
 });

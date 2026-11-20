@@ -5,15 +5,14 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { amazonUrl } from "../../lib/gear";
 import { ALL_BOTTLED_UP_TO, BOTTLED_DAYS, bundle, defaultWay, foodFacts, rowsFor, savedList, shoppingText, tripStages, type Only, type Row, type WaterWay } from "../../lib/ready/bundle";
 import { CALORIES_PER_DAY, PROTEIN_PER_DAY } from "../../lib/ready/nutrition";
-import { roleText } from "../../lib/shop/picks";
+import { holdsText, packText } from "../../lib/shop/offers";
 import { durationLabel } from "../../lib/stockup/calc";
 import { itemById } from "../../lib/stockup/catalog";
 import { sources } from "../../lib/stockup/sources";
 import { useLists } from "../shop/ListsProvider";
-import BackupLink from "../stockup/BackupLink";
+import { MoreChoices } from "../stockup/BackupLink";
 import ShopButton from "../stockup/ShopButton";
 import { btnPrimary, card, muted } from "../stockup/ui";
 import FoodWaterPicker, { bundleHref } from "./FoodWaterPicker";
@@ -21,41 +20,40 @@ import FoodWaterPicker, { bundleHref } from "./FoodWaterPicker";
 const n = (x: number) => x.toLocaleString("en-US");
 const plural = (k: number, one: string, many: string) => `${n(k)} ${k === 1 ? one : many}`;
 
-/** "9 cases of 24", "3 packs of 12", "2 jars". */
-function packText(r: Row) {
-  const per = r.pick?.count ?? 1;
-  if (per === 1) return `${n(r.packs)} ${r.unit}`;
-  return r.id === "bottled-water" || r.id === "water" ? `${plural(r.packs, "case", "cases")} of ${per}` : `${plural(r.packs, "pack", "packs")} of ${per}`;
-}
-
-function detail(r: Row) {
+/** The amount the household needs, in the item's own unit: "213 bottles, 28 gallons", "43 cans". */
+function needText(r: Row) {
   const unit = itemById(r.id)!.unit;
-  const got = `${n(r.packUnits)} ${r.packUnits === 1 ? unit.one : unit.many}`;
-  if (r.id === "bottled-water") return `${got}, about ${n(Math.floor((r.packUnits * 16.9) / 128))} gallons`;
-  if (r.id === "water") return `${got} · heavy, so a store near you can be easier`;
-  if (r.id === "water-storage-container") return `${r.prep} · holds ${n(r.packUnits * 7)} gallons · replace the water every 6 months`;
-  if ((r.pick?.count ?? 1) === 1) return r.prep ?? "";
-  return [r.packUnits > r.units ? `${got} (${n(r.units)} needed)` : got, r.prep].filter(Boolean).join(" · ");
+  const amount = `${n(r.units)} ${r.units === 1 ? unit.one : unit.many}`;
+  if (r.id === "bottled-water") return `${amount} (about ${n(Math.round((r.units * 16.9) / 128))} gallons)`;
+  if (r.id === "water-storage-container") return `${amount} to fill (${n(r.units * 7)} gallons)`;
+  return amount;
 }
 
+/** What the first product's packages hold, and anything to know about it. */
+function detail(r: Row) {
+  const o = r.offers[0];
+  const item = itemById(r.id)!;
+  const holds = o ? holdsText(o, item) : "";
+  const extra = o && o.units > r.units && o.per > 1 ? `${holds} (${n(r.units)} needed)` : holds;
+  if (r.id === "water-storage-container") return [extra, r.prep, "replace the water every 6 months"].filter(Boolean).join(" · ");
+  return [extra, r.prep].filter(Boolean).join(" · ");
+}
+
+/** One line: what the household needs, what to buy to get it (our pick, with the button), then every other way. */
 function Line({ r }: { r: Row }) {
   const item = itemById(r.id)!;
+  const o = r.offers[0];
   return (
-    <li className="flex flex-col gap-2 py-3 sm:flex-row sm:items-center sm:gap-4">
-      <div className="min-w-0 flex-1">
-        <p className="text-sm font-black leading-snug">{r.group} <span className="pbr-accent">· {packText(r)}</span></p>
-        <p className={muted}>{r.pick ? r.pick.name : item.name}{detail(r) ? ` · ${detail(r)}` : ""}</p>
-        {r.others.length > 0 && (
-          <p className="flex flex-wrap gap-x-3 text-xs font-black">
-            {r.others.map((o) => (
-              <a key={o.asin} href={amazonUrl(o.asin)} target="_blank" rel="noopener noreferrer sponsored" data-measure="shop" data-measure-label={`${item.cat}-${o.role}-${r.id}`}
-                aria-label={`${roleText[o.role]}: ${o.name} on Amazon (opens in a new tab)`} className="pbr-blue hover:underline">{roleText[o.role]}: {o.name} ↗</a>
-            ))}
-          </p>
-        )}
-        <BackupLink item={item} />
+    <li className="flex flex-col gap-2 py-3">
+      <p className="text-sm font-black leading-snug">{r.group} <span className="text-[#94a3b8]">· need {needText(r)}</span></p>
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
+        <div className="min-w-0 flex-1">
+          {o && <p className="text-sm font-black leading-snug"><span className="pbr-accent">Buy {packText(o, item)}</span> <span className="font-bold text-[#e8edf5]">· {o.pick.name}</span></p>}
+          {detail(r) && <p className={muted}>{detail(r)}</p>}
+        </div>
+        <div className="flex sm:w-48"><ShopButton item={item} big /></div>
       </div>
-      <div className="flex sm:w-48"><ShopButton item={item} big /></div>
+      <MoreChoices item={item} need={r.units} />
     </li>
   );
 }
@@ -158,9 +156,11 @@ export default function FoodWaterBundle({ people, days, goal: wanted, only, way:
           <h2 id="fw-water" className="pt-4 text-xs font-black uppercase tracking-wider text-[#94a3b8]">
             Water · {b.water.gap > 0 ? `${n(Math.ceil(b.water.gap - 1e-9))} gallons needed` : "covered"}
           </h2>
-          {days > ALL_BOTTLED_UP_TO && b.water.gap > 0 && (
-            <nav aria-label="How to get the water" className="mt-2 flex flex-wrap gap-2 text-xs font-black">
-              {([["stored", `${BOTTLED_DAYS} days bottled + store tap water`], ["bottled", "All bottled"]] as const).map(([w, t]) => (
+          {b.water.gap > 0 && (
+            <nav aria-label="How to buy the water" className="mt-2 flex flex-wrap gap-2 text-xs font-black">
+              {(days > ALL_BOTTLED_UP_TO
+                ? ([["stored", `${BOTTLED_DAYS} days bottled + store tap water`], ["bottled", "All in cases of bottles"], ["jugs", "All in gallon jugs"]] as const)
+                : ([["bottled", "Cases of bottles"], ["jugs", "Gallon jugs"]] as const)).map(([w, t]) => (
                 <Link key={w} href={`${href(days)}&water=${w}`} replace scroll={false} aria-current={way === w ? "page" : undefined}
                   className={`inline-flex min-h-10 items-center rounded-full border px-3 ${way === w ? "border-[#F97316] pbr-accent" : "border-[#26324c] text-[#e8edf5]"}`}>{t}</Link>
               ))}
@@ -175,7 +175,6 @@ export default function FoodWaterBundle({ people, days, goal: wanted, only, way:
           {b.water.rows.length ? (
             <ul className="divide-y divide-[var(--om-border)]">
               {b.water.rows.map((r) => <Line key={r.id} r={r} />)}
-              <Line r={b.water.jugRow} />
             </ul>
           ) : b.water.fill ? null : <Done text={`Water covered for ${plural(people, "person", "people")}, ${durationLabel(days)}.`} />}
         </section>
@@ -203,7 +202,7 @@ export default function FoodWaterBundle({ people, days, goal: wanted, only, way:
       )}
 
       <p className={`mt-4 ${muted}`}>
-        Each button opens one product on Amazon. We can’t see its stock, and grocery listings can depend on your delivery area: if one is out, use the search link under it, or take the list to any store. 1 gallon of water per person per day (<a href={sources["rg-water"].href} target="_blank" rel="noopener noreferrer" className="underline">Ready.gov</a>); more for hot weather, nursing or illness.
+        Each button opens one product on Amazon. We can’t see its stock, and grocery listings can depend on your delivery area: if one is out, use another choice under it (it says how many to buy for the same amount), search similar, or take the list to any store. 1 gallon of water per person per day (<a href={sources["rg-water"].href} target="_blank" rel="noopener noreferrer" className="underline">Ready.gov</a>); more for hot weather, nursing or illness.
         {" "}A person-day is a day of food for one person, counted as 2,000 calories.
       </p>
       <p className="mt-3 text-sm font-black">

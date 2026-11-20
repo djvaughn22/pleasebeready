@@ -39,6 +39,8 @@ export const essentialPicks = (): Pick[] => byPrep(CORE).map((id) => primaryPick
 export function findsTabs(now: Date, exclude: string[] = [], n = 8) {
   const essentials = essentialPicks();
   const skip = new Set([...exclude, ...essentials.map((p) => p.item)]);
+  // One product can fill two items (a 7-gallon jug stores water and serves a campsite): never show it twice.
+  const shown = new Set([...skip].map((id) => primaryPick(id)?.asin).filter(Boolean));
   const since = new Date(now.getTime() - NEW_DAYS * 864e5).toISOString().slice(0, 10);
   // Newest first: by the date added; products added the same day in preparedness order.
   const rank = (p: Pick) => prepRank(itemById(p.item)!);
@@ -48,7 +50,7 @@ export function findsTabs(now: Date, exclude: string[] = [], n = 8) {
   for (const p of recent) {
     if (fresh.length >= n) break;
     const cat = itemById(p.item)?.cat;
-    if (p.role === "pick" && !skip.has(p.item) && !fresh.some((f) => itemById(f.item)?.cat === cat)) fresh.push(p);
+    if (p.role === "pick" && !skip.has(p.item) && !shown.has(p.asin) && !fresh.some((f) => itemById(f.item)?.cat === cat)) fresh.push(p);
   }
   const pool = EVERYDAY.filter((id) => !skip.has(id) && !fresh.some((f) => f.item === id));
   const start = (weekOf(now) * n) % Math.max(pool.length, 1);
