@@ -60,6 +60,7 @@ function KitBody({ kit, n, setN }: { kit: Kit; n: KitNumbers; setN: (fn: (n: Kit
 
   // Share this kit: the link carries only the four counts, so whoever opens it sees the same amounts.
   const [shared, setShared] = useState("");
+  const [editing, setEditing] = useState(false);
   const share = async () => {
     const url = `${window.location.origin}${kitSharePath(kit, n)}`;
     try {
@@ -78,17 +79,34 @@ function KitBody({ kit, n, setN }: { kit: Kit; n: KitNumbers; setN: (fn: (n: Kit
     <div className="pbr-planner flex flex-col gap-10">
       <PlanGaps ids={[...saveSet, ...kit.upgrades]} className="-mb-6" />
       <section aria-label="Your group and how long" className={`${inset} flex flex-col gap-4 p-4`}>
-        {kit.ask.length > 0 && (
-          <div className="flex flex-wrap gap-x-6 gap-y-3">
-            {kit.ask.includes("people") && <Stepper compact id="kit-people" text="People" value={n.people} min={1} max={MAX_PEOPLE} onChange={(v) => set({ people: v, kids: Math.max(0, Math.min(n.kids, v - n.babies)) })} />}
-            {kit.ask.includes("kids") && <Stepper compact id="kit-kids" text="Kids" value={n.kids} min={0} max={MAX_PEOPLE} onChange={(v) => set({ kids: v })} />}
-            {kit.ask.includes("pets") && <Stepper compact id="kit-pets" text="Pets" value={n.pets} min={0} max={50} onChange={(v) => set({ pets: v })} />}
-            {kit.ask.includes("days") && <Stepper compact id="kit-days" text="Days" value={n.days} min={1} max={MAX_DAYS} onChange={(v) => set({ days: v })} />}
-          </div>
+        {/* The amounts as one line from the plan's own numbers (from home or the link), so the
+            checklist starts on the first phone screen. Change opens the steppers, Done folds them
+            again; the same button toggles, so keyboard focus stays put. */}
+        {kit.ask.length > 0 ? (
+          <>
+            <p className="flex flex-wrap items-center gap-x-2 text-sm font-bold leading-6 text-[#e8edf5]">
+              <span data-testid="kit-amounts">Amounts for {who.join(", ")}{kit.ask.includes("days") ? `, ${durationLabel(n.days)}` : ""}.</span>
+              <button type="button" aria-expanded={editing} aria-controls="kit-numbers" onClick={() => setEditing((v) => !v)}
+                data-testid="kit-change"
+                className="pbr-accent inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg px-2 font-black underline underline-offset-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F97316]">
+                {editing ? "Done" : "Change"}
+              </button>
+            </p>
+            <div id="kit-numbers" hidden={!editing} className="flex flex-col gap-3">
+              <div className="flex flex-wrap gap-x-6 gap-y-3">
+                {kit.ask.includes("people") && <Stepper compact id="kit-people" text="People" value={n.people} min={1} max={MAX_PEOPLE} onChange={(v) => set({ people: v, kids: Math.max(0, Math.min(n.kids, v - n.babies)) })} />}
+                {kit.ask.includes("kids") && <Stepper compact id="kit-kids" text="Kids" value={n.kids} min={0} max={MAX_PEOPLE} onChange={(v) => set({ kids: v })} />}
+                {kit.ask.includes("pets") && <Stepper compact id="kit-pets" text="Pets" value={n.pets} min={0} max={50} onChange={(v) => set({ pets: v })} />}
+                {kit.ask.includes("days") && <Stepper compact id="kit-days" text="Days" value={n.days} min={1} max={MAX_DAYS} onChange={(v) => set({ days: v })} />}
+              </div>
+              <p className={muted}>These are planning estimates; change any of them on your list.</p>
+            </div>
+          </>
+        ) : (
+          <p className={muted}>
+            Amounts below are for {who.join(", ")}. They are planning estimates; change any of them on your list.
+          </p>
         )}
-        <p className={muted}>
-          Amounts below are for {who.join(", ")}{kit.ask.includes("days") ? `, ${durationLabel(n.days)}` : ""}. They are planning estimates; change any of them on your list.
-        </p>
         <div className="flex flex-wrap items-center gap-2">
           {mine ? (
             <>
