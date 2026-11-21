@@ -5,7 +5,7 @@ import JsonLd, { SITE } from "./components/JsonLd";
 import ListsProvider from "./components/shop/ListsProvider";
 import ReadyCard from "./components/ready/ReadyCard";
 import ListsTeaser from "./components/shop/ListsTeaser";
-import OccasionPlanner from "./components/shop/OccasionPlanner";
+import EmergencyPlanner from "./components/shop/EmergencyPlanner";
 import Saver from "./components/shop/Saver";
 import SaveToast, { ListPicker } from "./components/shop/SaveBar";
 import { FindsTabs } from "./components/shop/Store";
@@ -17,10 +17,10 @@ import { POPULAR, WINTER_MONTHS, kitBySlug, kits, seasonalKits } from "./lib/sho
 import { lanes } from "./lib/shop/lanes";
 import { pickByAsin } from "./lib/shop/picks";
 
-// Home: wordmark and search, then the planner (owner direction 2026-11-20: the page reads at once as a
-// planner for real occasions like parties, sleepovers and camping): one headline, the occasions, how many
-// people, and one button to that plan with amounts for the group. Food & Water is one of the occasions.
-// "Continue my plan" shows only to a visitor with a Get Ready plan (Get Ready is in the menu). Then
+// Home: wordmark and search, then the emergency planner (owner direction 2026-11-20, night: household
+// preparedness leads; the occasion-first planner was rejected): outages and storms, how many people, how
+// long, and "Build your emergency plan" to that checklist. Parties, sleepovers, camping and cookouts are
+// one line below it. Then Get Ready (or Continue my plan). Then
 // departments and products; the "Saving to" line sits above the products it saves. Ready Finds opens on
 // Essentials (what a household should stock first, in the shared order from
 // lib/shop/priority.ts), then New, Everyday, Budget picks, Upgrades, and
@@ -32,7 +32,7 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: { absolute: "PleaseBeReady" },
   description:
-    "Plan what to buy for a party, sleepover, camping trip or storm: amounts for your group, a link to each item, and lists saved on your device.",
+    "Get your home ready for power outages, storms and water shutoffs: a checklist with amounts for your household, a link to each item, and lists saved on your device.",
   alternates: { canonical: "/" },
 };
 
@@ -104,8 +104,8 @@ export default function Home() {
                 </button>
               </form>
             </header>
-            <div className="mb-6"><OccasionPlanner month={month} /></div>
-            <ReadyCard onlyPlan className="-mt-3 mb-6" />
+            <div className="mb-3"><EmergencyPlanner month={month} /></div>
+            <ReadyCard className="mb-6" />
 
             <nav aria-label="Departments" className="mb-8">
               <ul className={`${rail} sm:grid sm:grid-cols-8 sm:overflow-visible sm:pb-0`}>
