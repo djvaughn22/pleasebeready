@@ -44,7 +44,7 @@ export default function EmergencyPlanner({ month }: { month: number }) {
       <h1 id="plan-title" className="pbr-display max-w-[36rem] text-[1.6rem] font-black leading-[1.15] sm:text-4xl sm:leading-[1.1]">
         Get your home ready for outages and storms
       </h1>
-      <p className="mt-2 max-w-[36rem] text-[0.95rem] font-semibold leading-6 text-[#cbd5e1]">
+      <p className="pbr-body mt-2 max-w-[36rem] text-[0.95rem] font-semibold leading-6">
         Water, food, light and power for your household. Pick what you’re planning for and get a checklist with amounts.
       </p>
       <fieldset className="mt-4 min-w-0">
