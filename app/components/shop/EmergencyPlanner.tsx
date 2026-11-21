@@ -15,8 +15,9 @@ import { MAX_PEOPLE } from "../../lib/stockup/calc";
 import { ALL_SITUATIONS, EVERYDAY, FRESH, LENGTHS, SAVE_KEY, planHref, planSummary, situationsFor, startingPlan, type HomePlan } from "../../lib/shop/emergencyPlan";
 import { Stepper } from "../stockup/ui";
 
+// Compact under 400px so "Power outage" and "Emergency kit" stay on one line in two columns at 360.
 const chip = (on: boolean) =>
-  `inline-flex min-h-11 items-center justify-center gap-1.5 rounded-xl border-2 px-3 text-sm font-black transition ${on ? "pbr-edge bg-[#F97316] text-[#0b1220]" : "border-[#26324c] bg-[#1c2740] text-[#e8edf5] hover:border-[#F97316]"}`;
+  `inline-flex min-h-11 items-center justify-center gap-1 whitespace-nowrap rounded-xl border-2 px-2 text-[0.8125rem] font-black min-[400px]:gap-1.5 min-[400px]:px-3 min-[400px]:text-sm transition ${on ? "pbr-edge bg-[#F97316] text-[#0b1220]" : "border-[#26324c] bg-[#1c2740] text-[#e8edf5] hover:border-[#F97316]"}`;
 
 const read = (k: string): unknown => {
   try { return JSON.parse(window.localStorage.getItem(k) ?? "null"); } catch { return null; }

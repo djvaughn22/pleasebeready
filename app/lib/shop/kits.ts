@@ -50,8 +50,8 @@ const READY_KIT = { label: "Ready.gov: Build a Kit", href: "https://www.ready.go
 
 const written: Kit[] = [
   {
-    slug: "five-day-emergency", emoji: "🔦", title: "Five-day emergency supplies", short: "Ready.gov's basic kit, for five days",
-    intro: "Water, food, light, a radio and first aid for five days at home, built from Ready.gov's basic kit list.",
+    slug: "five-day-emergency", emoji: "🔦", title: "Basic emergency supplies", short: "Ready.gov's basic kit, five days to start",
+    intro: "Water, food, light, a radio and first aid for your household at home, built from Ready.gov's basic kit list. Five days is a good start; two weeks is better.",
     lane: "emergency", base: "emergency", preset: { people: 4, days: 5 }, ask: ["people", "days"],
     essentials: ["water", "shelf-food", "manual-can-opener", "weather-radio", "flashlights", "batteries", "first-aid-kit", "whistle", "masks",
       "plastic-sheeting", "duct-tape", "wet-wipes", "trash-bags", "zip-ties", "pliers", "paper-road-map", "power-bank", "charging-cables"],
