@@ -69,6 +69,11 @@ export default function ChecklistPage() {
                   <span aria-hidden className="text-2xl">{a.emoji}</span>{a.title}
                 </h3>
                 <div className="flex-1"><ChecklistLines areaId={a.id} details={a.details} /></div>
+                {a.id === "plan" ? (
+                  <Link href="/household-plan" className="inline-flex min-h-11 items-center justify-between rounded-xl border border-[#26324c] px-4 py-2.5 text-sm font-black" style={{ color: A }}>
+                    <span>📝 Write yours down: household plan</span><span aria-hidden>→</span>
+                  </Link>
+                ) : null}
                 <a href={a.href} target="_blank" rel="noopener noreferrer" data-measure="guide" data-measure-label={a.id}
                   className="inline-flex items-center justify-between rounded-xl border border-[#26324c] bg-[#1c2740] px-4 py-2.5 text-xs font-black uppercase tracking-[0.1em] transition hover:border-[#F97316]"
                   style={{ color: A }}>

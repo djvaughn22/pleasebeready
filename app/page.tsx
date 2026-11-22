@@ -105,7 +105,14 @@ export default function Home() {
               </form>
             </header>
             <div className="mb-3"><EmergencyPlanner month={month} /></div>
-            <ReadyCard className="mb-6" />
+            <ReadyCard className="mb-3" />
+            <Link href="/household-plan" className="mb-6 flex min-h-[3.75rem] items-center gap-3 rounded-2xl border-2 border-[#26324c] bg-[#141d2e] px-4 py-2.5">
+              <span className="min-w-0 flex-1">
+                <span className="block text-sm font-black text-[#e8edf5]">📝 Household plan</span>
+                <span className="block truncate text-xs font-bold text-[#94a3b8]">Who to call and where to meet.</span>
+              </span>
+              <span aria-hidden className="pbr-accent shrink-0 text-lg font-black">→</span>
+            </Link>
 
             <nav aria-label="Departments" className="mb-8">
               <ul className={`${rail} sm:grid sm:grid-cols-8 sm:overflow-visible sm:pb-0`}>

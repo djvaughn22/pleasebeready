@@ -27,6 +27,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           links={[
             { emoji: "🔎", name: "Shop", href: "/" },
             { emoji: "✔️", name: "Get Ready", href: "/ready" },
+            { emoji: "📝", name: "Household plan", href: "/household-plan" },
             { emoji: "🧰", name: "Kits", href: "/kits" },
             { emoji: "⭐", name: "My Ready Lists", href: "/lists" },
             { emoji: "🛒", name: "Shop by need", href: "/shop" },
