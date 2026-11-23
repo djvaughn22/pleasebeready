@@ -12,6 +12,9 @@ export const metadata: Metadata = {
   description:
     "Shopping lists for whatever is coming: power outages, winter storms, a new puppy, a teen's first car, camping, parties and more. Ready-made kits, Amazon links, and lists saved on your device.",
   openGraph: { siteName: "PleaseBeReady", type: "website", locale: "en_US" },
+  // Google Search Console ownership for https://pleasebeready.com/ (Nov 22 2026). The value is
+  // public by design; removing it un-verifies the property. Not analytics: it sends nothing.
+  verification: { google: "OUktughxmxBDGMuhx5Dz6N1_FkB07ri1IqxVhIqmGJw" },
 };
 
 // The display face for the wordmark and section headings (.pbr-display in globals.css).
