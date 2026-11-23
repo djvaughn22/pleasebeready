@@ -87,12 +87,16 @@ export function parsePlan(raw: string | null | undefined): HouseholdPlan {
   };
 }
 
+const pad = (n: number) => String(n).padStart(2, "0");
+/** The visitor's own calendar date, not UTC: an evening save in the U.S. must not say tomorrow. */
+export const localDate = (d: Date) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+
 type Store = Pick<Storage, "getItem" | "setItem" | "removeItem">;
 export function loadPlan(store: Store | null | undefined): HouseholdPlan {
   try { return parsePlan(store?.getItem(PLAN_KEY)); } catch { return emptyPlan(); }
 }
 export function savePlan(store: Store | null | undefined, plan: HouseholdPlan, now = new Date()): HouseholdPlan {
-  const next = { ...plan, updated: now.toISOString().slice(0, 10) };
+  const next = { ...plan, updated: localDate(now) };
   try { store?.setItem(PLAN_KEY, JSON.stringify(next)); } catch { /* storage full or blocked: the page still works */ }
   return next;
 }

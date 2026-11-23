@@ -54,7 +54,8 @@ describe("household plan data", () => {
     const s = memoryStore();
     const p = emptyPlan();
     p.people[0] = { name: "Sam", mobile: "555-0101", other: "", email: "", notes: "" };
-    const saved = savePlan(s, p, new Date("2026-11-22T15:00:00Z"));
+    // 9:30 PM local on Nov 22: already Nov 23 in UTC for U.S. visitors, but the plan must say Nov 22.
+    const saved = savePlan(s, p, new Date(2026, 10, 22, 21, 30));
     expect(saved.updated).toBe("2026-11-22");
     expect([...s.m.keys()]).toEqual([PLAN_KEY]);
     expect(loadPlan(s).people[0].name).toBe("Sam");
