@@ -3,6 +3,7 @@ Be ready for whatever is coming: shopping kits and saved Ready Lists for any sit
 - Keep the "not professional or medical advice" disclaimer above the footer.
 
 ## Open Mirror family rules
+- **Messaging (owner, 2026-11-24):** preparedness, emergency planning, supplies and shopping live HERE and only here. Never describe Open Mirror as a preparedness company or "be ready" as its mission, and don't add plugs for other Open Mirror sites. About keeps one line saying PleaseBeReady is an Open Mirror LLC project; affiliate notices stay exactly as they are. Other sites no longer link here (their plugs were removed 2026-11-24). Full rules: the hub repo's `docs/MESSAGING.md`.
 - One of 11 Open Mirror LLC sites (hub: openmirrorllc.com, repo djvaughn22/open-mirror). Baseline tag: `mvp-1`.
 - **Design:** flat + cool. bg `#0b1220`, surface `#141d2e`, border `#26324c`, text `#e8edf5`, muted `#94a3b8`. No glass, no gradients, **no red**.
 - **Shared chrome is SYNCED, not owned here:** `OpenMirrorNav.tsx`, `OpenMirrorFooter.tsx`, `OpenMirrorTheme.tsx` in the app folder are copies from the hub repo `packages/openmirror-ui/`. NEVER edit them here — edit in the hub, run its `scripts/sync-ui.sh`, then rebuild/commit each satellite.
