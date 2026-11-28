@@ -1,6 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Which kind of build this is ("production" on Vercel's production builds, "preview" on
+  // branch previews, "development" locally). The trip planner's one-link Amazon cart test is
+  // never shown on a production build (lib/shop/amazonCart.ts).
+  env: { PBR_DEPLOY: process.env.VERCEL_ENV ?? "development" },
   // Nov 15 2026 (Nov 14 audit): three low-risk security headers on every page.
   // No Content-Security-Policy yet; that needs a report-only trial first.
   async headers() {

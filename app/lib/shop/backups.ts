@@ -45,6 +45,8 @@ export const BACKUP_Q: Record<string, string> = {
   "hand-crank-weather-radio-with-charger": "hand crank noaa radio",
   "first-aid-kit": "first aid kit for home",
   "toilet-paper": "toilet paper mega rolls",
+  // The catalog's own words for dish soap are for camping ("biodegradable camp soap"); at home it's dish soap.
+  "dish-soap": "dish soap",
   "trash-bags": "30 gallon drawstring trash bags",
   "smoke-and-co-alarm": "smoke and carbon monoxide alarm battery",
   "carbon-monoxide-alarm": "plug in carbon monoxide alarm battery backup",

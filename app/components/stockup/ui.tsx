@@ -22,10 +22,11 @@ export const btnPrimary =
 
 /** Whole-number input with − and + buttons. Typing any number in range works. */
 export function Stepper({
-  id, text, value, min, max, onChange, hint, compact, sr,
+  id, text, value, min, max, onChange, hint, compact, narrow, sr,
 }: {
   id: string; text: string; sr?: string; value: number; min: number; max: number;
-  onChange: (n: number) => void; hint?: string; compact?: boolean;
+  /** narrow: a slimmer number box, so two steppers sit side by side on a phone. */
+  onChange: (n: number) => void; hint?: string; compact?: boolean; narrow?: boolean;
 }) {
   const set = (n: number) => onChange(Math.min(max, Math.max(min, Math.round(Number.isFinite(n) ? n : min))));
   const size = compact ? "h-10 w-10" : "h-11 w-11";
@@ -38,7 +39,7 @@ export function Stepper({
         <input id={id} type="number" inputMode="numeric" min={min} max={max} value={value}
           onChange={(e) => set(e.target.value === "" ? min : Number(e.target.value))}
           onFocus={(e) => e.target.select()}
-          className={`${input} ${compact ? "h-10 w-16" : "w-20"} text-center tabular-nums`} />
+          className={`${input} ${compact ? (narrow ? "h-10 w-12 px-1" : "h-10 w-16") : "w-20"} text-center tabular-nums`} />
         <button type="button" aria-label={`One more: ${text}${sr ? `, ${sr}` : ""}`} disabled={value >= max} onClick={() => set(value + 1)}
           className={`${size} rounded-lg border border-[#26324c] bg-[#1c2740] text-lg font-black text-[#e8edf5] disabled:opacity-40`}>+</button>
       </div>

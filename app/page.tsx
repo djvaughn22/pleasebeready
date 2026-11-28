@@ -5,7 +5,7 @@ import JsonLd, { SITE } from "./components/JsonLd";
 import ListsProvider from "./components/shop/ListsProvider";
 import ReadyCard from "./components/ready/ReadyCard";
 import ListsTeaser from "./components/shop/ListsTeaser";
-import EmergencyPlanner from "./components/shop/EmergencyPlanner";
+import TripPlanner from "./components/shop/TripPlanner";
 import Saver from "./components/shop/Saver";
 import SaveToast, { ListPicker } from "./components/shop/SaveBar";
 import { FindsTabs } from "./components/shop/Store";
@@ -17,10 +17,11 @@ import { POPULAR, WINTER_MONTHS, kitBySlug, kits, seasonalKits } from "./lib/sho
 import { lanes } from "./lib/shop/lanes";
 import { pickByAsin } from "./lib/shop/picks";
 
-// Home: wordmark and search, then the emergency planner (owner direction 2026-11-20, night: household
-// preparedness leads; the occasion-first planner was rejected): outages and storms, how many people, how
-// long, and "Build your emergency plan" to that checklist. Parties, sleepovers, camping and cookouts are
-// one line below it. Then Get Ready (or Continue my plan). Then
+// Home: wordmark and search, then the trip planner (owner direction 2026-11-27, "the everyday shop"):
+// what you're getting ready for (outage, water shutoff, boil-water notice, pantry, household supplies),
+// a budget, what matters first, people and days, then what to check at home, what to buy this trip and
+// what can wait, with a "Review my Amazon list" handoff. The full emergency checklists stay one tap away
+// (the planner's links, the kits rail, /checklist). Then Get Ready (or Continue my plan). Then
 // departments and products; the "Saving to" line sits above the products it saves. Ready Finds opens on
 // Essentials (what a household should stock first, in the shared order from
 // lib/shop/priority.ts), then New, Everyday, Budget picks, Upgrades, and
@@ -32,7 +33,7 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: { absolute: "PleaseBeReady" },
   description:
-    "Get your home ready for power outages, storms and water shutoffs: a checklist with amounts for your household, a link to each item, and lists saved on your device.",
+    "Plan what to buy for a power outage, water shutoff, boil-water notice, pantry restock or household supplies on your budget: real pack sizes, what to check at home first, and what can wait.",
   alternates: { canonical: "/" },
 };
 
@@ -104,7 +105,7 @@ export default function Home() {
                 </button>
               </form>
             </header>
-            <div className="mb-3"><EmergencyPlanner month={month} /></div>
+            <div className="mb-3"><TripPlanner /></div>
             <ReadyCard className="mb-3" />
             <Link href="/household-plan" className="mb-6 flex min-h-[3.75rem] items-center gap-3 rounded-2xl border-2 border-[#26324c] bg-[#141d2e] px-4 py-2.5">
               <span className="min-w-0 flex-1">

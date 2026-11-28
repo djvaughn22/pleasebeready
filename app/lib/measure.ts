@@ -23,7 +23,9 @@ export type MeasureEvent =
   /** A list's share link was sent or copied. Label: the list's situation. */
   | "list_share"
   /** Two or more shoes compared side by side on /footwear. Label: <activity>-<count>. */
-  | "footwear_compare";
+  | "footwear_compare"
+  /** Home trip planner: the Amazon review list opened, the list downloaded, or the preview-only cart test link opened. Label: the situation id. */
+  | "trip_review" | "trip_download" | "trip_cart_test";
 
 export function measure(event: MeasureEvent, label: string): void {
   if (typeof window === "undefined") return;
