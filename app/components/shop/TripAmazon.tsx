@@ -78,7 +78,7 @@ export default function TripAmazon({ plan, cart }: { plan: TripPlan; cart: boole
                 </div>
                 <a href={l.url} target="_blank" rel="noopener noreferrer sponsored" data-measure="shop" data-measure-label={`trip-p-${first.item.id}`}
                   aria-label={`Open on Amazon: ${l.name}, quantity ${l.qty} (opens in a new tab)`}
-                  className="pbr-edge inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border-2 bg-[#F97316] px-4 text-sm font-black text-[#0b1220] sm:w-44">
+                  className="pbr-edge inline-flex min-h-11 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-xl border-2 bg-[#F97316] px-4 text-sm font-black text-[#0b1220] sm:w-52">
                   Open on Amazon <span aria-hidden>↗</span>
                 </a>
               </li>

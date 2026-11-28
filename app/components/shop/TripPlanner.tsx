@@ -189,7 +189,7 @@ export default function TripPlanner() {
             {plan.water && (
               <li>
                 <p className="text-sm font-black leading-snug"><span aria-hidden>💧 </span>{coverageLine("water", plan.water, a.days)}</p>
-                <p className={muted}>{n(Math.floor(plan.water.after + 1e-9))} of {n(plan.water.need)} gallons after this trip</p>
+                <p className={muted}>{n(Math.floor(plan.water.after + 1e-9))} of {n(plan.water.need)} {plan.water.need === 1 ? "gallon" : "gallons"} after this trip</p>
               </li>
             )}
             {plan.food && (

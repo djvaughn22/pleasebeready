@@ -37,7 +37,7 @@ export function tripText(plan: TripPlan): string {
     "",
   ];
   const have: string[] = [];
-  if (plan.water) have.push(`Water: ${coverageLine("water", plan.water, a.days)} (${n(Math.floor(plan.water.after))} of ${n(plan.water.need)} gallons)`);
+  if (plan.water) have.push(`Water: ${coverageLine("water", plan.water, a.days)} (${n(Math.floor(plan.water.after + 1e-9))} of ${n(plan.water.need)} ${plan.water.need === 1 ? "gallon" : "gallons"})`);
   if (plan.food) have.push(`Food, an estimate: ${coverageLine("food", plan.food, a.days)}`);
   if (plan.light) have.push(`Light: ${n(plan.light.after)} ${plan.light.after === 1 ? "light" : "lights"} for ${n(plan.light.people)} ${plan.light.people === 1 ? "person" : "people"}`);
   if (have.length) out.push("AFTER THIS TRIP", ...have, "");
